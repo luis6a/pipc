@@ -1441,7 +1441,6 @@ def crear_word(df_pipc):
                 'ubicación_gas': r_val['ubicación_gas'],
                 'equipo_brigada': r_val['equipo_brigada'],
                 'ubicacion_brigada': r_val['ubicacion_brigada'],
-                'ubiacion_brigadas': r_val['ubiacion_brigadas'],
                 'lampara': r_val['lampara'],
                 'ubicacion_lampara': r_val['ubicacion_lampara'],
                 'baterias': r_val['baterias'],
