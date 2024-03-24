@@ -1146,18 +1146,32 @@ def crear_word(df_pipc):
                 crono_anual = ''
 
             try:
-                img_path_mantto = os.path.join(IMAGES_PATH, r_val["mantto"])
-                if os.path.exists(img_path_mantto):
-                    mantto = InlineImage(
-                        docx_tpl, img_path_mantto, height=Mm(190))
+                img_path_mantto1 = os.path.join(IMAGES_PATH, r_val["mantto1"])
+                if os.path.exists(img_path_mantto1):
+                    mantto1 = InlineImage(
+                        docx_tpl, img_path_mantto1, height=Mm(190))
                 else:
                     print(
-                        f'Advertencia: No se encontró la imagen {r_val["mantto"]}')
-                    mantto = ''
+                        f'Advertencia: No se encontró la imagen {r_val["mantto1"]}')
+                    mantto1 = ''
             except Exception as e:
                 print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["mantto"]}: {e}')
-                mantto = ''
+                    f'Advertencia: No se pudo cargar la imagen {r_val["mantto1"]}: {e}')
+                mantto1 = ''
+
+            try:
+                img_path_mantto2 = os.path.join(IMAGES_PATH, r_val["mantto2"])
+                if os.path.exists(img_path_mantto2):
+                    mantto2 = InlineImage(
+                        docx_tpl, img_path_mantto2, height=Mm(190))
+                else:
+                    print(
+                        f'Advertencia: No se encontró la imagen {r_val["mantto2"]}')
+                    mantto2 = ''
+            except Exception as e:
+                print(
+                    f'Advertencia: No se pudo cargar la imagen {r_val["mantto2"]}: {e}')
+                mantto2 = ''
 
             try:
                 img_path_simulacro = os.path.join(
@@ -1584,7 +1598,8 @@ def crear_word(df_pipc):
                 'acta1': acta1,
                 'acta2': acta2,
                 'crono_anual': crono_anual,
-                'mantto': mantto,
+                'mantto1': mantto1,
+                'mantto2': mantto2,
                 'simulacro': simulacro,
                 'capacitacion': capacitacion,
                 'inv_quim': inv_quim,
