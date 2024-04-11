@@ -25,7 +25,7 @@ GDL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Farmcia_GDL.docx'
 GENERAL_PTLL_PATH = '.\Inputs\Templates\General.docx'
 GENERAL_MF_PTLL_PATH = '.\Inputs\Templates\MF General.docx'
 GENERAL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI General.docx'
-BBVA_PTLL_PATH = '.\Inputs\Templates\BBVA.docx'
+BBVA_PTLL_PATH = '.\Inputs\Templates\BBVA1.docx'
 BBVA_MF_PTLL_PATH = '.\Inputs\Templates\MF BBVA.docx'
 BBVA_GRI_PTLL_PATH = '.\Inputs\Templates\GRI BBVA.docx'
 
