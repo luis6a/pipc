@@ -25,7 +25,7 @@ GDL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Farmcia_GDL.docx'
 GENERAL_PTLL_PATH = '.\Inputs\Templates\General.docx'
 GENERAL_MF_PTLL_PATH = '.\Inputs\Templates\MF General.docx'
 GENERAL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI General.docx'
-BBVA_PTLL_PATH = '.\Inputs\Templates\BBVA1.docx'
+BBVA_PTLL_PATH = '.\Inputs\Templates\BBVA.docx'
 BBVA_MF_PTLL_PATH = '.\Inputs\Templates\MF BBVA.docx'
 BBVA_GRI_PTLL_PATH = '.\Inputs\Templates\GRI BBVA.docx'
 
@@ -1400,8 +1400,8 @@ def crear_word(df_pipc):
                 'email': r_val['email'],
                 'antiguedad_inmueble': r_val['antiguedad_inmueble'],
                 'inicio_operaciones': r_val['inicio_operaciones'],
-                'mod_estructurales': r_val['mod_estructurales'],
-                'mod_arquitect': r_val['mod_arquitect'],
+                'registro_perito' : r_val['registro_perito'],
+                'no_registro' : r_val['no_registro'],
                 'terreno_m2': r_val['terreno_m2'],
                 'construccion_m2': r_val['construccion_m2'],
                 'edificios': r_val['edificios'],
