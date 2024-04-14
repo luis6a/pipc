@@ -113,7 +113,7 @@ def crear_word(df_pipc):
                 img_path_fachada = os.path.join(IMAGES_PATH, r_val["fachada"])
                 if os.path.exists(img_path_fachada):
                     fachada = InlineImage(
-                        docx_tpl, img_path_fachada, height=Mm(105))
+                        docx_tpl, img_path_fachada, height=Mm(90))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["fachada"]}')
@@ -126,7 +126,7 @@ def crear_word(df_pipc):
             try:
                 img_path_mapa = os.path.join(IMAGES_PATH, r_val["mapa"])
                 if os.path.exists(img_path_mapa):
-                    mapa = InlineImage(docx_tpl, img_path_mapa, height=Mm(95))
+                    mapa = InlineImage(docx_tpl, img_path_mapa, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["mapa"]}')
@@ -141,7 +141,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["esc_emer"])
                 if os.path.exists(img_path_esc_emer):
                     esc_emer = InlineImage(
-                        docx_tpl, img_path_esc_emer, height=Mm(60))
+                        docx_tpl, img_path_esc_emer, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["esc_emer"]}')
@@ -155,7 +155,7 @@ def crear_word(df_pipc):
                 img_path_mueble1 = os.path.join(IMAGES_PATH, r_val["mueble1"])
                 if os.path.exists(img_path_mueble1):
                     mueble1 = InlineImage(
-                        docx_tpl, img_path_mueble1, height=Mm(60))
+                        docx_tpl, img_path_mueble1, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["mueble1"]}')
@@ -169,7 +169,7 @@ def crear_word(df_pipc):
                 img_path_mueble2 = os.path.join(IMAGES_PATH, r_val["mueble2"])
                 if os.path.exists(img_path_mueble2):
                     mueble2 = InlineImage(
-                        docx_tpl, img_path_mueble2, height=Mm(60))
+                        docx_tpl, img_path_mueble2, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["mueble2"]}')
@@ -183,7 +183,7 @@ def crear_word(df_pipc):
                 img_path_venteo = os.path.join(IMAGES_PATH, r_val["venteo"])
                 if os.path.exists(img_path_venteo):
                     venteo = InlineImage(
-                        docx_tpl, img_path_venteo, height=Mm(60))
+                        docx_tpl, img_path_venteo, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["venteo"]}')
@@ -198,7 +198,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["manguera"])
                 if os.path.exists(img_path_manguera):
                     manguera = InlineImage(
-                        docx_tpl, img_path_manguera, height=Mm(60))
+                        docx_tpl, img_path_manguera, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["manguera"]}')
@@ -213,7 +213,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["electrico"])
                 if os.path.exists(img_path_electrico):
                     electrico = InlineImage(
-                        docx_tpl, img_path_electrico, height=Mm(60))
+                        docx_tpl, img_path_electrico, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["electrico"]}')
@@ -227,7 +227,7 @@ def crear_word(df_pipc):
                 img_path_banio = os.path.join(IMAGES_PATH, r_val["banio"])
                 if os.path.exists(img_path_banio):
                     banio = InlineImage(
-                        docx_tpl, img_path_banio, height=Mm(60))
+                        docx_tpl, img_path_banio, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["banio"]}')
@@ -242,7 +242,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["cisterna"])
                 if os.path.exists(img_path_cisterna):
                     cisterna = InlineImage(
-                        docx_tpl, img_path_cisterna, height=Mm(60))
+                        docx_tpl, img_path_cisterna, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["cisterna"]}')
@@ -256,7 +256,7 @@ def crear_word(df_pipc):
                 img_path_sismo = os.path.join(IMAGES_PATH, r_val["sismo"])
                 if os.path.exists(img_path_sismo):
                     sismo = InlineImage(
-                        docx_tpl, img_path_sismo, height=Mm(70))
+                        docx_tpl, img_path_sismo, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["sismo"]}')
@@ -271,7 +271,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["inundacion"])
                 if os.path.exists(img_path_inundacion):
                     inundacion = InlineImage(
-                        docx_tpl, img_path_inundacion, height=Mm(70))
+                        docx_tpl, img_path_inundacion, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["inundacion"]}')
@@ -286,7 +286,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["torm_elect"])
                 if os.path.exists(img_path_torm_elect):
                     torm_elect = InlineImage(
-                        docx_tpl, img_path_torm_elect, height=Mm(70))
+                        docx_tpl, img_path_torm_elect, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["torm_elect"]}')
@@ -301,7 +301,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["incendio"])
                 if os.path.exists(img_path_incendio):
                     incendio = InlineImage(
-                        docx_tpl, img_path_incendio, height=Mm(70))
+                        docx_tpl, img_path_incendio, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["incendio"]}')
@@ -316,7 +316,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["influenza"])
                 if os.path.exists(img_path_influenza):
                     influenza = InlineImage(
-                        docx_tpl, img_path_influenza, height=Mm(70))
+                        docx_tpl, img_path_influenza, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["influenza"]}')
@@ -331,7 +331,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["radiacion"])
                 if os.path.exists(img_path_radiacion):
                     radiacion = InlineImage(
-                        docx_tpl, img_path_radiacion, height=Mm(70))
+                        docx_tpl, img_path_radiacion, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["radiacion"]}')
@@ -344,7 +344,7 @@ def crear_word(df_pipc):
             try:
                 img_path_ext1 = os.path.join(IMAGES_PATH, r_val["ext1"])
                 if os.path.exists(img_path_ext1):
-                    ext1 = InlineImage(docx_tpl, img_path_ext1, height=Mm(60))
+                    ext1 = InlineImage(docx_tpl, img_path_ext1, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["ext1"]}')
@@ -357,7 +357,7 @@ def crear_word(df_pipc):
             try:
                 img_path_ext2 = os.path.join(IMAGES_PATH, r_val["ext2"])
                 if os.path.exists(img_path_ext2):
-                    ext2 = InlineImage(docx_tpl, img_path_ext2, height=Mm(60))
+                    ext2 = InlineImage(docx_tpl, img_path_ext2, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["ext2"]}')
@@ -370,7 +370,7 @@ def crear_word(df_pipc):
             try:
                 img_path_ext3 = os.path.join(IMAGES_PATH, r_val["ext3"])
                 if os.path.exists(img_path_ext3):
-                    ext3 = InlineImage(docx_tpl, img_path_ext3, height=Mm(60))
+                    ext3 = InlineImage(docx_tpl, img_path_ext3, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["ext3"]}')
@@ -383,7 +383,7 @@ def crear_word(df_pipc):
             try:
                 img_path_ext4 = os.path.join(IMAGES_PATH, r_val["ext4"])
                 if os.path.exists(img_path_ext4):
-                    ext4 = InlineImage(docx_tpl, img_path_ext4, height=Mm(60))
+                    ext4 = InlineImage(docx_tpl, img_path_ext4, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["ext4"]}')
@@ -398,7 +398,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["botiquin"])
                 if os.path.exists(img_path_botiquin):
                     botiquin = InlineImage(
-                        docx_tpl, img_path_botiquin, height=Mm(60))
+                        docx_tpl, img_path_botiquin, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["botiquin"]}')
@@ -468,7 +468,7 @@ def crear_word(df_pipc):
                 img_path_alarma = os.path.join(IMAGES_PATH, r_val["alarma"])
                 if os.path.exists(img_path_alarma):
                     alarma = InlineImage(
-                        docx_tpl, img_path_alarma, height=Mm(60))
+                        docx_tpl, img_path_alarma, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["alarma"]}')
@@ -538,7 +538,7 @@ def crear_word(df_pipc):
                 img_path_layout = os.path.join(IMAGES_PATH, r_val["layout"])
                 if os.path.exists(img_path_layout):
                     layout = InlineImage(
-                        docx_tpl, img_path_layout, height=Mm(160))
+                        docx_tpl, img_path_layout, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["layout"]}')
@@ -789,7 +789,7 @@ def crear_word(df_pipc):
                 img_path_techo = os.path.join(IMAGES_PATH, r_val["techo"])
                 if os.path.exists(img_path_techo):
                     techo = InlineImage(
-                        docx_tpl, img_path_techo, height=Mm(60))
+                        docx_tpl, img_path_techo, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["techo"]}')
@@ -803,7 +803,7 @@ def crear_word(df_pipc):
                 img_path_pisos = os.path.join(IMAGES_PATH, r_val["pisos"])
                 if os.path.exists(img_path_pisos):
                     pisos = InlineImage(
-                        docx_tpl, img_path_pisos, height=Mm(60))
+                        docx_tpl, img_path_pisos, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["pisos"]}')
@@ -817,7 +817,7 @@ def crear_word(df_pipc):
                 img_path_puerta = os.path.join(IMAGES_PATH, r_val["puerta"])
                 if os.path.exists(img_path_puerta):
                     puerta = InlineImage(
-                        docx_tpl, img_path_puerta, height=Mm(60))
+                        docx_tpl, img_path_puerta, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["puerta"]}')
@@ -832,7 +832,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["estantes"])
                 if os.path.exists(img_path_estantes):
                     estantes = InlineImage(
-                        docx_tpl, img_path_estantes, height=Mm(60))
+                        docx_tpl, img_path_estantes, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["estantes"]}')
@@ -845,7 +845,7 @@ def crear_word(df_pipc):
             try:
                 img_path_site = os.path.join(IMAGES_PATH, r_val["site"])
                 if os.path.exists(img_path_site):
-                    site = InlineImage(docx_tpl, img_path_site, height=Mm(60))
+                    site = InlineImage(docx_tpl, img_path_site, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["site"]}')
@@ -858,7 +858,7 @@ def crear_word(df_pipc):
             try:
                 img_path_dh = os.path.join(IMAGES_PATH, r_val["dh"])
                 if os.path.exists(img_path_dh):
-                    dh = InlineImage(docx_tpl, img_path_dh, height=Mm(60))
+                    dh = InlineImage(docx_tpl, img_path_dh, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["dh"]}')
@@ -873,7 +873,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["ventanas"])
                 if os.path.exists(img_path_ventanas):
                     ventanas = InlineImage(
-                        docx_tpl, img_path_ventanas, height=Mm(60))
+                        docx_tpl, img_path_ventanas, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["ventanas"]}')
@@ -888,7 +888,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["compresor"])
                 if os.path.exists(img_path_compresor):
                     compresor = InlineImage(
-                        docx_tpl, img_path_compresor, height=Mm(60))
+                        docx_tpl, img_path_compresor, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["compresor"]}')
@@ -903,7 +903,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["quimicos"])
                 if os.path.exists(img_path_quimicos):
                     quimicos = InlineImage(
-                        docx_tpl, img_path_quimicos, height=Mm(60))
+                        docx_tpl, img_path_quimicos, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["quimicos"]}')
@@ -918,7 +918,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["tanques_gaso"])
                 if os.path.exists(img_path_tanques_gaso):
                     tanques_gaso = InlineImage(
-                        docx_tpl, img_path_tanques_gaso, height=Mm(60))
+                        docx_tpl, img_path_tanques_gaso, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["tanques_gaso"]}')
@@ -931,7 +931,7 @@ def crear_word(df_pipc):
             try:
                 img_path_paro = os.path.join(IMAGES_PATH, r_val["paro"])
                 if os.path.exists(img_path_paro):
-                    paro = InlineImage(docx_tpl, img_path_paro, height=Mm(60))
+                    paro = InlineImage(docx_tpl, img_path_paro, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["paro"]}')
@@ -946,7 +946,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["trampa_grasa"])
                 if os.path.exists(img_path_trampa_grasa):
                     trampa_grasa = InlineImage(
-                        docx_tpl, img_path_trampa_grasa, height=Mm(60))
+                        docx_tpl, img_path_trampa_grasa, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["trampa_grasa"]}')
@@ -960,7 +960,7 @@ def crear_word(df_pipc):
                 img_path_planta = os.path.join(IMAGES_PATH, r_val["planta"])
                 if os.path.exists(img_path_planta):
                     planta = InlineImage(
-                        docx_tpl, img_path_planta, height=Mm(60))
+                        docx_tpl, img_path_planta, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["planta"]}')
@@ -975,7 +975,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["deposito"])
                 if os.path.exists(img_path_deposito):
                     deposito = InlineImage(
-                        docx_tpl, img_path_deposito, height=Mm(60))
+                        docx_tpl, img_path_deposito, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["deposito"]}')
@@ -990,7 +990,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["mapa_satel"])
                 if os.path.exists(img_path_mapa_satel):
                     mapa_satel = InlineImage(
-                        docx_tpl, img_path_mapa_satel, width=Mm(140))
+                        docx_tpl, img_path_mapa_satel, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["mapa_satel"]}')
@@ -1004,7 +1004,7 @@ def crear_word(df_pipc):
                 img_path_plano = os.path.join(IMAGES_PATH, r_val["plano"])
                 if os.path.exists(img_path_plano):
                     plano = InlineImage(
-                        docx_tpl, img_path_plano, height=Mm(200))
+                        docx_tpl, img_path_plano, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["plano"]}')
@@ -1019,7 +1019,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["inmueble1"])
                 if os.path.exists(img_path_inmueble1):
                     inmueble1 = InlineImage(
-                        docx_tpl, img_path_inmueble1, height=Mm(60))
+                        docx_tpl, img_path_inmueble1, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["inmueble1"]}')
@@ -1034,7 +1034,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["inmueble2"])
                 if os.path.exists(img_path_inmueble2):
                     inmueble2 = InlineImage(
-                        docx_tpl, img_path_inmueble2, height=Mm(60))
+                        docx_tpl, img_path_inmueble2, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["inmueble2"]}')
@@ -1048,7 +1048,7 @@ def crear_word(df_pipc):
                 img_path_banio1 = os.path.join(IMAGES_PATH, r_val["banio1"])
                 if os.path.exists(img_path_banio1):
                     banio1 = InlineImage(
-                        docx_tpl, img_path_banio1, height=Mm(60))
+                        docx_tpl, img_path_banio1, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["banio1"]}')
@@ -1063,7 +1063,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["electrico1"])
                 if os.path.exists(img_path_electrico1):
                     electrico1 = InlineImage(
-                        docx_tpl, img_path_electrico1, height=Mm(60))
+                        docx_tpl, img_path_electrico1, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["electrico1"]}')
@@ -1078,7 +1078,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["fachada1"])
                 if os.path.exists(img_path_fachada1):
                     fachada1 = InlineImage(
-                        docx_tpl, img_path_fachada1, height=Mm(60))
+                        docx_tpl, img_path_fachada1, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["fachada1"]}')
@@ -1092,7 +1092,7 @@ def crear_word(df_pipc):
                 img_path_bateria = os.path.join(IMAGES_PATH, r_val["bateria"])
                 if os.path.exists(img_path_bateria):
                     bateria = InlineImage(
-                        docx_tpl, img_path_bateria, height=Mm(60))
+                        docx_tpl, img_path_bateria, height=Mm(50))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["bateria"]}')
@@ -1106,7 +1106,7 @@ def crear_word(df_pipc):
                 img_path_acta1 = os.path.join(IMAGES_PATH, r_val["acta1"])
                 if os.path.exists(img_path_acta1):
                     acta1 = InlineImage(
-                        docx_tpl, img_path_acta1, height=Mm(190))
+                        docx_tpl, img_path_acta1, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["acta1"]}')
@@ -1120,7 +1120,7 @@ def crear_word(df_pipc):
                 img_path_acta2 = os.path.join(IMAGES_PATH, r_val["acta2"])
                 if os.path.exists(img_path_acta2):
                     acta2 = InlineImage(
-                        docx_tpl, img_path_acta2, height=Mm(190))
+                        docx_tpl, img_path_acta2, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["acta2"]}')
@@ -1135,7 +1135,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["crono_anual"])
                 if os.path.exists(img_path_crono_anual):
                     crono_anual = InlineImage(
-                        docx_tpl, img_path_crono_anual, height=Mm(190))
+                        docx_tpl, img_path_crono_anual, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["crono_anual"]}')
@@ -1149,7 +1149,7 @@ def crear_word(df_pipc):
                 img_path_mantto1 = os.path.join(IMAGES_PATH, r_val["mantto1"])
                 if os.path.exists(img_path_mantto1):
                     mantto1 = InlineImage(
-                        docx_tpl, img_path_mantto1, height=Mm(190))
+                        docx_tpl, img_path_mantto1, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["mantto1"]}')
@@ -1163,7 +1163,7 @@ def crear_word(df_pipc):
                 img_path_mantto2 = os.path.join(IMAGES_PATH, r_val["mantto2"])
                 if os.path.exists(img_path_mantto2):
                     mantto2 = InlineImage(
-                        docx_tpl, img_path_mantto2, height=Mm(190))
+                        docx_tpl, img_path_mantto2, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["mantto2"]}')
@@ -1178,7 +1178,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["simulacro"])
                 if os.path.exists(img_path_simulacro):
                     simulacro = InlineImage(
-                        docx_tpl, img_path_simulacro, height=Mm(95))
+                        docx_tpl, img_path_simulacro, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["simulacro"]}')
@@ -1193,7 +1193,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["capacitacion"])
                 if os.path.exists(img_path_capacitacion):
                     capacitacion = InlineImage(
-                        docx_tpl, img_path_capacitacion, height=Mm(95))
+                        docx_tpl, img_path_capacitacion, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["capacitacion"]}')
@@ -1208,7 +1208,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["inv_quim"])
                 if os.path.exists(img_path_inv_quim):
                     inv_quim = InlineImage(
-                        docx_tpl, img_path_inv_quim, height=Mm(190))
+                        docx_tpl, img_path_inv_quim, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["inv_quim"]}')
@@ -1223,7 +1223,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["inv_emer"])
                 if os.path.exists(img_path_inv_emer):
                     inv_emer = InlineImage(
-                        docx_tpl, img_path_inv_emer, height=Mm(190))
+                        docx_tpl, img_path_inv_emer, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["inv_emer"]}')
@@ -1238,7 +1238,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["bit_emer"])
                 if os.path.exists(img_path_bit_emer):
                     bit_emer = InlineImage(
-                        docx_tpl, img_path_bit_emer, height=Mm(190))
+                        docx_tpl, img_path_bit_emer, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["bit_emer"]}')
@@ -1253,7 +1253,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["insp_bot"])
                 if os.path.exists(img_path_insp_bot):
                     insp_bot = InlineImage(
-                        docx_tpl, img_path_insp_bot, height=Mm(190))
+                        docx_tpl, img_path_insp_bot, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["insp_bot"]}')
@@ -1268,7 +1268,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["insp_ext"])
                 if os.path.exists(img_path_insp_ext):
                     insp_ext = InlineImage(
-                        docx_tpl, img_path_insp_ext, height=Mm(190))
+                        docx_tpl, img_path_insp_ext, width=Mm(149))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["insp_ext"]}')
@@ -1282,7 +1282,7 @@ def crear_word(df_pipc):
                 img_path_insp_dh = os.path.join(IMAGES_PATH, r_val["insp_dh"])
                 if os.path.exists(img_path_insp_dh):
                     insp_dh = InlineImage(
-                        docx_tpl, img_path_insp_dh, height=Mm(190))
+                        docx_tpl, img_path_insp_dh, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["insp_dh"]}')
@@ -1297,7 +1297,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["insp_lamp"])
                 if os.path.exists(img_path_insp_lamp):
                     insp_lamp = InlineImage(
-                        docx_tpl, img_path_insp_lamp, height=Mm(190))
+                        docx_tpl, img_path_insp_lamp, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["insp_lamp"]}')
@@ -1312,7 +1312,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["insp_alarm"])
                 if os.path.exists(img_path_insp_alarm):
                     insp_alarm = InlineImage(
-                        docx_tpl, img_path_insp_alarm, height=Mm(190))
+                        docx_tpl, img_path_insp_alarm, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["insp_alarm"]}')
@@ -1326,7 +1326,7 @@ def crear_word(df_pipc):
                 img_path_ev_sim1 = os.path.join(IMAGES_PATH, r_val["ev_sim1"])
                 if os.path.exists(img_path_ev_sim1):
                     ev_sim1 = InlineImage(
-                        docx_tpl, img_path_ev_sim1, height=Mm(190))
+                        docx_tpl, img_path_ev_sim1, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["ev_sim1"]}')
@@ -1340,7 +1340,7 @@ def crear_word(df_pipc):
                 img_path_ev_sim2 = os.path.join(IMAGES_PATH, r_val["ev_sim2"])
                 if os.path.exists(img_path_ev_sim2):
                     ev_sim2 = InlineImage(
-                        docx_tpl, img_path_ev_sim2, height=Mm(190))
+                        docx_tpl, img_path_ev_sim2, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["ev_sim2"]}')
@@ -1354,7 +1354,7 @@ def crear_word(df_pipc):
                 img_path_visitas = os.path.join(IMAGES_PATH, r_val["visitas"])
                 if os.path.exists(img_path_visitas):
                     visitas = InlineImage(
-                        docx_tpl, img_path_visitas, height=Mm(190))
+                        docx_tpl, img_path_visitas, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["visitas"]}')
@@ -1369,7 +1369,7 @@ def crear_word(df_pipc):
                     IMAGES_PATH, r_val["dir_emer"])
                 if os.path.exists(img_path_dir_emer):
                     dir_emer = InlineImage(
-                        docx_tpl, img_path_dir_emer, height=Mm(60))
+                        docx_tpl, img_path_dir_emer, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["dir_emer"]}')
