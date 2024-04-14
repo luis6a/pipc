@@ -1379,6 +1379,17 @@ def crear_word(df_pipc):
                     f'Advertencia: No se pudo cargar la imagen {r_val["dir_emer"]}: {e}')
                 dir_emer = ''
 
+            try:	
+                img_path_corresp1 = os.path.join(IMAGES_PATH, r_val["corresp1"])	
+                if os.path.exists(img_path_corresp1):	
+                    corresp1 = InlineImage(docx_tpl, img_path_corresp1, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["corresp1"]}')	
+                    corresp1 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["corresp1"]}: {e}')	
+                corresp1 = ''
+
             # Crear contexto
             context = {
                 # 'id': r_val['id'],
@@ -1641,7 +1652,8 @@ def crear_word(df_pipc):
                 'ev_sim1': ev_sim1,
                 'ev_sim2': ev_sim2,
                 'visitas': visitas,
-                'dir_emer': dir_emer
+                'dir_emer': dir_emer,
+                'corresp1': corresp1,
             }
 
             try:
