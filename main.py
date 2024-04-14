@@ -1390,6 +1390,127 @@ def crear_word(df_pipc):
                 print(f'Advertencia: No se pudo cargar la imagen {r_val["corresp1"]}: {e}')	
                 corresp1 = ''
 
+            try:	
+                img_path_corresp2 = os.path.join(IMAGES_PATH, r_val["corresp2"])	
+                if os.path.exists(img_path_corresp2):	
+                    corresp2 = InlineImage(docx_tpl, img_path_corresp2, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["corresp2"]}')	
+                    corresp2 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["corresp2"]}: {e}')	
+                corresp2 = ''
+            
+            try:	
+                img_path_corresp3 = os.path.join(IMAGES_PATH, r_val["corresp3"])	
+                if os.path.exists(img_path_corresp3):	
+                    corresp3 = InlineImage(docx_tpl, img_path_corresp3, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["corresp3"]}')	
+                    corresp3 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["corresp3"]}: {e}')	
+                corresp3 = ''
+            
+            try:	
+                img_path_carta_respon = os.path.join(IMAGES_PATH, r_val["carta_respon"])	
+                if os.path.exists(img_path_carta_respon):	
+                    carta_respon = InlineImage(docx_tpl, img_path_carta_respon, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["carta_respon"]}')	
+                    carta_respon = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["carta_respon"]}: {e}')	
+                carta_respon = ''
+            
+            try:	
+                img_path_registro1 = os.path.join(IMAGES_PATH, r_val["registro1"])	
+                if os.path.exists(img_path_registro1):	
+                    registro1 = InlineImage(docx_tpl, img_path_registro1, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["registro1"]}')	
+                    registro1 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["registro1"]}: {e}')	
+                registro1 = ''
+            
+            try:	
+                img_path_registro2 = os.path.join(IMAGES_PATH, r_val["registro2"])	
+                if os.path.exists(img_path_registro2):	
+                    registro2 = InlineImage(docx_tpl, img_path_registro2, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["registro2"]}')	
+                    registro2 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["registro2"]}: {e}')	
+                registro2 = ''
+            
+            try:	
+                img_path_ries_circ = os.path.join(IMAGES_PATH, r_val["ries_circ"])	
+                if os.path.exists(img_path_ries_circ):	
+                    ries_circ = InlineImage(docx_tpl, img_path_ries_circ, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["ries_circ"]}')	
+                    ries_circ = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["ries_circ"]}: {e}')	
+                ries_circ = ''
+            
+            try:	
+                img_path_mapa_ext = os.path.join(IMAGES_PATH, r_val["mapa_ext"])
+                if os.path.exists(img_path_mapa_ext):
+                    mapa_ext = InlineImage(docx_tpl, img_path_mapa_ext, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["mapa_ext"]}')	
+                    mapa_ext = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["mapa_ext"]}: {e}')	
+                mapa_ext = ''
+            
+            try:	
+                img_path_rec_ext = os.path.join(IMAGES_PATH, r_val["rec_ext"])	
+                if os.path.exists(img_path_rec_ext):	
+                    rec_ext = InlineImage(docx_tpl, img_path_rec_ext, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["rec_ext"]}')	
+                    rec_ext = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["rec_ext"]}: {e}')	
+                rec_ext = ''
+            
+            try:	
+                img_path_mayor_ries = os.path.join(IMAGES_PATH, r_val["mayor_ries"])	
+                if os.path.exists(img_path_mayor_ries):	
+                    mayor_ries = InlineImage(docx_tpl, img_path_mayor_ries, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["mayor_ries"]}')	
+                    mayor_ries = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["mayor_ries"]}: {e}')	
+                mayor_ries = ''
+            
+            try:	
+                img_path_menor_ries = os.path.join(IMAGES_PATH, r_val["menor_ries"])	
+                if os.path.exists(img_path_menor_ries):	
+                    menor_ries = InlineImage(docx_tpl, img_path_menor_ries, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["menor_ries"]}')	
+                    menor_ries = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["menor_ries"]}: {e}')	
+                menor_ries = ''
+            
+            try:	
+                img_path_zona_evac = os.path.join(IMAGES_PATH, r_val["zona_evac"])	
+                if os.path.exists(img_path_zona_evac):	
+                    zona_evac = InlineImage(docx_tpl, img_path_zona_evac, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["zona_evac"]}')	
+                    zona_evac = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["zona_evac"]}: {e}')	
+                zona_evac = ''
+
             # Crear contexto
             context = {
                 # 'id': r_val['id'],
@@ -1654,6 +1775,17 @@ def crear_word(df_pipc):
                 'visitas': visitas,
                 'dir_emer': dir_emer,
                 'corresp1': corresp1,
+                'corresp2': corresp2,
+                'corresp3': corresp3,
+                'carta_respon': carta_respon,
+                'registro1': registro1,
+                'registro2': registro2,
+                'ries_circ': ries_circ,
+                'mapa_ext': mapa_ext,
+                'rec_ext': rec_ext,
+                'mayor_ries': mayor_ries,
+                'menor_ries': menor_ries,
+                'zona_evac': zona_evac
             }
 
             try:
