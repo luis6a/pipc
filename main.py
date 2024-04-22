@@ -28,6 +28,9 @@ GENERAL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI General.docx'
 BBVA_PTLL_PATH = '.\Inputs\Templates\BBVA.docx'
 BBVA_MF_PTLL_PATH = '.\Inputs\Templates\MF BBVA.docx'
 BBVA_GRI_PTLL_PATH = '.\Inputs\Templates\GRI BBVA.docx'
+COMPARTAMOS_PTLL_PATH = '.\Inputs\Templates\Compartamos.docx'
+COMPARTAMOS_MF_PTLL_PATH = '.\Inputs\Templates\MF Compartamos.docx'
+COMPARTAMOS_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Compartamos.docx'
 
 # Ruta imágenes
 IMAGES_PATH = '.\Inputs\Images'
@@ -75,6 +78,8 @@ def crear_word(df_pipc):
         elif r_val['pipc'] == 'BBVA':
             plantillas = [BBVA_PTLL_PATH,
                           BBVA_MF_PTLL_PATH, BBVA_GRI_PTLL_PATH]
+        elif r_val['pipc'] == 'COMPARTAMOS':
+            plantillas = [COMPARTAMOS_PTLL_PATH, COMPARTAMOS_MF_PTLL_PATH, COMPARTAMOS_GRI_PTLL_PATH]
 
         for idx, l_tpl in enumerate(plantillas, start=1):
             # Cargar plantilla
