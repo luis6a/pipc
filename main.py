@@ -31,6 +31,8 @@ BBVA_GRI_PTLL_PATH = '.\Inputs\Templates\GRI BBVA.docx'
 COMPARTAMOS_PTLL_PATH = '.\Inputs\Templates\Compartamos.docx'
 COMPARTAMOS_MF_PTLL_PATH = '.\Inputs\Templates\MF Compartamos.docx'
 COMPARTAMOS_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Compartamos.docx'
+ALL_GOWER_PTLL_PATH = '.\Inputs\Templates\Cartas Gower.docx'
+ALL_NOE_PTLL_PATH = '.\Inputs\Templates\Cartas Noe.docx'
 
 # Ruta imágenes
 IMAGES_PATH = '.\Inputs\Images'
@@ -66,20 +68,20 @@ def crear_word(df_pipc):
         # Cargar plantilla
         if r_val['pipc'] == 'GASOLINERA':
             plantillas = [GASOLINERA_WORD_PTLL_PATH,
-                          GAS_MF_WORD_PTLL_PATH, GRI_GAS_WORD_PTLL_PATH]
+                          GAS_MF_WORD_PTLL_PATH, GRI_GAS_WORD_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
         elif r_val['pipc'] == 'BANCO':
             plantillas = [CIDUR_PTLL_PATH,
-                          CIDUR_MF_PTLL_PATH, CIDUR_GRI_PTLL_PATH]
+                          CIDUR_MF_PTLL_PATH, CIDUR_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
         elif r_val['pipc'] == 'GDL':
-            plantillas = [GDL_PTLL_PATH, GDL_MF_PTLL_PATH, GDL_GRI_PTLL_PATH]
+            plantillas = [GDL_PTLL_PATH, GDL_MF_PTLL_PATH, GDL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
         elif r_val['pipc'] == 'GENERAL':
             plantillas = [GENERAL_PTLL_PATH,
-                          GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH]
+                          GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
         elif r_val['pipc'] == 'BBVA':
             plantillas = [BBVA_PTLL_PATH,
-                          BBVA_MF_PTLL_PATH, BBVA_GRI_PTLL_PATH]
+                          BBVA_MF_PTLL_PATH, BBVA_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
         elif r_val['pipc'] == 'COMPARTAMOS':
-            plantillas = [COMPARTAMOS_PTLL_PATH, COMPARTAMOS_MF_PTLL_PATH, COMPARTAMOS_GRI_PTLL_PATH]
+            plantillas = [COMPARTAMOS_PTLL_PATH, COMPARTAMOS_MF_PTLL_PATH, COMPARTAMOS_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
 
         for idx, l_tpl in enumerate(plantillas, start=1):
             # Cargar plantilla
@@ -1807,6 +1809,14 @@ def crear_word(df_pipc):
                         r_val['nombre_comercial'] + '.docx'
                 elif idx == 3:
                     nombre_pipc = '3. RIESGO DE INCENDIO ' + \
+                        r_val['nombre_comercial'] + '.docx'
+                    
+                elif idx == 4:
+                    nombre_pipc = '4. CARTAS GOWER ' + \
+                        r_val['nombre_comercial'] + '.docx'
+                    
+                elif idx == 5:
+                    nombre_pipc = '5. CARTAS NOE ' + \
                         r_val['nombre_comercial'] + '.docx'
 
                 # Guardar el documento con un nombre único
