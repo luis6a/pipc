@@ -1521,13 +1521,145 @@ def crear_word(df_pipc):
             try:	
                 img_path_firma = os.path.join(IMAGES_PATH, r_val["firma"])	
                 if os.path.exists(img_path_firma):	
-                    firma = InlineImage(docx_tpl, img_path_firma, height=Mm(14))	
+                    firma = InlineImage(docx_tpl, img_path_firma, width=Mm(70))	
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["firma"]}')	
                     firma = ''	
             except Exception as e:	
                 print(f'Advertencia: No se pudo cargar la imagen {r_val["firma"]}: {e}')	
                 firma = ''
+
+            try:	
+                img_path_layout1 = os.path.join(IMAGES_PATH, r_val["layout1"])	
+                if os.path.exists(img_path_layout1):	
+                    layout1 = InlineImage(docx_tpl, img_path_layout1, width=Mm(160))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["layout1"]}')	
+                    layout1 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout1"]}: {e}')	
+                layout1 = ''
+            
+            try:	
+                img_path_layout2 = os.path.join(IMAGES_PATH, r_val["layout2"])	
+                if os.path.exists(img_path_layout2):	
+                    layout2 = InlineImage(docx_tpl, img_path_layout2, width=Mm(160))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["layout2"]}')	
+                    layout2 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout2"]}: {e}')	
+                layout2 = ''
+            
+            try:	
+                img_path_layout3 = os.path.join(IMAGES_PATH, r_val["layout3"])
+                if os.path.exists(img_path_layout3):	
+                    layout3 = InlineImage(docx_tpl, img_path_layout3, width=Mm(160))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["layout3"]}')	
+                    layout3 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout3"]}: {e}')	
+                layout3 = ''
+            
+            try:	
+                img_path_layout4 = os.path.join(IMAGES_PATH, r_val["layout4"])	
+                if os.path.exists(img_path_layout4):
+                    layout4 = InlineImage(docx_tpl, img_path_layout4, width=Mm(160))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["layout4"]}')	
+                    layout4 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout4"]}: {e}')	
+                layout4 = ''
+            
+            try:	
+                img_path_layout5 = os.path.join(IMAGES_PATH, r_val["layout5"])	
+                if os.path.exists(img_path_layout5):	
+                    layout5 = InlineImage(docx_tpl, img_path_layout5, width=Mm(160))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["layout5"]}')	
+                    layout5 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout5"]}: {e}')
+                layout5 = ''
+            
+            try:	
+                img_path_layout6 = os.path.join(IMAGES_PATH, r_val["layout6"])	
+                if os.path.exists(img_path_layout6):	
+                    layout6 = InlineImage(docx_tpl, img_path_layout6, width=Mm(160))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["layout6"]}')	
+                    layout6 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout6"]}: {e}')
+                layout6 = ''
+            
+            try:	
+                img_path_layout7 = os.path.join(IMAGES_PATH, r_val["layout7"])	
+                if os.path.exists(img_path_layout7):	
+                    layout7 = InlineImage(docx_tpl, img_path_layout7, width=Mm(160))
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["layout7"]}')
+                    layout7 = ''	
+            except Exception as e:
+                    print(f'Advertencia: No se pudo cargar la imagen {r_val["layout7"]}: {e}')	
+                    layout7 = ''
+            
+            try:	
+                img_path_layout8 = os.path.join(IMAGES_PATH, r_val["layout8"])
+                if os.path.exists(img_path_layout8):	
+                    layout8 = InlineImage(docx_tpl, img_path_layout8, width=Mm(160))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["layout8"]}')	
+                    layout8 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout8"]}: {e}')
+                layout8 = ''
+            
+            try:	
+                img_path_layout9 = os.path.join(IMAGES_PATH, r_val["layout9"])	
+                if os.path.exists(img_path_layout9):	
+                    layout9 = InlineImage(docx_tpl, img_path_layout9, width=Mm(160))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["layout9"]}')
+                    layout9 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout9"]}: {e}')	
+                layout9 = ''
+            
+            try:	
+                img_path_layout10 = os.path.join(IMAGES_PATH, r_val["layout10"])
+                if os.path.exists(img_path_layout10):	
+                    layout10 = InlineImage(docx_tpl, img_path_layout10, width=Mm(160))
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["layout10"]}')	
+                    layout10 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout10"]}: {e}')	
+                layout10 = ''
+            
+            try:	
+                img_path_layout11 = os.path.join(IMAGES_PATH, r_val["layout11"])	
+                if os.path.exists(img_path_layout11):	
+                    layout11 = InlineImage(docx_tpl, img_path_layout11, width=Mm(160))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["layout11"]}')	
+                    layout11 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout11"]}: {e}')	
+                layout11 = ''
+            
+            try:	
+                img_path_layout12 = os.path.join(IMAGES_PATH, r_val["layout12"])	
+                if os.path.exists(img_path_layout12):
+                        layout12 = InlineImage(docx_tpl, img_path_layout12, width=Mm(160))
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["layout12"]}')	
+                    layout12 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout12"]}: {e}')	
+                layout12 = ''
 
 
             # Crear contexto
@@ -1821,7 +1953,19 @@ def crear_word(df_pipc):
                 'mayor_ries': mayor_ries,
                 'menor_ries': menor_ries,
                 'zona_evac': zona_evac,
-                'firma': firma
+                'firma': firma,
+                'layout1': layout1,
+                'layout2': layout2,
+                'layout3': layout3,
+                'layout4': layout4,
+                'layout5': layout5,
+                'layout6': layout6,
+                'layout7': layout7,
+                'layout8': layout8,
+                'layout9': layout9,
+                'layout10': layout10,
+                'layout11': layout11,
+                'layout12': layout12
             }
 
             try:
