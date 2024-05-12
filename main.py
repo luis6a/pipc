@@ -1518,6 +1518,18 @@ def crear_word(df_pipc):
                 print(f'Advertencia: No se pudo cargar la imagen {r_val["zona_evac"]}: {e}')	
                 zona_evac = ''
 
+            try:	
+                img_path_firma = os.path.join(IMAGES_PATH, r_val["firma"])	
+                if os.path.exists(img_path_firma):	
+                    firma = InlineImage(docx_tpl, img_path_firma, height=Mm(14))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["firma"]}')	
+                    firma = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["firma"]}: {e}')	
+                firma = ''
+
+
             # Crear contexto
             context = {
                 # 'id': r_val['id'],
@@ -1594,7 +1606,7 @@ def crear_word(df_pipc):
                 'riesgo_electrico': r_val['riesgo_electrico'],
                 'senial_prohibicion': r_val['senial_prohibicion'],
                 'no_fumar': r_val['no_fumar'],
-                'area_restrig ': r_val['area_restrig '],
+                'area_restrig': r_val['area_restrig'],
                 'apague_motor': r_val['apague_motor'],
                 'no_celular': r_val['no_celular'],
                 'no_gorra_lentes': r_val['no_gorra_lentes'],
@@ -1808,7 +1820,8 @@ def crear_word(df_pipc):
                 'rec_ext': rec_ext,
                 'mayor_ries': mayor_ries,
                 'menor_ries': menor_ries,
-                'zona_evac': zona_evac
+                'zona_evac': zona_evac,
+                'firma': firma
             }
 
             try:
