@@ -1661,6 +1661,94 @@ def crear_word(df_pipc):
                 print(f'Advertencia: No se pudo cargar la imagen {r_val["layout12"]}: {e}')	
                 layout12 = ''
 
+            try:	
+                img_path_ev_sim3 = os.path.join(IMAGES_PATH, r_val["ev_sim3"])	
+                if os.path.exists(img_path_ev_sim3):	
+                    ev_sim3 = InlineImage(docx_tpl, img_path_ev_sim3, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["ev_sim3"]}')	
+                    ev_sim3 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim3"]}: {e}')	
+                ev_sim3 = ''
+            
+            try:	
+                img_path_ev_sim4 = os.path.join(IMAGES_PATH, r_val["ev_sim4"])	
+                if os.path.exists(img_path_ev_sim4):	
+                    ev_sim4 = InlineImage(docx_tpl, img_path_ev_sim4, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["ev_sim4"]}')	
+                    ev_sim4 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim4"]}: {e}')	
+                ev_sim4 = ''
+            
+            try:	
+                img_path_ev_sim5 = os.path.join(IMAGES_PATH, r_val["ev_sim5"])	
+                if os.path.exists(img_path_ev_sim5):	
+                    ev_sim5 = InlineImage(docx_tpl, img_path_ev_sim5, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["ev_sim5"]}')	
+                    ev_sim5 = ''	
+            except Exception as e:
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim5"]}: {e}')	
+                ev_sim5 = ''
+            
+            try:	
+                img_path_ev_sim6 = os.path.join(IMAGES_PATH, r_val["ev_sim6"])	
+                if os.path.exists(img_path_ev_sim6):	
+                    ev_sim6 = InlineImage(docx_tpl, img_path_ev_sim6, width=Mm(155))
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["ev_sim6"]}')	
+                    ev_sim6 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim6"]}: {e}')	
+                ev_sim6 = ''
+            
+            try:	
+                img_path_ev_sim7 = os.path.join(IMAGES_PATH, r_val["ev_sim7"])	
+                if os.path.exists(img_path_ev_sim7):	
+                    ev_sim7 = InlineImage(docx_tpl, img_path_ev_sim7, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["ev_sim7"]}')	
+                    ev_sim7 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim7"]}: {e}')	
+                ev_sim7 = ''
+            
+            try:	
+                img_path_ev_sim8 = os.path.join(IMAGES_PATH, r_val["ev_sim8"])	
+                if os.path.exists(img_path_ev_sim8):	
+                    ev_sim8 = InlineImage(docx_tpl, img_path_ev_sim8, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["ev_sim8"]}')
+                    ev_sim8 = ''	
+            except Exception as e:
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim8"]}: {e}')	
+                ev_sim8 = ''
+
+            try:	
+                img_path_acta3 = os.path.join(IMAGES_PATH, r_val["acta3"])	
+                if os.path.exists(img_path_acta3):	
+                    acta3 = InlineImage(docx_tpl, img_path_acta3, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["acta3"]}')	
+                    acta3 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["acta3"]}: {e}')	
+                acta3 = ''
+            
+            try:	
+                img_path_acta4 = os.path.join(IMAGES_PATH, r_val["acta4"])	
+                if os.path.exists(img_path_acta4):	
+                    acta4 = InlineImage(docx_tpl, img_path_acta4, width=Mm(155))	
+                else:	
+                    print(f'Advertencia: No se encontró la imagen {r_val["acta4"]}')	
+                    acta4 = ''	
+            except Exception as e:	
+                print(f'Advertencia: No se pudo cargar la imagen {r_val["acta4"]}: {e}')	
+                acta4 = ''
+
 
             # Crear contexto
             context = {
@@ -1965,7 +2053,15 @@ def crear_word(df_pipc):
                 'layout9': layout9,
                 'layout10': layout10,
                 'layout11': layout11,
-                'layout12': layout12
+                'layout12': layout12,
+                'ev_sim3': ev_sim3,
+                'ev_sim4': ev_sim4,
+                'ev_sim5': ev_sim5,
+                'ev_sim6': ev_sim6,
+                'ev_sim7': ev_sim7,
+                'ev_sim8': ev_sim8,
+                'acta3': acta3,
+                'acta4': acta4
             }
 
             try:
