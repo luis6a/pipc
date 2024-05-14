@@ -1532,7 +1532,7 @@ def crear_word(df_pipc):
             try:	
                 img_path_layout1 = os.path.join(IMAGES_PATH, r_val["layout1"])	
                 if os.path.exists(img_path_layout1):	
-                    layout1 = InlineImage(docx_tpl, img_path_layout1, width=Mm(160))	
+                    layout1 = InlineImage(docx_tpl, img_path_layout1, height=Mm(100))	
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["layout1"]}')	
                     layout1 = ''	
@@ -1543,7 +1543,7 @@ def crear_word(df_pipc):
             try:	
                 img_path_layout2 = os.path.join(IMAGES_PATH, r_val["layout2"])	
                 if os.path.exists(img_path_layout2):	
-                    layout2 = InlineImage(docx_tpl, img_path_layout2, width=Mm(160))	
+                    layout2 = InlineImage(docx_tpl, img_path_layout2, height=Mm(100))	
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["layout2"]}')	
                     layout2 = ''	
@@ -1554,7 +1554,7 @@ def crear_word(df_pipc):
             try:	
                 img_path_layout3 = os.path.join(IMAGES_PATH, r_val["layout3"])
                 if os.path.exists(img_path_layout3):	
-                    layout3 = InlineImage(docx_tpl, img_path_layout3, width=Mm(160))	
+                    layout3 = InlineImage(docx_tpl, img_path_layout3, height=Mm(100))	
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["layout3"]}')	
                     layout3 = ''	
@@ -1565,7 +1565,7 @@ def crear_word(df_pipc):
             try:	
                 img_path_layout4 = os.path.join(IMAGES_PATH, r_val["layout4"])	
                 if os.path.exists(img_path_layout4):
-                    layout4 = InlineImage(docx_tpl, img_path_layout4, width=Mm(160))	
+                    layout4 = InlineImage(docx_tpl, img_path_layout4, height=Mm(100))	
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["layout4"]}')	
                     layout4 = ''	
@@ -1576,7 +1576,7 @@ def crear_word(df_pipc):
             try:	
                 img_path_layout5 = os.path.join(IMAGES_PATH, r_val["layout5"])	
                 if os.path.exists(img_path_layout5):	
-                    layout5 = InlineImage(docx_tpl, img_path_layout5, width=Mm(160))	
+                    layout5 = InlineImage(docx_tpl, img_path_layout5, height=Mm(100))	
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["layout5"]}')	
                     layout5 = ''	
@@ -1587,7 +1587,7 @@ def crear_word(df_pipc):
             try:	
                 img_path_layout6 = os.path.join(IMAGES_PATH, r_val["layout6"])	
                 if os.path.exists(img_path_layout6):	
-                    layout6 = InlineImage(docx_tpl, img_path_layout6, width=Mm(160))	
+                    layout6 = InlineImage(docx_tpl, img_path_layout6, height=Mm(100))	
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["layout6"]}')	
                     layout6 = ''	
@@ -1598,7 +1598,7 @@ def crear_word(df_pipc):
             try:	
                 img_path_layout7 = os.path.join(IMAGES_PATH, r_val["layout7"])	
                 if os.path.exists(img_path_layout7):	
-                    layout7 = InlineImage(docx_tpl, img_path_layout7, width=Mm(160))
+                    layout7 = InlineImage(docx_tpl, img_path_layout7, height=Mm(100))
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["layout7"]}')
                     layout7 = ''	
@@ -1609,7 +1609,7 @@ def crear_word(df_pipc):
             try:	
                 img_path_layout8 = os.path.join(IMAGES_PATH, r_val["layout8"])
                 if os.path.exists(img_path_layout8):	
-                    layout8 = InlineImage(docx_tpl, img_path_layout8, width=Mm(160))	
+                    layout8 = InlineImage(docx_tpl, img_path_layout8, height=Mm(100))	
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["layout8"]}')	
                     layout8 = ''	
@@ -1620,7 +1620,7 @@ def crear_word(df_pipc):
             try:	
                 img_path_layout9 = os.path.join(IMAGES_PATH, r_val["layout9"])	
                 if os.path.exists(img_path_layout9):	
-                    layout9 = InlineImage(docx_tpl, img_path_layout9, width=Mm(160))	
+                    layout9 = InlineImage(docx_tpl, img_path_layout9, height=Mm(100))	
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["layout9"]}')
                     layout9 = ''	
@@ -1631,7 +1631,7 @@ def crear_word(df_pipc):
             try:	
                 img_path_layout10 = os.path.join(IMAGES_PATH, r_val["layout10"])
                 if os.path.exists(img_path_layout10):	
-                    layout10 = InlineImage(docx_tpl, img_path_layout10, width=Mm(160))
+                    layout10 = InlineImage(docx_tpl, img_path_layout10, height=Mm(100))
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["layout10"]}')	
                     layout10 = ''	
@@ -1642,7 +1642,7 @@ def crear_word(df_pipc):
             try:	
                 img_path_layout11 = os.path.join(IMAGES_PATH, r_val["layout11"])	
                 if os.path.exists(img_path_layout11):	
-                    layout11 = InlineImage(docx_tpl, img_path_layout11, width=Mm(160))	
+                    layout11 = InlineImage(docx_tpl, img_path_layout11, height=Mm(100))	
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["layout11"]}')	
                     layout11 = ''	
@@ -1653,7 +1653,7 @@ def crear_word(df_pipc):
             try:	
                 img_path_layout12 = os.path.join(IMAGES_PATH, r_val["layout12"])	
                 if os.path.exists(img_path_layout12):
-                        layout12 = InlineImage(docx_tpl, img_path_layout12, width=Mm(160))
+                        layout12 = InlineImage(docx_tpl, img_path_layout12, height=Mm(100))
                 else:	
                     print(f'Advertencia: No se encontró la imagen {r_val["layout12"]}')	
                     layout12 = ''	
