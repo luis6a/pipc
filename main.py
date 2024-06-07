@@ -33,7 +33,8 @@ COMPARTAMOS_MF_PTLL_PATH = '.\Inputs\Templates\MF Compartamos.docx'
 COMPARTAMOS_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Compartamos.docx'
 ALL_GOWER_PTLL_PATH = '.\Inputs\Templates\Cartas Gower.docx'
 ALL_NOE_PTLL_PATH = '.\Inputs\Templates\Cartas Noe.docx'
-UVP_PTLL_PATH = '.\Inputs\Templates\UVP.docx'
+UVP_PTLL_PATH = '.\Inputs\Templates\PIPC UVP.docx'
+DHL_PTLL_PATH = '.\Inputs\Templates\DHL.docx'
 
 # Ruta imágenes
 IMAGES_PATH = '.\Inputs\Images'
@@ -91,6 +92,10 @@ def crear_word(df_pipc):
 
         elif r_val['pipc'] == 'UVP':
             plantillas = [UVP_PTLL_PATH,
+                          GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+            
+        elif r_val['pipc'] == 'DHL':
+            plantillas = [DHL_PTLL_PATH,
                           GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
 
         for idx, l_tpl in enumerate(plantillas, start=1):
