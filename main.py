@@ -7,37 +7,39 @@ from docx.shared import Mm
 #################### CONFIGURACION DE USUARIO ####################
 
 # Ruta de salida
-OUTPUT_PATH = '.\Outputs'
+OUTPUT_PATH = './Outputs'
 
 # Ruta fichero Excel
-EXCEL_PATH = '.\Inputs\BD.xlsx'
+EXCEL_PATH = './Inputs/BD.xlsx'
 
 # Ruta plantillas ficheros Word
-GASOLINERA_WORD_PTLL_PATH = '.\Inputs\Templates\Gasolinera.docx'
-GAS_MF_WORD_PTLL_PATH = '.\Inputs\Templates\MF Gasolinera.docx'
-GRI_GAS_WORD_PTLL_PATH = '.\Inputs\Templates\GRI Gasolinera.docx'
-CIDUR_PTLL_PATH = '.\Inputs\Templates\Cidur.docx'
-CIDUR_MF_PTLL_PATH = '.\Inputs\Templates\MF Cidur.docx'
-CIDUR_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Cidur.docx'
-GDL_PTLL_PATH = '.\Inputs\Templates\Farmcia_GDL.docx'
-GDL_MF_PTLL_PATH = '.\Inputs\Templates\MF Farmcia_GDL.docx'
-GDL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Farmcia_GDL.docx'
-GENERAL_PTLL_PATH = '.\Inputs\Templates\General.docx'
-GENERAL_MF_PTLL_PATH = '.\Inputs\Templates\MF General.docx'
-GENERAL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI General.docx'
-BBVA_PTLL_PATH = '.\Inputs\Templates\BBVA.docx'
-BBVA_MF_PTLL_PATH = '.\Inputs\Templates\MF BBVA.docx'
-BBVA_GRI_PTLL_PATH = '.\Inputs\Templates\GRI BBVA.docx'
-COMPARTAMOS_PTLL_PATH = '.\Inputs\Templates\Compartamos.docx'
-COMPARTAMOS_MF_PTLL_PATH = '.\Inputs\Templates\MF Compartamos.docx'
-COMPARTAMOS_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Compartamos.docx'
-ALL_GOWER_PTLL_PATH = '.\Inputs\Templates\Cartas Gower.docx'
-ALL_NOE_PTLL_PATH = '.\Inputs\Templates\Cartas Noe.docx'
-UVP_PTLL_PATH = '.\Inputs\Templates\PIPC UVP.docx'
-DHL_PTLL_PATH = '.\Inputs\Templates\DHL.docx'
+GASOLINERA_WORD_PTLL_PATH = './Inputs/Templates/Gasolinera.docx'
+GAS_MF_WORD_PTLL_PATH = './Inputs/Templates/MF Gasolinera.docx'
+GRI_GAS_WORD_PTLL_PATH = './Inputs/Templates/GRI Gasolinera.docx'
+CIDUR_PTLL_PATH = './Inputs/Templates/Cidur.docx'
+CIDUR_MF_PTLL_PATH = './Inputs/Templates/MF Cidur.docx'
+CIDUR_GRI_PTLL_PATH = './Inputs/Templates/GRI Cidur.docx'
+GDL_PTLL_PATH = './Inputs/Templates/Farmcia_GDL.docx'
+GDL_MF_PTLL_PATH = './Inputs/Templates/MF Farmcia_GDL.docx'
+GDL_GRI_PTLL_PATH = './Inputs/Templates/GRI Farmcia_GDL.docx'
+GENERAL_PTLL_PATH = './Inputs/Templates/General.docx'
+GENERAL_MF_PTLL_PATH = './Inputs/Templates/MF General.docx'
+GENERAL_GRI_PTLL_PATH = './Inputs/Templates/GRI General.docx'
+BBVA_PTLL_PATH = './Inputs/Templates/BBVA.docx'
+BBVA_MF_PTLL_PATH = './Inputs/Templates/MF BBVA.docx'
+BBVA_GRI_PTLL_PATH = './Inputs/Templates/GRI BBVA.docx'
+COMPARTAMOS_PTLL_PATH = './Inputs/Templates/Compartamos.docx'
+COMPARTAMOS_MF_PTLL_PATH = './Inputs/Templates/MF Compartamos.docx'
+COMPARTAMOS_GRI_PTLL_PATH = './Inputs/Templates/GRI Compartamos.docx'
+ALL_GOWER_PTLL_PATH = './Inputs/Templates/Cartas Gower.docx'
+ALL_NOE_PTLL_PATH = './Inputs/Templates/Cartas Noe.docx'
+UVP_PTLL_PATH = './Inputs/Templates/PIPC UVP.docx'
+DHL_PTLL_PATH = './Inputs/Templates/DHL.docx'
+GASERA_WORD_PTLL_PATH = './Inputs/Templates/Gasera.docx'
+GASERA_MF_WORD_PTLL_PATH = './Inputs/Templates/MF Gasera.docx'
 
 # Ruta imágenes
-IMAGES_PATH = '.\Inputs\Images'
+IMAGES_PATH = './Inputs/Images'
 
 #################### CONFIGURACION DE USUARIO ####################
 
@@ -97,6 +99,10 @@ def crear_word(df_pipc):
         elif r_val['pipc'] == 'DHL':
             plantillas = [DHL_PTLL_PATH,
                           GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+            
+        elif r_val['pipc'] == 'GASERA':
+            plantillas = [GASERA_WORD_PTLL_PATH,
+                          GASERA_MF_WORD_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
 
         for idx, l_tpl in enumerate(plantillas, start=1):
             # Cargar plantilla
