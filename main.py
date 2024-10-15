@@ -113,7 +113,7 @@ def crear_word(df_pipc):
                 img_path_logo1 = os.path.join(IMAGES_PATH, r_val['logo1'])
                 if os.path.exists(img_path_logo1):
                     logo1 = InlineImage(
-                        docx_tpl, img_path_logo1, height=Mm(145))
+                        docx_tpl, img_path_logo1, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["logo1"]}')
