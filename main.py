@@ -6,14 +6,14 @@ from docx.shared import Mm
 
 #################### CONFIGURACION DE USUARIO ####################
 
+# Ruta base absoluta
+BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
+
 # Ruta de salida
-OUTPUT_PATH = 'C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC/Outputs'
+OUTPUT_PATH = f"{BASE_DIR}/Outputs"
 
 # Ruta fichero Excel
-EXCEL_PATH = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC/Inputs/BD.xlsx"
-
-# Ruta base absoluta (ajusta según tu sistema)
-BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
+EXCEL_PATH = f"{BASE_DIR}/Inputs/BD.xlsx"
 
 # Ruta plantillas ficheros Word
 GASOLINERA_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Gasolinera.docx"
