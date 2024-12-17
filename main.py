@@ -1,5 +1,6 @@
 import os
 import shutil
+import stat
 import pandas as pd
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Mm
@@ -51,12 +52,19 @@ IMAGES_PATH = f"{BASE_DIR}/Inputs/Images"
 
 
 def eliminar_crear_carpetas(path):
-    # Verficiar si la carpeta existe y eliminarla
-    if (os.path.exists(path)):
-        shutil.rmtree(path)
+    # Función para manejar errores de permisos
+    def on_rm_error(func, path, exc_info):
+        import stat
+        # Cambiar los permisos de la carpeta a escritura
+        os.chmod(path, stat.S_IWRITE)
+        func(path)  # Intentar eliminar la carpeta nuevamente
+
+    # Verificar si la carpeta existe y eliminarla
+    if os.path.exists(path):
+        shutil.rmtree(path, onerror=on_rm_error)  # Llamar a rmtree con manejo de errores
 
     # Crear carpeta de salida
-    os.mkdir(OUTPUT_PATH)
+    os.mkdir(path)  # Crear la carpeta nueva
 
 # Leer datos de Excel y pasarlo a formato dataframe 'df'
 
