@@ -1,131 +1,165 @@
-import requests
 import os
+import shutil
+import pandas as pd
 from docxtpl import DocxTemplate, InlineImage
-from docx import Document
-from docx.shared import Inches
+from docx.shared import Mm
+from pyairtable import Table
 
 #################### CONFIGURACION DE USUARIO ####################
 
-access_token = 'patwubbJ7vFDQCigL.8ac92361a7f8f099407c42a654ac0e166c794c07850f89723e862492a54c408b'
-base_id = 'appy6PazgVEt6DWzU'
-table_name = 'tblGLidPHPZP7M7ds'
+# Configuración de Airtable
+AIRTABLE_API_KEY = 'patwubbJ7vFDQCigL.8ac92361a7f8f099407c42a654ac0e166c794c07850f89723e862492a54c408b'
+BASE_ID = 'appy6PazgVEt6DWzU'
+TABLE_NAME = 'tblGLidPHPZP7M7ds'
 
-# Valor específico para buscar
-target_value = 'BBVA'  # Valor específico que deseas buscar en la columna "Categoría"
-target_column = 'Categoría'  # Cambia 'Categoría' al nombre de la columna que contiene el valor
+# Valores específicos para buscar en Airtable
+CATEGORIA_BUSCAR = 'GASOLINERA'
+NOMBRE_COMERCIAL_BUSCAR = 'SAN SEBASTIAN E.S. 7335 VALERO'
 
-# URL para acceder a la tabla en Airtable
-url = f'https://api.airtable.com/v0/{base_id}/{table_name}'
+# Ruta de salida
+OUTPUT_PATH = '.\Outputs'
 
-# Cabeceras para la solicitud
-headers = {
-    'Authorization': f'Bearer {access_token}'
-}
+# Ruta fichero Excel (para datos adicionales si es necesario)
+EXCEL_PATH = '.\Inputs\BD.xlsx'
 
-# Parámetros para filtrar registros
-params = {
-    'filterByFormula': f"{{{target_column}}}='{target_value}'"
-}
+# Rutas de plantillas Word (mantén las que necesites)
+GASOLINERA_WORD_PTLL_PATH = '.\Inputs\Templates\Gasolinera.docx'
+GAS_MF_WORD_PTLL_PATH = '.\Inputs\Templates\MF Gasolinera.docx'
+GRI_GAS_WORD_PTLL_PATH = '.\Inputs\Templates\GRI Gasolinera.docx'
+CIDUR_PTLL_PATH = '.\Inputs\Templates\Cidur.docx'
+CIDUR_MF_PTLL_PATH = '.\Inputs\Templates\MF Cidur.docx'
+CIDUR_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Cidur.docx'
+GDL_PTLL_PATH = '.\Inputs\Templates\Farmcia_GDL.docx'
+GDL_MF_PTLL_PATH = '.\Inputs\Templates\MF Farmcia_GDL.docx'
+GDL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Farmcia_GDL.docx'
+GENERAL_PTLL_PATH = '.\Inputs\Templates\General.docx'
+GENERAL_MF_PTLL_PATH = '.\Inputs\Templates\MF General.docx'
+GENERAL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI General.docx'
+BBVA_PTLL_PATH = '.\Inputs\Templates\BBVA.docx'
+BBVA_MF_PTLL_PATH = '.\Inputs\Templates\MF BBVA.docx'
+BBVA_GRI_PTLL_PATH = '.\Inputs\Templates\GRI BBVA.docx'
+COMPARTAMOS_PTLL_PATH = '.\Inputs\Templates\Compartamos.docx'
+COMPARTAMOS_MF_PTLL_PATH = '.\Inputs\Templates\MF Compartamos.docx'
+COMPARTAMOS_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Compartamos.docx'
+ALL_GOWER_PTLL_PATH = '.\Inputs\Templates\Cartas Gower.docx'
+ALL_NOE_PTLL_PATH = '.\Inputs\Templates\Cartas Noe.docx'
+UVP_PTLL_PATH = '.\Inputs\Templates\PIPC UVP.docx'
+DHL_PTLL_PATH = '.\Inputs\Templates\DHL.docx'
 
-# Realiza la solicitud GET a la API de Airtable
-response = requests.get(url, headers=headers, params=params)
+# Ruta imágenes
+IMAGES_PATH = '.\Inputs\Images'
 
-# Verifica si la solicitud fue exitosa
-if response.status_code == 200:
-    print("Acceso a la base de datos exitoso.")
-    data = response.json()
-    records = data['records']
-    print(f"Total de registros encontrados: {len(records)}")
-else:
-    print(f"Error: {response.status_code}")
-    print("Revisa el token de acceso, el ID de la base y el nombre de la tabla.")
-    records = []
+#################### CONFIGURACION DE USUARIO ####################
 
-# Filtrar el registro específico
-target_record = None
-if records:
-    target_record = records[0]  # Obtiene el primer registro que coincide con el filtro
-    print(f"Registro encontrado: {target_record}")
-else:
-    print(f"No se encontró ningún registro con {target_column} = {target_value}")
+# Eliminar y crear carpetas
+def eliminar_crear_carpetas(path):
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    os.mkdir(path)
 
-if not target_record:
-    print(f'No se encontró ningún registro con {target_column} = {target_value}')
-    exit()
+# Función para obtener datos de Airtable
+def obtener_datos_airtable():
+    table = Table(AIRTABLE_API_KEY, BASE_ID, TABLE_NAME)
+    
+    # Filtrar por categoría y nombre comercial
+    formula = f"AND({{Categoría}}='{CATEGORIA_BUSCAR}', {{Nombre Comercial}}='{NOMBRE_COMERCIAL_BUSCAR}')"
+    records = table.all(formula=formula)
+    
+    if not records:
+        print("No se encontraron registros con los criterios especificados.")
+        return None
+    
+    # Tomamos el primer registro que coincida
+    return records[0]['fields']
 
-# Crear una carpeta para almacenar las imágenes descargadas
-os.makedirs('images', exist_ok=True)
+# Función para crear ficheros Word
+def crear_word(datos_airtable):
+    if not datos_airtable:
+        print("No hay datos para procesar.")
+        return
 
-def download_image(url, filename):
-    response = requests.get(url)
-    if response.status_code == 200:
-        with open(filename, 'wb') as f:
-            f.write(response.content)
-        print(f"Imagen descargada: {filename}")
+    # Determinar qué plantillas usar basado en la categoría
+    categoria = datos_airtable.get('Categoría', '')
+    
+    if categoria == 'GASOLINERA':
+        plantillas = [GASOLINERA_WORD_PTLL_PATH, GAS_MF_WORD_PTLL_PATH, GRI_GAS_WORD_PTLL_PATH]
+    
+    elif categoria == 'BANCO':
+        plantillas = [CIDUR_PTLL_PATH, CIDUR_MF_PTLL_PATH, CIDUR_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+        
+    elif categoria == 'GDL':
+        plantillas = [GDL_PTLL_PATH, GDL_MF_PTLL_PATH, GDL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+    
+    elif categoria == 'GENERAL':
+        plantillas = [GENERAL_PTLL_PATH, GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+    
+    elif categoria == 'BBVA':
+        plantillas = [BBVA_PTLL_PATH, BBVA_MF_PTLL_PATH, BBVA_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+    
+    elif categoria == 'COMPARTAMOS':
+        plantillas = [COMPARTAMOS_PTLL_PATH, COMPARTAMOS_MF_PTLL_PATH, COMPARTAMOS_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+
+    elif categoria == 'UVP':
+        plantillas = [UVP_PTLL_PATH, GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+        
+    elif categoria == 'DHL':
+        plantillas = [DHL_PTLL_PATH, GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+
     else:
-        print(f'Error al descargar la imagen: {response.status_code}')
+        print(f"No se encontraron plantillas para la categoría: {categoria}")
+        return
 
-def replace_placeholder(doc, placeholder, text):
-    for paragraph in doc.paragraphs:
-        if placeholder in paragraph.text:
-            paragraph.text = paragraph.text.replace(placeholder, text)
-    for table in doc.tables:
-        for row in table.rows:
-            for cell in row.cells:
-                if placeholder in cell.text:
-                    cell.text = cell.text.replace(placeholder, text)
+    for idx, plantilla_path in enumerate(plantillas, start=1):
+        # Cargar plantilla
+        docx_tpl = DocxTemplate(plantilla_path)
 
-def add_image_at_placeholder(doc, placeholder, image_path, width=None):
-    for paragraph in doc.paragraphs:
-        if placeholder in paragraph.text:
-            run = paragraph.clear().add_run()
-            run.add_picture(image_path, width=width)
-            break
+        # Preparar imágenes (si es necesario)
+        # Ejemplo:
+        try:
+            img_path_logo1 = os.path.join(IMAGES_PATH, datos_airtable.get('logo1', ''))
+            if os.path.exists(img_path_logo1):
+                logo1 = InlineImage(docx_tpl, img_path_logo1, height=Mm(145))
+            else:
+                print(f'Advertencia: No se encontró la imagen {datos_airtable.get("logo1", "")}')
+                logo1 = ''
+        except Exception as e:
+            print(f'Advertencia: No se pudo cargar la imagen {datos_airtable.get("logo1", "")}: {e}')
+            logo1 = ''
 
-# Descargar imágenes para el registro específico
-fields = target_record['fields']
-for key, value in fields.items():
-    if isinstance(value, list) and all(isinstance(item, dict) for item in value):
-        for item in value:
-            if 'url' in item:
-                url = item['url']
-                filename = os.path.join('images', os.path.basename(url))
-                download_image(url, filename)
+        # Crear contexto
+        context = datos_airtable.copy()
+        context['logo1'] = logo1
+        # Agrega aquí más procesamiento de imágenes si es necesario
 
-# Crear una carpeta para los documentos de salida
-os.makedirs('output', exist_ok=True)
+        try:
+            # Renderizar documento
+            docx_tpl.render(context)
 
-# Seleccionar la plantilla correcta basada en el valor de la columna "Categoría"
-category = fields.get('Categoría')  # Cambia 'Categoría' al nombre de tu columna en Airtable
-print(f"Categoría del registro: {category}")
+            # Determinar nombre del archivo de salida
+            if idx == 1:
+                nombre_pipc = f'1. PIPC {datos_airtable["Nombre Comercial"]}.docx'
+            elif idx == 2:
+                nombre_pipc = f'2. MEMORIA FOTOGRAFICA {datos_airtable["Nombre Comercial"]}.docx'
+            elif idx == 3:
+                nombre_pipc = f'3. RIESGO DE INCENDIO {datos_airtable["Nombre Comercial"]}.docx'
 
-# Mapeo de categorías a plantillas
-template_map = {
-    'DHL': 'DHL_template.docx',
-    'BBVA': 'BBVA_template.docx',
-    'GDL': 'GDL_template.docx'
-}
+            # Guardar el documento
+            docx_tpl.save(os.path.join(OUTPUT_PATH, nombre_pipc))
+            print(f"Documento creado: {nombre_pipc}")
 
-# Seleccionar la plantilla correspondiente
-template_name = template_map.get(category, 'default_template.docx')  # Usa 'default_template.docx' como fallback
-template_path = f'templates/{template_name}'  # Asegúrate de que las plantillas estén en esta carpeta
-print(f"Plantilla seleccionada: {template_path}")
+        except Exception as e:
+            print(f'Error al guardar el documento: {str(e)}')
 
-# Cargar la plantilla de Word
-doc = Document(template_path)
+# Función principal
+def main():
+    # Eliminar y volver a crear carpeta 'Outputs'
+    eliminar_crear_carpetas(OUTPUT_PATH)
 
-# Reemplazar los placeholders con los valores de Airtable
-for key, value in fields.items():
-    if isinstance(value, list) and all(isinstance(item, dict) for item in value):
-        for item in value:
-            if 'url' in item:
-                url = item['url']
-                filename = os.path.join('images', os.path.basename(url))
-                add_image_at_placeholder(doc, f'{{{{{key}}}}}', filename, width=Inches(2.0))
-    else:
-        replace_placeholder(doc, f'{{{{{key}}}}}', str(value))
+    # Obtener datos de Airtable
+    datos_airtable = obtener_datos_airtable()
 
-# Guardar el documento
-output_path = f'output/{fields.get("Name", "document")}_{category}.docx'  # Cambia 'Name' a una columna que tenga un identificador único o un nombre
-doc.save(output_path)
-print(f"Documento guardado en: {output_path}")
+    # Crear ficheros Word
+    crear_word(datos_airtable)
+
+if __name__ == '__main__':
+    main()
