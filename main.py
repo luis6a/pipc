@@ -41,6 +41,10 @@ UVP_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/PIPC UVP.docx"
 DHL_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/DHL.docx"
 GASERA_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Gasera.docx"
 GASERA_MF_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Gasera.docx"
+ESTAFETA_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Estafeta.docx"
+ESTAFETA_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Estafeta.docx"
+ESTAFETA_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Estafeta.docx"
+ALL_LEVANTAMIENTO_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Levantamiento.docx"
 
 # Ruta imágenes
 IMAGES_PATH = f"{BASE_DIR}/Inputs/Images"
@@ -99,7 +103,7 @@ def crear_word(df_pipc):
         
         elif r_val['pipc'] == 'BBVA':
             plantillas = [BBVA_PTLL_PATH,
-                          BBVA_MF_PTLL_PATH, BBVA_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                          BBVA_MF_PTLL_PATH, BBVA_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
         
         elif r_val['pipc'] == 'COMPARTAMOS':
             plantillas = [COMPARTAMOS_PTLL_PATH, COMPARTAMOS_MF_PTLL_PATH, COMPARTAMOS_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
@@ -115,6 +119,10 @@ def crear_word(df_pipc):
         elif r_val['pipc'] == 'GASERA':
             plantillas = [GASERA_WORD_PTLL_PATH,
                           GASERA_MF_WORD_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+            
+        elif r_val['pipc'] == 'ESTAFETA':
+            plantillas = [ESTAFETA_PTLL_PATH,
+                          ESTAFETA_MF_PTLL_PATH, ESTAFETA_GRI_PTLL_PATH]
 
         for idx, l_tpl in enumerate(plantillas, start=1):
             # Cargar plantilla
@@ -2119,6 +2127,10 @@ def crear_word(df_pipc):
                     
                 elif idx == 5:
                     nombre_pipc = '5. CARTAS NOE ' + \
+                        r_val['nombre_comercial'] + '.docx'
+                    
+                elif idx == 6:
+                    nombre_pipc = '6. LEVANTAMIENTO ' + \
                         r_val['nombre_comercial'] + '.docx'
 
                 # Guardar el documento con un nombre único
