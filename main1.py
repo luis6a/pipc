@@ -127,46 +127,42 @@ def crear_word(datos_airtable):
 
         # Preparar imágenes (si es necesario)
         # Ejemplo:
-        try:
-            img_logo1 = datos_airtable.get('logo1_nombre', 'logo1.jpg')
-            img_path_logo1 = os.path.join(
-                IMAGES_PATH, img_logo1)
-            if os.path.exists(img_path_logo1):
-                logo1 = InlineImage(docx_tpl, img_path_logo1, height=Mm(145))
-            else:
-                print(
-                    f'Advertencia: No se encontró la imagen {datos_airtable.get("logo1", "")}')
-                logo1 = ''
-        except Exception as e:
-            print(
-                f'Advertencia: No se pudo cargar la imagen {datos_airtable.get("logo1", "")}: {e}')
-            logo1 = ''
+        def cargar_imagen(docx_tpl, imagen_nombre_campo, imagen_default, altura_mm, datos_airtable):
+            try:
+                img_nombre = datos_airtable.get(f'{imagen_nombre_campo}_nombre', imagen_default)
+                img_path = os.path.join(IMAGES_PATH, img_nombre)
+                
+                if os.path.exists(img_path):
+                    return InlineImage(docx_tpl, img_path, height=Mm(altura_mm))
+                else:
+                    print(f'Advertencia: No se encontró la imagen {img_nombre}')
+                    return ''
+            except Exception as e:
+                print(f'Advertencia: No se pudo cargar la imagen {img_nombre}: {e}')
+                return ''
 
-        try:
-            img_logo2 = datos_airtable.get('logo2_nombre', 'logo2.jpg')
-            img_path_logo2 = os.path.join(
-                IMAGES_PATH, img_logo2)
-            if os.path.exists(img_path_logo2):
-                logo2 = InlineImage(docx_tpl, img_path_logo2, height=Mm(15))
-            else:
-                print(
-                    f'Advertencia: No se encontró la imagen {datos_airtable.get("logo2", "")}')
-                logo2 = ''
-        except Exception as e:
-            print(
-                f'Advertencia: No se pudo cargar la imagen {datos_airtable.get("logo2", "")}: {e}')
-            logo2 = ''
+        # Cargar las imágenes
+        logo1 = cargar_imagen(docx_tpl, 'logo1', 'logo1.jpg', 145, datos_airtable)
+        logo2 = cargar_imagen(docx_tpl, 'logo2', 'logo2.jpg', 15, datos_airtable)
 
         # Crear contexto
         context = datos_airtable.copy()
-        # Ya tienes todos los valores en context gracias al .copy(), pero si necesitas 
-        # asegurarte de que existan con valores predeterminados, usa:
-        context['nombre_comercial'] = datos_airtable.get('Nombre Comercial', '')
-        context['razon_social'] = datos_airtable.get('Razón Social', '')
-        context['RFC'] = datos_airtable.get('RFC', '')
-        context['logo1'] = logo1
-        context['logo2'] = logo2
-        # Agrega aquí más procesamiento de imágenes si es necesario
+
+        # Mapeo de nombres de campos y sus equivalentes con valores predeterminados
+        campo_mapping = {
+            'nombre_comercial': ('Nombre Comercial', ''),
+            'razon_social': ('Razón Social', ''),
+            'RFC': ('RFC', '')
+        }
+        
+        # Crear contexto y aplicar mapeo en una sola operación
+        context = {
+            **datos_airtable.copy(),
+            **{key_context: datos_airtable.get(key_airtable, default_value) 
+            for key_context, (key_airtable, default_value) in campo_mapping.items()},
+            'logo1': logo1,
+            'logo2': logo2
+        }
 
         try:
             # Renderizar documento
