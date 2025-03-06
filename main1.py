@@ -156,13 +156,17 @@ def obtener_datos_airtable():
     return datos_completos
 
 # Función para cargar imágenes
-def cargar_imagen(docx_tpl, imagen_nombre_campo, imagen_default, altura_mm, datos_airtable):
+def cargar_imagen(docx_tpl, imagen_nombre_campo, imagen_default, medida_mm, tipo_medida='height', datos_airtable=None):
     try:
         img_nombre = datos_airtable.get(f'{imagen_nombre_campo}_nombre', imagen_default)
         img_path = os.path.join(IMAGES_PATH, img_nombre)
         
         if os.path.exists(img_path):
-            return InlineImage(docx_tpl, img_path, height=Mm(altura_mm))
+            # Aplicar altura o ancho según corresponda
+            if tipo_medida.lower() == 'width':
+                return InlineImage(docx_tpl, img_path, width=Mm(medida_mm))
+            else:  # Por defecto usa height
+                return InlineImage(docx_tpl, img_path, height=Mm(medida_mm))
         else:
             print(f'Advertencia: No se encontró la imagen {img_nombre}')
             return ''
@@ -212,8 +216,8 @@ def crear_word(datos_airtable):
         docx_tpl = DocxTemplate(plantilla_path)
 
         # Cargar las imágenes
-        logo1 = cargar_imagen(docx_tpl, 'logo1', 'logo1.jpg', 145, datos_airtable)
-        logo2 = cargar_imagen(docx_tpl, 'logo2', 'logo2.jpg', 15, datos_airtable)
+        logo1 = cargar_imagen(docx_tpl, 'logo1', 'logo1.jpg', 145, 'height',datos_airtable)
+        logo2 = cargar_imagen(docx_tpl, 'logo2', 'logo2.jpg', 15, 'width',datos_airtable)
 
         # Mapeo de nombres de campos y sus equivalentes con valores predeterminados
         campo_mapping = {
