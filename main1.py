@@ -13,8 +13,8 @@ BASE_ID = 'appy6PazgVEt6DWzU'
 TABLE_NAME = 'tblGLidPHPZP7M7ds'
 
 # Valores específicos para buscar en Airtable
-CATEGORIA_BUSCAR = 'GASOLINERA'
-NOMBRE_COMERCIAL_BUSCAR = 'SAN SEBASTIAN E.S. 7335 VALERO'
+CATEGORIA_BUSCAR = 'BBVA'
+NOMBRE_COMERCIAL_BUSCAR = 'CR 3758 OFICINA PRINCIPAL'
 
 # Ruta de salida
 OUTPUT_PATH = '.\Outputs'
@@ -152,9 +152,10 @@ def crear_word(datos_airtable):
         campo_mapping = {
             'nombre_comercial': ('Nombre Comercial', ''),
             'razon_social': ('Razón Social', ''),
-            'RFC': ('RFC', '')
+            'rfc': ('RFC', ''),
+            'trabajadores': ('Total Población', '')
         }
-        
+
         # Crear contexto y aplicar mapeo en una sola operación
         context = {
             **datos_airtable.copy(),
