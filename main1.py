@@ -14,7 +14,7 @@ TABLE_NAME = 'tblGLidPHPZP7M7ds'
 
 # Tablas relacionadas en Airtable
 INMUEBLE_TABLE = 'Inmueble'
-POBLACION_TABLE = 'Población'
+POBLACION_TABLE = 'Poblacion'
 BRIGADAS_TABLE = 'Brigadas'
 INVENTARIO_TABLE = 'Inventario'
 EQUIPO_TABLE = 'Equipo'
@@ -77,7 +77,7 @@ def obtener_datos_relacionados(api, nombre_comercial, tabla_nombre):
     # Usar diferente columna de búsqueda según la tabla
     if tabla_nombre == INMUEBLE_TABLE:
         # Para la tabla Inmueble, buscamos por Nombre Comercial
-        formula = f"{{Nombre Comercial}}='{nombre_comercial}'"
+        formula = f"{{Nombre_Comercial}}='{nombre_comercial}'"
     else:
         # Para las otras tablas, buscamos por el campo Inmueble
         formula = f"{{Inmueble}}='{nombre_comercial}'"
@@ -85,12 +85,12 @@ def obtener_datos_relacionados(api, nombre_comercial, tabla_nombre):
     records = tabla.all(formula=formula)
     
     if not records:
-        print(f"No se encontraron registros en la tabla {tabla_nombre} para {nombre_comercial}.")
+        print(f"No se encontraron registros en la tabla {tabla_nombre} para {nombre_comercial}")
         return {}
     
     # Si hay múltiples registros, los combinamos en un solo diccionario
     if len(records) > 1:
-        print(f"Se encontraron {len(records)} registros en la tabla {tabla_nombre} para {nombre_comercial}.")
+        print(f"Se encontraron {len(records)} registros en la tabla {tabla_nombre} para {nombre_comercial}")
         # Para listas o campos que pueden tener múltiples valores, podemos combinarlos
         combined_fields = {}
         for idx, record in enumerate(records, 1):
@@ -115,16 +115,16 @@ def obtener_datos_airtable():
     table = api.table(BASE_ID, TABLE_NAME)
 
     # Filtrar por categoría y nombre comercial
-    formula = f"AND({{Categoría}}='{CATEGORIA_BUSCAR}', {{Nombre Comercial}}='{NOMBRE_COMERCIAL_BUSCAR}')"
+    formula = f"AND({{Categoria}}='{CATEGORIA_BUSCAR}', {{Nombre_Comercial}}='{NOMBRE_COMERCIAL_BUSCAR}')"
     records = table.all(formula=formula)
 
     if not records:
-        print("No se encontraron registros con los criterios especificados.")
+        print("No se encontraron registros con los criterios especificados")
         return None
 
     # Tomamos el primer registro que coincida
     datos_principales = records[0]['fields']
-    nombre_comercial = datos_principales.get('Nombre Comercial', '')
+    nombre_comercial = datos_principales.get('Nombre_Comercial', '')
 
  # Obtenemos datos de tablas relacionadas
     tablas_relacionadas = {
@@ -141,6 +141,9 @@ def obtener_datos_airtable():
     }
     
     datos_completos = {}  # Creamos un diccionario vacío para los datos completos
+    
+    # Añadir datos principales primero (sin prefijo)
+    datos_completos.update(datos_principales)
     
     # Añadir datos de tablas relacionadas con prefijos para evitar colisiones
     for prefijo, tabla in tablas_relacionadas.items():
@@ -177,11 +180,11 @@ def cargar_imagen(docx_tpl, imagen_nombre_campo, imagen_default, medida_mm, tipo
 # Función para crear ficheros Word
 def crear_word(datos_airtable):
     if not datos_airtable:
-        print("No hay datos para procesar.")
+        print("No hay datos para procesar")
         return
 
     # Determinar qué plantillas usar basado en la categoría
-    categoria = datos_airtable.get('Categoría', '')
+    categoria = datos_airtable.get('Categoria', '')
 
     if categoria == 'GASOLINERA':
         plantillas = [GASOLINERA_WORD_PTLL_PATH,
@@ -219,43 +222,27 @@ def crear_word(datos_airtable):
         logo1 = cargar_imagen(docx_tpl, 'logo1', 'logo1.jpg', 145, 'height',datos_airtable)
         logo2 = cargar_imagen(docx_tpl, 'logo2', 'logo2.jpg', 15, 'width',datos_airtable)
 
-        # Mapeo de nombres de campos y sus equivalentes con valores predeterminados
-        campo_mapping = {
-            # Campos de la tabla Inmueble (ejemplo)
-            'nombre_comercial': ('Nombre Comercial', ''),
-            'razon_social': ('Razón Social', ''),
-            'RFC': ('RFC', ''),
-            # Campos de la tabla Población (ejemplo)
-            'representante_legal': ('Representante Legal', ''),
-            'hombres': ('No Hombres', ''),
-            # Campos de la tabla Brigadas (ejemplo)
-            'responsable_pipc': ('Coordinador', ''),
-            'coord_puesto': ('Puesto Coordinador', ''),
-            # Campos de la tabla Inventario (ejemplo)
-            'ruta_evac': ('Ruta evacuación', ''),
-            'salida_emerg': ('Salida Emergencia', '')
-        }
-
-        # Crear contexto y aplicar mapeo en una sola operación
-        context = {
-            **datos_airtable,
-            **{key_context: datos_airtable.get(key_airtable, default_value) 
-               for key_context, (key_airtable, default_value) in campo_mapping.items()},
-            'logo1': logo1,
-            'logo2': logo2
-        }
-
         try:
-            # Renderizar documento
-            docx_tpl.render(context)
+            # Renderizar documento - pasamos todos los datos directamente
+            docx_tpl.render({**datos_airtable, 
+                             'logo1': logo1, 
+                             'logo2': logo2
+                             })
 
             # Determinar nombre del archivo de salida
+            nombre_comercial = datos_airtable.get("Nombre_Comercial", "Documento")
             if idx == 1:
-                nombre_pipc = f'1. PIPC {datos_airtable["Nombre Comercial"]}.docx'
+                nombre_pipc = f'1. PIPC {nombre_comercial}.docx'
             elif idx == 2:
-                nombre_pipc = f'2. MEMORIA FOTOGRAFICA {datos_airtable["Nombre Comercial"]}.docx'
+                nombre_pipc = f'2. MEMORIA FOTOGRAFICA {nombre_comercial}.docx'
             elif idx == 3:
-                nombre_pipc = f'3. RIESGO DE INCENDIO {datos_airtable["Nombre Comercial"]}.docx'
+                nombre_pipc = f'3. RIESGO DE INCENDIO {nombre_comercial}.docx'
+            elif idx == 4:
+                nombre_pipc = f'4. CARTA GOWER {nombre_comercial}.docx'
+            elif idx == 5:
+                nombre_pipc = f'5. CARTA NOE {nombre_comercial}.docx'
+            else:
+                nombre_pipc = f'{idx}. DOCUMENTO {nombre_comercial}.docx'
 
             # Guardar el documento
             docx_tpl.save(os.path.join(OUTPUT_PATH, nombre_pipc))
