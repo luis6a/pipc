@@ -221,12 +221,258 @@ def crear_word(datos_airtable):
         # Cargar las imágenes
         logo1 = cargar_imagen(docx_tpl, 'logo1', 'logo1.jpg', 145, 'height',datos_airtable)
         logo2 = cargar_imagen(docx_tpl, 'logo2', 'logo2.jpg', 15, 'width',datos_airtable)
+        fachada = cargar_imagen(docx_tpl, 'fachada', 'fachada.jpg', 90, 'height', datos_airtable)
+        mapa = cargar_imagen(docx_tpl, 'mapa', 'mapa.png', 155, 'width', datos_airtable)
+        esc_emer = cargar_imagen(docx_tpl, 'esc_emer', 'esc_emer.jpg', 50, 'height', datos_airtable)
+        mueble1 = cargar_imagen(docx_tpl, 'mueble1', 'mueble (1).jpg', 50, 'height', datos_airtable)
+        mueble2 = cargar_imagen(docx_tpl, 'mueble2', 'mueble (2).jpg', 50, 'height', datos_airtable)
+        venteo = cargar_imagen(docx_tpl, 'venteo', 'venteo.jpg', 50, 'height', datos_airtable)
+        manguera = cargar_imagen(docx_tpl, 'manguera', 'manguera.jpg', 50, 'height', datos_airtable)
+        electrico = cargar_imagen(docx_tpl, 'electrico', 'electrico.jpg', 50, 'height', datos_airtable)
+        banio = cargar_imagen(docx_tpl, 'banio', 'banio.jpg', 50, 'height', datos_airtable)
+        cisterna = cargar_imagen(docx_tpl, 'cisterna', 'cisterna.jpg', 50, 'height', datos_airtable)
+        sismo = cargar_imagen(docx_tpl, 'sismo', 'sismo.png', 155, 'width', datos_airtable)
+        inundacion = cargar_imagen(docx_tpl, 'inundacion', 'inundacion.png', 155, 'width', datos_airtable)
+        torm_elect = cargar_imagen(docx_tpl, 'torm_elect', 'torm_elect.png', 155, 'width', datos_airtable)
+        incendio = cargar_imagen(docx_tpl, 'incendio', 'incendio.png', 155, 'width', datos_airtable)
+        influenza = cargar_imagen(docx_tpl, 'influenza', 'influenza.png', 155, 'width', datos_airtable)
+        radiacion = cargar_imagen(docx_tpl, 'radiacion', 'radiacion.png', 155, 'width', datos_airtable)
+        ext1 = cargar_imagen(docx_tpl, 'ext1', 'ext (1).jpg', 50, 'height', datos_airtable)
+        ext2 = cargar_imagen(docx_tpl, 'ext2', 'ext (2).jpg', 50, 'height', datos_airtable)
+        ext3 = cargar_imagen(docx_tpl, 'ext3', 'ext (3).jpg', 50, 'height', datos_airtable)
+        ext4 = cargar_imagen(docx_tpl, 'ext4', 'ext (4).jpg', 50, 'height', datos_airtable)
+        botiquin = cargar_imagen(docx_tpl, 'botiquin', 'botiquin.jpg', 50, 'height', datos_airtable)
+        ruta1 = cargar_imagen(docx_tpl, 'ruta1', 'ruta (1).jpg', 50, 'height', datos_airtable)
+        ruta2 = cargar_imagen(docx_tpl, 'ruta2', 'ruta (2).jpg', 50, 'height', datos_airtable)
+        ruta3 = cargar_imagen(docx_tpl, 'ruta3', 'ruta (3).jpg', 50, 'height', datos_airtable)
+        salida = cargar_imagen(docx_tpl, 'salida', 'salida.jpg', 50, 'height', datos_airtable)
+        alarma = cargar_imagen(docx_tpl, 'alarma', 'alarma.jpg', 50, 'height', datos_airtable)
+        prohib1 = cargar_imagen(docx_tpl, 'prohib1', 'prohib (1).jpg', 50, 'height', datos_airtable)
+        prohib2 = cargar_imagen(docx_tpl, 'prohib2', 'prohib (2).jpg', 50, 'height', datos_airtable)
+        prohib3 = cargar_imagen(docx_tpl, 'prohib3', 'prohib (3).jpg', 50, 'height', datos_airtable)
+        prohib4 = cargar_imagen(docx_tpl, 'prohib4', 'prohib (4).jpg', 50, 'height', datos_airtable)
+        layout = cargar_imagen(docx_tpl, 'layout', 'layout.png', 155, 'width', datos_airtable)
+        cap1 = cargar_imagen(docx_tpl, 'cap1', 'cap (1).jpg', 60, 'height', datos_airtable)
+        cap2 = cargar_imagen(docx_tpl, 'cap2', 'cap (2).jpg', 60, 'height', datos_airtable)
+        cap3 = cargar_imagen(docx_tpl, 'cap3', 'cap (3).jpg', 60, 'height', datos_airtable)
+        cap4 = cargar_imagen(docx_tpl, 'cap4', 'cap (4).jpg', 60, 'height', datos_airtable)
+        cap5 = cargar_imagen(docx_tpl, 'cap5', 'cap (5).jpg', 60, 'height', datos_airtable)
+        cap6 = cargar_imagen(docx_tpl, 'cap6', 'cap (6).jpg', 60, 'height', datos_airtable)
+        cap7 = cargar_imagen(docx_tpl, 'cap7', 'cap (7).jpg', 60, 'height', datos_airtable)
+        cap8 = cargar_imagen(docx_tpl, 'cap8', 'cap (8).jpg', 60, 'height', datos_airtable)
+        cap9 = cargar_imagen(docx_tpl, 'cap9', 'cap (9).jpg', 60, 'height', datos_airtable)
+        cap10 = cargar_imagen(docx_tpl, 'cap10', 'cap (10).jpg', 60, 'height', datos_airtable)
+        cap11 = cargar_imagen(docx_tpl, 'cap11', 'cap (11).jpg', 60, 'height', datos_airtable)
+        cap12 = cargar_imagen(docx_tpl, 'cap12', 'cap (12).jpg', 60, 'height', datos_airtable)
+        sim1 = cargar_imagen(docx_tpl, 'sim1', 'sim (1).jpg', 60, 'height', datos_airtable)
+        sim2 = cargar_imagen(docx_tpl, 'sim2', 'sim (2).jpg', 60, 'height', datos_airtable)
+        sim3 = cargar_imagen(docx_tpl, 'sim3', 'sim (3).jpg', 60, 'height', datos_airtable)
+        sim4 = cargar_imagen(docx_tpl, 'sim4', 'sim (4).jpg', 60, 'height', datos_airtable)
+        sim5 = cargar_imagen(docx_tpl, 'sim5', 'sim (5).jpg', 60, 'height', datos_airtable)
+        sim6 = cargar_imagen(docx_tpl, 'sim6', 'sim (6).jpg', 60, 'height', datos_airtable)
+        techo = cargar_imagen(docx_tpl, 'techo', 'techo.jpg', 60, 'height', datos_airtable)
+        pisos = cargar_imagen(docx_tpl, 'pisos', 'pisos.jpg', 50, 'height', datos_airtable)
+        puerta = cargar_imagen(docx_tpl, 'puerta', 'puerta.jpg', 50, 'height', datos_airtable)
+        estantes = cargar_imagen(docx_tpl, 'estantes', 'estantes.jpg', 50, 'height', datos_airtable)
+        site = cargar_imagen(docx_tpl, 'site', 'site.jpg', 50, 'height', datos_airtable)
+        dh = cargar_imagen(docx_tpl, 'dh', 'dh.jpg', 50, 'height', datos_airtable)
+        ventanas = cargar_imagen(docx_tpl, 'ventanas', 'ventanas.jpg', 50, 'height', datos_airtable)
+        compresor = cargar_imagen(docx_tpl, 'compresor', 'compresor.jpg', 50, 'height', datos_airtable)
+        quimicos = cargar_imagen(docx_tpl, 'quimicos', 'quimicos.jpg', 50, 'height', datos_airtable)
+        tanques_gaso = cargar_imagen(docx_tpl, 'tanques_gaso', 'tanques_gaso.jpg', 50, 'height', datos_airtable)
+        paro = cargar_imagen(docx_tpl, 'paro', 'paro.jpg', 50, 'height', datos_airtable)
+        trampa_grasa = cargar_imagen(docx_tpl, 'trampa_grasa', 'trampa_grasa.jpg', 50, 'height', datos_airtable)
+        planta = cargar_imagen(docx_tpl, 'planta', 'planta.jpg', 50, 'height', datos_airtable)
+        deposito = cargar_imagen(docx_tpl, 'deposito', 'deposito.jpg', 50, 'height', datos_airtable)
+        mapa_satel = cargar_imagen(docx_tpl, 'mapa_satel', 'mapa_satel.png', 160, 'width', datos_airtable)
+        plano = cargar_imagen(docx_tpl, 'plano', 'plano.jpg', 160, 'width', datos_airtable)
+        inmueble1 = cargar_imagen(docx_tpl, 'inmueble1', 'inmueble (1).jpg', 50, 'height', datos_airtable)
+        inmueble2 = cargar_imagen(docx_tpl, 'inmueble2', 'inmueble (2).jpg', 50, 'height', datos_airtable)
+        banio1 = cargar_imagen(docx_tpl, 'banio1', 'banio1.jpg', 50, 'height', datos_airtable)
+        electrico1 = cargar_imagen(docx_tpl, 'electrico1', 'electrico1.jpg', 50, 'height', datos_airtable)
+        fachada1 = cargar_imagen(docx_tpl, 'fachada1', 'fachada1.jpg', 50, 'height', datos_airtable)
+        bateria = cargar_imagen(docx_tpl, 'bateria', 'bateria.jpg', 50, 'height', datos_airtable)
+        acta1 = cargar_imagen(docx_tpl, 'acta1', 'acta1.png', 155, 'width', datos_airtable)
+        acta2 = cargar_imagen(docx_tpl, 'acta2', 'acta2.png', 155, 'width', datos_airtable)
+        crono_anual = cargar_imagen(docx_tpl, 'crono_anual', 'crono_anual.png', 155, 'width', datos_airtable)
+        mantto1 = cargar_imagen(docx_tpl, 'mantto1', 'mantto1.png', 155, 'width', datos_airtable)
+        mantto2 = cargar_imagen(docx_tpl, 'mantto2', 'mantto2.png', 155, 'width', datos_airtable)
+        simulacro = cargar_imagen(docx_tpl, 'simulacro', 'simulacro.png', 155, 'width', datos_airtable)
+        capacitacion = cargar_imagen(docx_tpl, 'capacitacion', 'capacitacion.png', 155, 'width', datos_airtable)
+        inv_quim = cargar_imagen(docx_tpl, 'inv_quim', 'inv_quim.png', 155, 'width', datos_airtable)
+        inv_emer = cargar_imagen(docx_tpl, 'inv_emer', 'inv_emer.png', 155, 'width', datos_airtable)
+        bit_emer = cargar_imagen(docx_tpl, 'bit_emer', 'bit_emer.png', 155, 'width', datos_airtable)
+        insp_bot = cargar_imagen(docx_tpl, 'insp_bot', 'insp_bot.png', 155, 'width', datos_airtable)
+        insp_ext = cargar_imagen(docx_tpl, 'insp_ext', 'insp_ext.png', 149, 'width', datos_airtable)
+        insp_dh = cargar_imagen(docx_tpl, 'insp_dh', 'insp_dh.png', 155, 'width', datos_airtable)
+        insp_lamp = cargar_imagen(docx_tpl, 'insp_lamp', 'insp_lamp.png', 155, 'width', datos_airtable)
+        insp_alarm = cargar_imagen(docx_tpl, 'insp_alarm', 'insp_alarm.png', 155, 'width', datos_airtable)
+        ev_sim1 = cargar_imagen(docx_tpl, 'ev_sim1', 'ev_sim1.png', 155, 'width', datos_airtable)
+        ev_sim2 = cargar_imagen(docx_tpl, 'ev_sim2', 'ev_sim2.png', 155, 'width', datos_airtable)
+        visitas = cargar_imagen(docx_tpl, 'visitas', 'visitas.png', 155, 'width', datos_airtable)
+        dir_emer = cargar_imagen(docx_tpl, 'dir_emer', 'dir_emer.jpg', 155, 'width', datos_airtable)
+        corresp1 = cargar_imagen(docx_tpl, 'corresp1', 'corresp1.png', 155, 'width', datos_airtable)
+        corresp2 = cargar_imagen(docx_tpl, 'corresp2', 'corresp2.png', 155, 'width', datos_airtable)
+        corresp3 = cargar_imagen(docx_tpl, 'corresp3', 'corresp3.png', 155, 'width', datos_airtable)
+        carta_respon = cargar_imagen(docx_tpl, 'carta_respon', 'carta_respon.png', 155, 'width', datos_airtable)
+        registro1 = cargar_imagen(docx_tpl, 'registro1', 'registro1.png', 155, 'width', datos_airtable)
+        registro2 = cargar_imagen(docx_tpl, 'registro2', 'registro2.png', 155, 'width', datos_airtable)
+        ries_circ = cargar_imagen(docx_tpl, 'ries_circ', 'ries_circ.png', 155, 'width', datos_airtable)
+        mapa_ext = cargar_imagen(docx_tpl, 'mapa_ext', 'mapa_ext.png', 155, 'width', datos_airtable)
+        rec_ext = cargar_imagen(docx_tpl, 'rec_ext', 'rec_ext.png', 155, 'width', datos_airtable)
+        mayor_ries = cargar_imagen(docx_tpl, 'mayor_ries', 'mayor_ries.png', 155, 'width', datos_airtable)
+        menor_ries = cargar_imagen(docx_tpl, 'menor_ries', 'menor_ries.png', 155, 'width', datos_airtable)
+        zona_evac = cargar_imagen(docx_tpl, 'zona_evac', 'zona_evac.png', 155, 'width', datos_airtable)
+        firma = cargar_imagen(docx_tpl, 'firma', 'firma.png', 14, 'height', datos_airtable)
+        layout1 = cargar_imagen(docx_tpl, 'layout1', 'layout (1).png', 160, 'width', datos_airtable)
+        layout2 = cargar_imagen(docx_tpl, 'layout2', 'layout (2).png', 160, 'width', datos_airtable)
+        layout3 = cargar_imagen(docx_tpl, 'layout3', 'layout (3).png', 160, 'width', datos_airtable)
+        layout4 = cargar_imagen(docx_tpl, 'layout4', 'layout (4).png', 160, 'width', datos_airtable)
+        layout5 = cargar_imagen(docx_tpl, 'layout5', 'layout (5).png', 160, 'width', datos_airtable)
+        layout6 = cargar_imagen(docx_tpl, 'layout6', 'layout (6).png', 160, 'width', datos_airtable)
+        layout7 = cargar_imagen(docx_tpl, 'layout7', 'layout (7).png', 160, 'width', datos_airtable)
+        layout8 = cargar_imagen(docx_tpl, 'layout8', 'layout (8).png', 160, 'width', datos_airtable)
+        layout9 = cargar_imagen(docx_tpl, 'layout9', 'layout (9).png', 160, 'width', datos_airtable)
+        layout10 = cargar_imagen(docx_tpl, 'layout10', 'layout (10).png', 160, 'width', datos_airtable)
+        layout11 = cargar_imagen(docx_tpl, 'layout11', 'layout (11).png', 160, 'width', datos_airtable)
+        layout12 = cargar_imagen(docx_tpl, 'layout12', 'layout (12).png', 160, 'width', datos_airtable)
+        ev_sim3 = cargar_imagen(docx_tpl, 'ev_sim3', 'ev_sim (3).png', 155, 'width', datos_airtable)
+        ev_sim4 = cargar_imagen(docx_tpl, 'ev_sim4', 'ev_sim (4).png', 155, 'width', datos_airtable)
+        ev_sim5 = cargar_imagen(docx_tpl, 'ev_sim5', 'ev_sim (5).png', 155, 'width', datos_airtable)
+        ev_sim6 = cargar_imagen(docx_tpl, 'ev_sim6', 'ev_sim (6).png', 155, 'width', datos_airtable)
+        ev_sim7 = cargar_imagen(docx_tpl, 'ev_sim7', 'ev_sim (7).png', 155, 'width', datos_airtable)
+        ev_sim8 = cargar_imagen(docx_tpl, 'ev_sim8', 'ev_sim (8).png', 155, 'width', datos_airtable)
+        acta3 = cargar_imagen(docx_tpl, 'acta3', 'acta3.png', 155, 'width', datos_airtable)
+        acta4 = cargar_imagen(docx_tpl, 'acta4', 'acta4.png', 155, 'width', datos_airtable)
 
         try:
             # Renderizar documento - pasamos todos los datos directamente
             docx_tpl.render({**datos_airtable, 
-                             'logo1': logo1, 
-                             'logo2': logo2
+                            'logo1': logo1, 
+                            'logo2': logo2,
+                            'fachada': fachada,
+                            'mapa': mapa,
+                            'esc_emer': esc_emer,
+                            'mueble1': mueble1,
+                            'mueble2': mueble2,
+                            'venteo': venteo,
+                            'manguera': manguera,
+                            'electrico': electrico,
+                            'banio': banio,
+                            'cisterna': cisterna,
+                            'sismo': sismo,
+                            'inundacion': inundacion,
+                            'torm_elect': torm_elect,
+                            'incendio': incendio,
+                            'influenza': influenza,
+                            'radiacion': radiacion,
+                            'ext1': ext1,
+                            'ext2': ext2,
+                            'ext3': ext3,
+                            'ext4': ext4,
+                            'botiquin': botiquin,
+                            'ruta1': ruta1,
+                            'ruta2': ruta2,
+                            'ruta3': ruta3,
+                            'salida': salida,
+                            'alarma': alarma,
+                            'prohib1': prohib1,
+                            'prohib2': prohib2,
+                            'prohib3': prohib3,
+                            'prohib4': prohib4,
+                            'layout': layout,
+                            'cap1': cap1,
+                            'cap2': cap2,
+                            'cap3': cap3,
+                            'cap4': cap4,
+                            'cap5': cap5,
+                            'cap6': cap6,
+                            'cap7': cap7,
+                            'cap8': cap8,
+                            'cap9': cap9,
+                            'cap10': cap10,
+                            'cap11': cap11,
+                            'cap12': cap12,
+                            'sim1': sim1,
+                            'sim2': sim2,
+                            'sim3': sim3,
+                            'sim4': sim4,
+                            'sim5': sim5,
+                            'sim6': sim6,
+                            'techo': techo,
+                            'pisos': pisos,
+                            'puerta': puerta,
+                            'estantes': estantes,
+                            'site': site,
+                            'dh': dh,
+                            'ventanas': ventanas,
+                            'compresor': compresor,
+                            'quimicos': quimicos,
+                            'tanques_gaso': tanques_gaso,
+                            'paro': paro,
+                            'trampa_grasa': trampa_grasa,
+                            'planta': planta,
+                            'deposito': deposito,
+                            'mapa_satel': mapa_satel,
+                            'plano': plano,
+                            'inmueble1': inmueble1,
+                            'inmueble2': inmueble2,
+                            'banio1': banio1,
+                            'electrico1': electrico1,
+                            'fachada1': fachada1,
+                            'bateria': bateria,
+                            'acta1': acta1,
+                            'acta2': acta2,
+                            'crono_anual': crono_anual,
+                            'mantto1': mantto1,
+                            'mantto2': mantto2,
+                            'simulacro': simulacro,
+                            'capacitacion': capacitacion,
+                            'inv_quim': inv_quim,
+                            'inv_emer': inv_emer,
+                            'bit_emer': bit_emer,
+                            'insp_bot': insp_bot,
+                            'insp_ext': insp_ext,
+                            'insp_dh': insp_dh,
+                            'insp_lamp': insp_lamp,
+                            'insp_alarm': insp_alarm,
+                            'ev_sim1': ev_sim1,
+                            'ev_sim2': ev_sim2,
+                            'visitas': visitas,
+                            'dir_emer': dir_emer,
+                            'corresp1': corresp1,
+                            'corresp2': corresp2,
+                            'corresp3': corresp3,
+                            'carta_respon': carta_respon,
+                            'registro1': registro1,
+                            'registro2': registro2,
+                            'ries_circ': ries_circ,
+                            'mapa_ext': mapa_ext,
+                            'rec_ext': rec_ext,
+                            'mayor_ries': mayor_ries,
+                            'menor_ries': menor_ries,
+                            'zona_evac': zona_evac,
+                            'firma': firma,
+                            'layout1': layout1,
+                            'layout2': layout2,
+                            'layout3': layout3,
+                            'layout4': layout4,
+                            'layout5': layout5,
+                            'layout6': layout6,
+                            'layout7': layout7,
+                            'layout8': layout8,
+                            'layout9': layout9,
+                            'layout10': layout10,
+                            'layout11': layout11,
+                            'layout12': layout12,
+                            'ev_sim3': ev_sim3,
+                            'ev_sim4': ev_sim4,
+                            'ev_sim5': ev_sim5,
+                            'ev_sim6': ev_sim6,
+                            'ev_sim7': ev_sim7,
+                            'ev_sim8': ev_sim8,
+                            'acta3': acta3,
+                            'acta4': acta4
                              })
 
             # Determinar nombre del archivo de salida
