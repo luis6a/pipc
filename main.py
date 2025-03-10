@@ -1,43 +1,54 @@
 import os
 import shutil
+import stat
 import pandas as pd
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Mm
 
 #################### CONFIGURACION DE USUARIO ####################
 
+# Ruta base absoluta
+BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
+
 # Ruta de salida
-OUTPUT_PATH = '.\Outputs'
+OUTPUT_PATH = f"{BASE_DIR}/Outputs"
 
 # Ruta fichero Excel
-EXCEL_PATH = '.\Inputs\BD.xlsx'
+EXCEL_PATH = f"{BASE_DIR}/Inputs/BD.xlsx"
 
 # Ruta plantillas ficheros Word
-GASOLINERA_WORD_PTLL_PATH = '.\Inputs\Templates\Gasolinera.docx'
-GAS_MF_WORD_PTLL_PATH = '.\Inputs\Templates\MF Gasolinera.docx'
-GRI_GAS_WORD_PTLL_PATH = '.\Inputs\Templates\GRI Gasolinera.docx'
-CIDUR_PTLL_PATH = '.\Inputs\Templates\Cidur.docx'
-CIDUR_MF_PTLL_PATH = '.\Inputs\Templates\MF Cidur.docx'
-CIDUR_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Cidur.docx'
-GDL_PTLL_PATH = '.\Inputs\Templates\Farmcia_GDL.docx'
-GDL_MF_PTLL_PATH = '.\Inputs\Templates\MF Farmcia_GDL.docx'
-GDL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Farmcia_GDL.docx'
-GENERAL_PTLL_PATH = '.\Inputs\Templates\General.docx'
-GENERAL_MF_PTLL_PATH = '.\Inputs\Templates\MF General.docx'
-GENERAL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI General.docx'
-BBVA_PTLL_PATH = '.\Inputs\Templates\BBVA.docx'
-BBVA_MF_PTLL_PATH = '.\Inputs\Templates\MF BBVA.docx'
-BBVA_GRI_PTLL_PATH = '.\Inputs\Templates\GRI BBVA.docx'
-COMPARTAMOS_PTLL_PATH = '.\Inputs\Templates\Compartamos.docx'
-COMPARTAMOS_MF_PTLL_PATH = '.\Inputs\Templates\MF Compartamos.docx'
-COMPARTAMOS_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Compartamos.docx'
-ALL_GOWER_PTLL_PATH = '.\Inputs\Templates\Cartas Gower.docx'
-ALL_NOE_PTLL_PATH = '.\Inputs\Templates\Cartas Noe.docx'
-UVP_PTLL_PATH = '.\Inputs\Templates\PIPC UVP.docx'
-DHL_PTLL_PATH = '.\Inputs\Templates\DHL.docx'
+GASOLINERA_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Gasolinera.docx"
+GAS_MF_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Gasolinera.docx"
+GRI_GAS_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Gasolinera.docx"
+CIDUR_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Cidur.docx"
+CIDUR_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Cidur.docx"
+CIDUR_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Cidur.docx"
+GDL_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Farmcia_GDL.docx"
+GDL_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Farmcia_GDL.docx"
+GDL_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Farmcia_GDL.docx"
+GENERAL_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/General.docx"
+GENERAL_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF General.docx"
+GENERAL_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI General.docx"
+BBVA_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/BBVA.docx"
+BBVA_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF BBVA.docx"
+BBVA_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI BBVA.docx"
+COMPARTAMOS_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Compartamos.docx"
+COMPARTAMOS_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Compartamos.docx"
+COMPARTAMOS_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Compartamos.docx"
+ALL_GOWER_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Cartas Gower.docx"
+ALL_NOE_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Cartas Noe.docx"
+UVP_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/PIPC UVP.docx"
+DHL_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/DHL.docx"
+GASERA_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Gasera.docx"
+GASERA_MF_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Gasera.docx"
+ESTAFETA_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Estafeta.docx"
+ESTAFETA_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Estafeta.docx"
+ESTAFETA_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Estafeta.docx"
+ALL_LEVANTAMIENTO_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Levantamiento.docx"
 
 # Ruta imágenes
-IMAGES_PATH = '.\Inputs\Images'
+IMAGES_PATH = f"{BASE_DIR}/Inputs/Images"
+
 
 #################### CONFIGURACION DE USUARIO ####################
 
@@ -45,12 +56,19 @@ IMAGES_PATH = '.\Inputs\Images'
 
 
 def eliminar_crear_carpetas(path):
-    # Verficiar si la carpeta existe y eliminarla
-    if (os.path.exists(path)):
-        shutil.rmtree(path)
+    # Función para manejar errores de permisos
+    def on_rm_error(func, path, exc_info):
+        import stat
+        # Cambiar los permisos de la carpeta a escritura
+        os.chmod(path, stat.S_IWRITE)
+        func(path)  # Intentar eliminar la carpeta nuevamente
+
+    # Verificar si la carpeta existe y eliminarla
+    if os.path.exists(path):
+        shutil.rmtree(path, onerror=on_rm_error)  # Llamar a rmtree con manejo de errores
 
     # Crear carpeta de salida
-    os.mkdir(OUTPUT_PATH)
+    os.mkdir(path)  # Crear la carpeta nueva
 
 # Leer datos de Excel y pasarlo a formato dataframe 'df'
 
@@ -85,7 +103,7 @@ def crear_word(df_pipc):
         
         elif r_val['pipc'] == 'BBVA':
             plantillas = [BBVA_PTLL_PATH,
-                          BBVA_MF_PTLL_PATH, BBVA_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                          BBVA_MF_PTLL_PATH, BBVA_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
         
         elif r_val['pipc'] == 'COMPARTAMOS':
             plantillas = [COMPARTAMOS_PTLL_PATH, COMPARTAMOS_MF_PTLL_PATH, COMPARTAMOS_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
@@ -97,6 +115,14 @@ def crear_word(df_pipc):
         elif r_val['pipc'] == 'DHL':
             plantillas = [DHL_PTLL_PATH,
                           GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+            
+        elif r_val['pipc'] == 'GASERA':
+            plantillas = [GASERA_WORD_PTLL_PATH,
+                          GASERA_MF_WORD_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+            
+        elif r_val['pipc'] == 'ESTAFETA':
+            plantillas = [ESTAFETA_PTLL_PATH,
+                          ESTAFETA_MF_PTLL_PATH, ESTAFETA_GRI_PTLL_PATH]
 
         for idx, l_tpl in enumerate(plantillas, start=1):
             # Cargar plantilla
@@ -107,7 +133,7 @@ def crear_word(df_pipc):
                 img_path_logo1 = os.path.join(IMAGES_PATH, r_val['logo1'])
                 if os.path.exists(img_path_logo1):
                     logo1 = InlineImage(
-                        docx_tpl, img_path_logo1, height=Mm(145))
+                        docx_tpl, img_path_logo1, width=Mm(155))
                 else:
                     print(
                         f'Advertencia: No se encontró la imagen {r_val["logo1"]}')
@@ -2101,6 +2127,10 @@ def crear_word(df_pipc):
                     
                 elif idx == 5:
                     nombre_pipc = '5. CARTAS NOE ' + \
+                        r_val['nombre_comercial'] + '.docx'
+                    
+                elif idx == 6:
+                    nombre_pipc = '6. LEVANTAMIENTO ' + \
                         r_val['nombre_comercial'] + '.docx'
 
                 # Guardar el documento con un nombre único
