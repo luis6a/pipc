@@ -77,7 +77,7 @@ def obtener_datos_relacionados(api, nombre_comercial, tabla_nombre):
     # Usar diferente columna de búsqueda según la tabla
     if tabla_nombre == INMUEBLE_TABLE:
         # Para la tabla Inmueble, buscamos por Nombre Comercial
-        formula = f"{{Nombre_Comercial}}='{nombre_comercial}'"
+        formula = f"{{nombre_comercial}}='{nombre_comercial}'"
     else:
         # Para las otras tablas, buscamos por el campo Inmueble
         formula = f"{{Inmueble}}='{nombre_comercial}'"
@@ -115,7 +115,7 @@ def obtener_datos_airtable():
     table = api.table(BASE_ID, TABLE_NAME)
 
     # Filtrar por categoría y nombre comercial
-    formula = f"AND({{Categoria}}='{CATEGORIA_BUSCAR}', {{Nombre_Comercial}}='{NOMBRE_COMERCIAL_BUSCAR}')"
+    formula = f"AND({{Categoria}}='{CATEGORIA_BUSCAR}', {{nombre_comercial}}='{NOMBRE_COMERCIAL_BUSCAR}')"
     records = table.all(formula=formula)
 
     if not records:
@@ -124,7 +124,7 @@ def obtener_datos_airtable():
 
     # Tomamos el primer registro que coincida
     datos_principales = records[0]['fields']
-    nombre_comercial = datos_principales.get('Nombre_Comercial', '')
+    nombre_comercial = datos_principales.get('nombre_comercial', '')
 
  # Obtenemos datos de tablas relacionadas
     tablas_relacionadas = {
@@ -344,6 +344,10 @@ def crear_word(datos_airtable):
         ev_sim8 = cargar_imagen(docx_tpl, 'ev_sim8', 'ev_sim (8).png', 155, 'width', datos_airtable)
         acta3 = cargar_imagen(docx_tpl, 'acta3', 'acta3.png', 155, 'width', datos_airtable)
         acta4 = cargar_imagen(docx_tpl, 'acta4', 'acta4.png', 155, 'width', datos_airtable)
+        plan1 = cargar_imagen(docx_tpl, 'plan1', 'plan (1).jpg', 50, 'width', datos_airtable)
+        plan2 = cargar_imagen(docx_tpl, 'plan2', 'plan (2).jpg', 50, 'width', datos_airtable)
+        plan3 = cargar_imagen(docx_tpl, 'plan3', 'plan (3).jpg', 50, 'width', datos_airtable)
+        lampara = cargar_imagen(docx_tpl, 'lampara', 'lampara.jpg', 50, 'heigth', datos_airtable)
 
         try:
             # Renderizar documento - pasamos todos los datos directamente
@@ -472,11 +476,15 @@ def crear_word(datos_airtable):
                             'ev_sim7': ev_sim7,
                             'ev_sim8': ev_sim8,
                             'acta3': acta3,
-                            'acta4': acta4
+                            'acta4': acta4,
+                            'plan1': plan1,
+                            'plan2': plan2,
+                            'plan3': plan3,
+                            'lampara': lampara
                              })
 
             # Determinar nombre del archivo de salida
-            nombre_comercial = datos_airtable.get("Nombre_Comercial", "Documento")
+            nombre_comercial = datos_airtable.get("nombre_comercial", "Documento")
             if idx == 1:
                 nombre_pipc = f'1. PIPC {nombre_comercial}.docx'
             elif idx == 2:
