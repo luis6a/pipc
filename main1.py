@@ -348,6 +348,9 @@ def crear_word(datos_airtable):
         plan2 = cargar_imagen(docx_tpl, 'plan2', 'plan (2).jpg', 50, 'width', datos_airtable)
         plan3 = cargar_imagen(docx_tpl, 'plan3', 'plan (3).jpg', 50, 'width', datos_airtable)
         lampara = cargar_imagen(docx_tpl, 'lampara', 'lampara.jpg', 50, 'heigth', datos_airtable)
+        bombas = cargar_imagen(docx_tpl, 'bombas', 'bombas.jpg', 50, 'heigth', datos_airtable)
+        atencion_clientes = cargar_imagen(docx_tpl, 'atencion_clientes', 'atencion_clientes.jpg', 50, 'heigth', datos_airtable)
+        bardas = cargar_imagen(docx_tpl, 'bardas', 'bardas.jpg', 50, 'heigth', datos_airtable)
 
         try:
             # Renderizar documento - pasamos todos los datos directamente
@@ -480,7 +483,10 @@ def crear_word(datos_airtable):
                             'plan1': plan1,
                             'plan2': plan2,
                             'plan3': plan3,
-                            'lampara': lampara
+                            'lampara': lampara,
+                            'bombas': bombas,
+                            'atencion_clientes': atencion_clientes,
+                            'bardas': bardas
                              })
 
             # Determinar nombre del archivo de salida
