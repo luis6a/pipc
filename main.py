@@ -18,11 +18,11 @@ EXCEL_PATH = f"{BASE_DIR}/Inputs/BD.xlsx"
 
 # Ruta plantillas ficheros Word
 GASOLINERA_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Gasolinera.docx"
-GAS_MF_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Gasolinera.docx"
-GRI_GAS_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Gasolinera.docx"
-CIDUR_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Cidur.docx"
-CIDUR_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Cidur.docx"
-CIDUR_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Cidur.docx"
+GASOLINERA_MF_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Gasolinera.docx"
+GASOLINERA_GRI_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Gasolinera.docx"
+CIDUR_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Banorte.docx"
+CIDUR_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Banorte.docx"
+CIDUR_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Banorte.docx"
 GDL_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Farmcia_GDL.docx"
 GDL_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Farmcia_GDL.docx"
 GDL_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Farmcia_GDL.docx"
@@ -32,10 +32,6 @@ GENERAL_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI General.docx"
 BBVA_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/BBVA.docx"
 BBVA_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF BBVA.docx"
 BBVA_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI BBVA.docx"
-COMPARTAMOS_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Compartamos.docx"
-COMPARTAMOS_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Compartamos.docx"
-COMPARTAMOS_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Compartamos.docx"
-ALL_GOWER_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Cartas Gower.docx"
 ALL_NOE_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Cartas Noe.docx"
 UVP_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/PIPC UVP.docx"
 DHL_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/DHL.docx"
@@ -87,42 +83,38 @@ def crear_word(df_pipc):
     for idx, r_val in df_pipc.iterrows():
         # Cargar plantilla
         if r_val['pipc'] == 'GASOLINERA':
-            plantillas = [GASOLINERA_WORD_PTLL_PATH,
-                          GAS_MF_WORD_PTLL_PATH, GRI_GAS_WORD_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+            plantillas = [GASOLINERA_WORD_PTLL_PATH, GASOLINERA_MF_WORD_PTLL_PATH, GASOLINERA_GRI_WORD_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
         
-        elif r_val['pipc'] == 'BANCO':
+        elif r_val['pipc'] == 'BANORTE':
             plantillas = [CIDUR_PTLL_PATH,
-                          CIDUR_MF_PTLL_PATH, CIDUR_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                          CIDUR_MF_PTLL_PATH, CIDUR_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
         
         elif r_val['pipc'] == 'GDL':
-            plantillas = [GDL_PTLL_PATH, GDL_MF_PTLL_PATH, GDL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+            plantillas = [GDL_PTLL_PATH, GDL_MF_PTLL_PATH, GDL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
         
         elif r_val['pipc'] == 'GENERAL':
             plantillas = [GENERAL_PTLL_PATH,
-                          GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                          GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
         
         elif r_val['pipc'] == 'BBVA':
             plantillas = [BBVA_PTLL_PATH,
-                          BBVA_MF_PTLL_PATH, BBVA_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                          BBVA_MF_PTLL_PATH, BBVA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
         
-        elif r_val['pipc'] == 'COMPARTAMOS':
-            plantillas = [COMPARTAMOS_PTLL_PATH, COMPARTAMOS_MF_PTLL_PATH, COMPARTAMOS_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
-
         elif r_val['pipc'] == 'UVP':
             plantillas = [UVP_PTLL_PATH,
-                          GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                          GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
             
         elif r_val['pipc'] == 'DHL':
             plantillas = [DHL_PTLL_PATH,
-                          GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                          GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
             
         elif r_val['pipc'] == 'GASERA':
             plantillas = [GASERA_WORD_PTLL_PATH,
-                          GASERA_MF_WORD_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                          GASERA_MF_WORD_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
             
         elif r_val['pipc'] == 'ESTAFETA':
             plantillas = [ESTAFETA_PTLL_PATH,
-                          ESTAFETA_MF_PTLL_PATH, ESTAFETA_GRI_PTLL_PATH]
+                          ESTAFETA_MF_PTLL_PATH, ESTAFETA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
 
         for idx, l_tpl in enumerate(plantillas, start=1):
             # Cargar plantilla
