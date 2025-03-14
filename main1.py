@@ -28,38 +28,43 @@ PERITO_TABLE = 'Perito'
 CATEGORIA_BUSCAR = 'GASOLINERA'
 NOMBRE_COMERCIAL_BUSCAR = 'SAN SEBASTIAN E.S. 7335 VALERO'
 
+# Ruta base absoluta
+BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
+
 # Ruta de salida
-OUTPUT_PATH = '.\Outputs'
+OUTPUT_PATH = f"{BASE_DIR}/Outputs"
 
-# Ruta fichero Excel (para datos adicionales si es necesario)
-EXCEL_PATH = '.\Inputs\BD.xlsx'
+# Ruta fichero Excel
+EXCEL_PATH = f"{BASE_DIR}/Inputs/BD.xlsx"
 
-# Rutas de plantillas Word (mantén las que necesites)
-GASOLINERA_WORD_PTLL_PATH = '.\Inputs\Templates\Gasolinera.docx'
-GAS_MF_WORD_PTLL_PATH = '.\Inputs\Templates\MF Gasolinera.docx'
-GRI_GAS_WORD_PTLL_PATH = '.\Inputs\Templates\GRI Gasolinera.docx'
-CIDUR_PTLL_PATH = '.\Inputs\Templates\Cidur.docx'
-CIDUR_MF_PTLL_PATH = '.\Inputs\Templates\MF Cidur.docx'
-CIDUR_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Cidur.docx'
-GDL_PTLL_PATH = '.\Inputs\Templates\Farmcia_GDL.docx'
-GDL_MF_PTLL_PATH = '.\Inputs\Templates\MF Farmcia_GDL.docx'
-GDL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Farmcia_GDL.docx'
-GENERAL_PTLL_PATH = '.\Inputs\Templates\General.docx'
-GENERAL_MF_PTLL_PATH = '.\Inputs\Templates\MF General.docx'
-GENERAL_GRI_PTLL_PATH = '.\Inputs\Templates\GRI General.docx'
-BBVA_PTLL_PATH = '.\Inputs\Templates\BBVA.docx'
-BBVA_MF_PTLL_PATH = '.\Inputs\Templates\MF BBVA.docx'
-BBVA_GRI_PTLL_PATH = '.\Inputs\Templates\GRI BBVA.docx'
-COMPARTAMOS_PTLL_PATH = '.\Inputs\Templates\Compartamos.docx'
-COMPARTAMOS_MF_PTLL_PATH = '.\Inputs\Templates\MF Compartamos.docx'
-COMPARTAMOS_GRI_PTLL_PATH = '.\Inputs\Templates\GRI Compartamos.docx'
-ALL_GOWER_PTLL_PATH = '.\Inputs\Templates\Cartas Gower.docx'
-ALL_NOE_PTLL_PATH = '.\Inputs\Templates\Cartas Noe.docx'
-UVP_PTLL_PATH = '.\Inputs\Templates\PIPC UVP.docx'
-DHL_PTLL_PATH = '.\Inputs\Templates\DHL.docx'
+# Ruta plantillas ficheros Word
+GASOLINERA_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Gasolinera.docx"
+GASOLINERA_MF_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Gasolinera.docx"
+GASOLINERA_GRI_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Gasolinera.docx"
+CIDUR_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Banorte.docx"
+CIDUR_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Banorte.docx"
+CIDUR_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Banorte.docx"
+GDL_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Farmcia_GDL.docx"
+GDL_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Farmcia_GDL.docx"
+GDL_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Farmcia_GDL.docx"
+GENERAL_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/General.docx"
+GENERAL_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF General.docx"
+GENERAL_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI General.docx"
+BBVA_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/BBVA.docx"
+BBVA_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF BBVA.docx"
+BBVA_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI BBVA.docx"
+ALL_NOE_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Cartas Noe.docx"
+UVP_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/PIPC UVP.docx"
+DHL_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/DHL.docx"
+GASERA_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Gasera.docx"
+GASERA_MF_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Gasera.docx"
+ESTAFETA_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Estafeta.docx"
+ESTAFETA_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Estafeta.docx"
+ESTAFETA_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Estafeta.docx"
+ALL_LEVANTAMIENTO_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Levantamiento.docx"
 
 # Ruta imágenes
-IMAGES_PATH = '.\Inputs\Images'
+IMAGES_PATH = f"{BASE_DIR}/Inputs/Images"
 
 #################### CONFIGURACION DE USUARIO ####################
 
@@ -188,28 +193,30 @@ def crear_word(datos_airtable):
 
     if categoria == 'GASOLINERA':
         plantillas = [GASOLINERA_WORD_PTLL_PATH,
-                      GAS_MF_WORD_PTLL_PATH, GRI_GAS_WORD_PTLL_PATH]
-    elif categoria == 'BANCO':
+                      GASOLINERA_MF_WORD_PTLL_PATH, GASOLINERA_GRI_WORD_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    elif categoria == 'BANORTE':
         plantillas = [CIDUR_PTLL_PATH, CIDUR_MF_PTLL_PATH,
-                      CIDUR_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                      CIDUR_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'GDL':
         plantillas = [GDL_PTLL_PATH, GDL_MF_PTLL_PATH,
-                      GDL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                      GDL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'GENERAL':
         plantillas = [GENERAL_PTLL_PATH, GENERAL_MF_PTLL_PATH,
-                      GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'BBVA':
         plantillas = [BBVA_PTLL_PATH, BBVA_MF_PTLL_PATH,
-                      BBVA_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
-    elif categoria == 'COMPARTAMOS':
-        plantillas = [COMPARTAMOS_PTLL_PATH, COMPARTAMOS_MF_PTLL_PATH,
-                      COMPARTAMOS_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                      BBVA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'UVP':
         plantillas = [UVP_PTLL_PATH, GENERAL_MF_PTLL_PATH,
-                      GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'DHL':
         plantillas = [DHL_PTLL_PATH, GENERAL_MF_PTLL_PATH,
-                      GENERAL_GRI_PTLL_PATH, ALL_GOWER_PTLL_PATH, ALL_NOE_PTLL_PATH]
+                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    elif categoria == 'GASERA':
+        plantillas = [GASERA_WORD_PTLL_PATH, GASERA_MF_WORD_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    elif categoria == 'ESTAFETA':
+        plantillas = [ESTAFETA_PTLL_PATH, ESTAFETA_MF_PTLL_PATH,
+                      ESTAFETA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     else:
         print(f"No se encontraron plantillas para la categoría: {categoria}")
         return
