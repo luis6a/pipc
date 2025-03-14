@@ -505,9 +505,9 @@ def crear_word(datos_airtable):
             elif idx == 3:
                 nombre_pipc = f'3. RIESGO DE INCENDIO {nombre_comercial}.docx'
             elif idx == 4:
-                nombre_pipc = f'4. CARTA GOWER {nombre_comercial}.docx'
+                nombre_pipc = f'4. CARTA NOE {nombre_comercial}.docx'
             elif idx == 5:
-                nombre_pipc = f'5. CARTA NOE {nombre_comercial}.docx'
+                nombre_pipc = f'5. LEVANTAMIENTO {nombre_comercial}.docx'
             else:
                 nombre_pipc = f'{idx}. DOCUMENTO {nombre_comercial}.docx'
 
