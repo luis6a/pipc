@@ -15,18 +15,13 @@ TABLE_NAME = 'tblGLidPHPZP7M7ds'
 # Tablas relacionadas en Airtable
 INMUEBLE_TABLE = 'Inmueble'
 POBLACION_TABLE = 'Poblacion'
-BRIGADAS_TABLE = 'Brigadas'
-INVENTARIO_TABLE = 'Inventario'
-EQUIPO_TABLE = 'Equipo'
 OTRO_EQUIPO_TABLE = 'Otro Equipo'
-RIESGOS_TABLE = 'Riesgos'
-GRI_TABLE = 'GRI'
 GASOLINERA_TABLE = 'Gasolinera'
 PERITO_TABLE = 'Perito'
 
 # Valores específicos para buscar en Airtable
-CATEGORIA_BUSCAR = 'GASOLINERA'
-NOMBRE_COMERCIAL_BUSCAR = 'SAN SEBASTIAN E.S. 7335 VALERO'
+CATEGORIA_BUSCAR = 'BANORTE'
+NOMBRE_COMERCIAL_BUSCAR = 'APIZACO JESUS CARRANZA CR 2989'
 
 # Ruta base absoluta
 BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
@@ -135,12 +130,7 @@ def obtener_datos_airtable():
     tablas_relacionadas = {
         'inmueble': INMUEBLE_TABLE,
         'poblacion': POBLACION_TABLE,
-        'brigadas': BRIGADAS_TABLE,
-        'inventario': INVENTARIO_TABLE,
-        'equipo': EQUIPO_TABLE,
         'otro_equipo': OTRO_EQUIPO_TABLE,
-        'riesgos': RIESGOS_TABLE,
-        'gri': GRI_TABLE,
         'gasolinera': GASOLINERA_TABLE,
         'perito': PERITO_TABLE
     }
@@ -228,8 +218,8 @@ def crear_word(datos_airtable):
         # Cargar las imágenes
         logo1 = cargar_imagen(docx_tpl, 'logo1', 'logo1.jpg', 145, 'height',datos_airtable)
         logo2 = cargar_imagen(docx_tpl, 'logo2', 'logo2.jpg', 15, 'width',datos_airtable)
-        fachada = cargar_imagen(docx_tpl, 'fachada', 'fachada.jpg', 90, 'height', datos_airtable)
-        mapa = cargar_imagen(docx_tpl, 'mapa', 'mapa.png', 155, 'width', datos_airtable)
+        fachada = cargar_imagen(docx_tpl, 'fachada', 'fachada.jpg', 150, 'width', datos_airtable)
+        mapa = cargar_imagen(docx_tpl, 'mapa', 'mapa.png', 144, 'width', datos_airtable)
         esc_emer = cargar_imagen(docx_tpl, 'esc_emer', 'esc_emer.jpg', 50, 'height', datos_airtable)
         mueble1 = cargar_imagen(docx_tpl, 'mueble1', 'mueble (1).jpg', 50, 'height', datos_airtable)
         mueble2 = cargar_imagen(docx_tpl, 'mueble2', 'mueble (2).jpg', 50, 'height', datos_airtable)
@@ -291,7 +281,7 @@ def crear_word(datos_airtable):
         trampa_grasa = cargar_imagen(docx_tpl, 'trampa_grasa', 'trampa_grasa.jpg', 50, 'height', datos_airtable)
         planta = cargar_imagen(docx_tpl, 'planta', 'planta.jpg', 50, 'height', datos_airtable)
         deposito = cargar_imagen(docx_tpl, 'deposito', 'deposito.jpg', 50, 'height', datos_airtable)
-        mapa_satel = cargar_imagen(docx_tpl, 'mapa_satel', 'mapa_satel.png', 160, 'width', datos_airtable)
+        mapa_satel = cargar_imagen(docx_tpl, 'mapa_satel', 'mapa_satel.png', 144, 'width', datos_airtable)
         plano = cargar_imagen(docx_tpl, 'plano', 'plano.jpg', 160, 'width', datos_airtable)
         inmueble1 = cargar_imagen(docx_tpl, 'inmueble1', 'inmueble (1).jpg', 50, 'height', datos_airtable)
         inmueble2 = cargar_imagen(docx_tpl, 'inmueble2', 'inmueble (2).jpg', 50, 'height', datos_airtable)
@@ -317,7 +307,7 @@ def crear_word(datos_airtable):
         ev_sim1 = cargar_imagen(docx_tpl, 'ev_sim1', 'ev_sim1.png', 155, 'width', datos_airtable)
         ev_sim2 = cargar_imagen(docx_tpl, 'ev_sim2', 'ev_sim2.png', 155, 'width', datos_airtable)
         visitas = cargar_imagen(docx_tpl, 'visitas', 'visitas.png', 155, 'width', datos_airtable)
-        dir_emer = cargar_imagen(docx_tpl, 'dir_emer', 'dir_emer.jpg', 155, 'width', datos_airtable)
+        dir_emer = cargar_imagen(docx_tpl, 'dir_emer', 'dir_emer.png', 155, 'width', datos_airtable)
         corresp1 = cargar_imagen(docx_tpl, 'corresp1', 'corresp1.png', 155, 'width', datos_airtable)
         corresp2 = cargar_imagen(docx_tpl, 'corresp2', 'corresp2.png', 155, 'width', datos_airtable)
         corresp3 = cargar_imagen(docx_tpl, 'corresp3', 'corresp3.png', 155, 'width', datos_airtable)
