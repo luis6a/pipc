@@ -20,8 +20,8 @@ GASOLINERA_TABLE = 'Gasolinera'
 PERITO_TABLE = 'Perito'
 
 # Valores específicos para buscar en Airtable
-CATEGORIA_BUSCAR = 'BANORTE'
-NOMBRE_COMERCIAL_BUSCAR = 'APIZACO JESUS CARRANZA CR 2989'
+CATEGORIA_BUSCAR = 'DHL'
+NOMBRE_COMERCIAL_BUSCAR = 'DHL ZACATLAN'
 
 # Ruta base absoluta
 BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
@@ -51,6 +51,8 @@ BBVA_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI BBVA.docx"
 ALL_NOE_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Cartas Noe.docx"
 UVP_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/PIPC UVP.docx"
 DHL_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/DHL.docx"
+DHL_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF DHL.docx"
+DHL_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI DHL.docx"
 GASERA_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Gasera.docx"
 GASERA_MF_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Gasera.docx"
 ESTAFETA_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Estafeta.docx"
@@ -200,8 +202,7 @@ def crear_word(datos_airtable):
         plantillas = [UVP_PTLL_PATH, GENERAL_MF_PTLL_PATH,
                       GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'DHL':
-        plantillas = [DHL_PTLL_PATH, GENERAL_MF_PTLL_PATH,
-                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+        plantillas = [DHL_PTLL_PATH, DHL_MF_PTLL_PATH, DHL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'GASERA':
         plantillas = [GASERA_WORD_PTLL_PATH, GASERA_MF_WORD_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'ESTAFETA':
@@ -348,6 +349,9 @@ def crear_word(datos_airtable):
         bombas = cargar_imagen(docx_tpl, 'bombas', 'bombas.jpg', 50, 'heigth', datos_airtable)
         atencion_clientes = cargar_imagen(docx_tpl, 'atencion_clientes', 'atencion_clientes.jpg', 50, 'heigth', datos_airtable)
         bardas = cargar_imagen(docx_tpl, 'bardas', 'bardas.jpg', 50, 'heigth', datos_airtable)
+        sis_inc = cargar_imagen(docx_tpl, 'sis_inc', 'sis_inc.jpg', 50, 'heigth', datos_airtable)
+        zona_sec = cargar_imagen(docx_tpl, 'zona_sec', 'zona_sec.jpg', 50, 'heigth', datos_airtable)
+        punto_reun = cargar_imagen(docx_tpl, 'punto_reun', 'punto_reun.jpg', 50, 'heigth', datos_airtable)
 
         try:
             # Renderizar documento - pasamos todos los datos directamente
@@ -483,7 +487,10 @@ def crear_word(datos_airtable):
                             'lampara': lampara,
                             'bombas': bombas,
                             'atencion_clientes': atencion_clientes,
-                            'bardas': bardas
+                            'bardas': bardas,
+                            'sis_inc': sis_inc,
+                            'zona_sec': zona_sec,
+                            'punto_reun': punto_reun
                              })
 
             # Determinar nombre del archivo de salida
