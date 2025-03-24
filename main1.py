@@ -20,8 +20,8 @@ GASOLINERA_TABLE = 'Gasolinera'
 PERITO_TABLE = 'Perito'
 
 # Valores específicos para buscar en Airtable
-CATEGORIA_BUSCAR = 'DHL'
-NOMBRE_COMERCIAL_BUSCAR = 'DHL ZACATLAN'
+CATEGORIA_BUSCAR = 'GENERAL'
+NOMBRE_COMERCIAL_BUSCAR = 'ESTACION DE GAS LP PARA CARBURACION'
 
 # Ruta base absoluta
 BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
@@ -218,7 +218,7 @@ def crear_word(datos_airtable):
 
         # Cargar las imágenes
         logo1 = cargar_imagen(docx_tpl, 'logo1', 'logo1.jpg', 145, 'height',datos_airtable)
-        logo2 = cargar_imagen(docx_tpl, 'logo2', 'logo2.jpg', 15, 'width',datos_airtable)
+        logo2 = cargar_imagen(docx_tpl, 'logo2', 'logo2.jpg', 15, 'heigth',datos_airtable)
         fachada = cargar_imagen(docx_tpl, 'fachada', 'fachada.jpg', 150, 'width', datos_airtable)
         mapa = cargar_imagen(docx_tpl, 'mapa', 'mapa.png', 144, 'width', datos_airtable)
         esc_emer = cargar_imagen(docx_tpl, 'esc_emer', 'esc_emer.jpg', 50, 'height', datos_airtable)

@@ -1,3 +1,0 @@
-access_token = 'patwubbJ7vFDQCigL.8ac92361a7f8f099407c42a654ac0e166c794c07850f89723e862492a54c408b'
-base_id = 'appy6PazgVEt6DWzU'
-table_name = 'tblGLidPHPZP7M7ds'
