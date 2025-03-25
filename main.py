@@ -1,11 +1,27 @@
 import os
 import shutil
-import stat
 import pandas as pd
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Mm
+from pyairtable import Api
 
 #################### CONFIGURACION DE USUARIO ####################
+
+# Configuración de Airtable
+AIRTABLE_API_KEY = 'patwubbJ7vFDQCigL.8ac92361a7f8f099407c42a654ac0e166c794c07850f89723e862492a54c408b'
+BASE_ID = 'appy6PazgVEt6DWzU'
+TABLE_NAME = 'tblGLidPHPZP7M7ds'
+
+# Tablas relacionadas en Airtable
+INMUEBLE_TABLE = 'Inmueble'
+POBLACION_TABLE = 'Poblacion'
+OTRO_EQUIPO_TABLE = 'Otro Equipo'
+GASOLINERA_TABLE = 'Gasolinera'
+PERITO_TABLE = 'Perito'
+
+# Valores específicos para buscar en Airtable
+CATEGORIA_BUSCAR = 'GENERAL'
+NOMBRE_COMERCIAL_BUSCAR = 'ESTACION DE GAS LP PARA CARBURACION'
 
 # Ruta base absoluta
 BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
@@ -35,6 +51,8 @@ BBVA_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI BBVA.docx"
 ALL_NOE_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Cartas Noe.docx"
 UVP_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/PIPC UVP.docx"
 DHL_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/DHL.docx"
+DHL_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF DHL.docx"
+DHL_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI DHL.docx"
 GASERA_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Gasera.docx"
 GASERA_MF_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Gasera.docx"
 ESTAFETA_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Estafeta.docx"
@@ -45,2104 +63,468 @@ ALL_LEVANTAMIENTO_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Levantamiento.docx"
 # Ruta imágenes
 IMAGES_PATH = f"{BASE_DIR}/Inputs/Images"
 
-
 #################### CONFIGURACION DE USUARIO ####################
 
 # Eliminar y crear carpetas
 
-
 def eliminar_crear_carpetas(path):
-    # Función para manejar errores de permisos
-    def on_rm_error(func, path, exc_info):
-        import stat
-        # Cambiar los permisos de la carpeta a escritura
-        os.chmod(path, stat.S_IWRITE)
-        func(path)  # Intentar eliminar la carpeta nuevamente
-
-    # Verificar si la carpeta existe y eliminarla
     if os.path.exists(path):
-        shutil.rmtree(path, onerror=on_rm_error)  # Llamar a rmtree con manejo de errores
+        shutil.rmtree(path)
+    os.mkdir(path)
 
-    # Crear carpeta de salida
-    os.mkdir(path)  # Crear la carpeta nueva
+# Función para obtener datos de tablas relacionadas
+def obtener_datos_relacionados(api, nombre_comercial, tabla_nombre):
+    tabla = api.table(BASE_ID, tabla_nombre)
+    
+    # Usar diferente columna de búsqueda según la tabla
+    if tabla_nombre == INMUEBLE_TABLE:
+        # Para la tabla Inmueble, buscamos por Nombre Comercial
+        formula = f"{{nombre_comercial}}='{nombre_comercial}'"
+    else:
+        # Para las otras tablas, buscamos por el campo Inmueble
+        formula = f"{{Inmueble}}='{nombre_comercial}'"
+    
+    records = tabla.all(formula=formula)
+    
+    if not records:
+        print(f"No se encontraron registros en la tabla {tabla_nombre} para {nombre_comercial}")
+        return {}
+    
+    # Si hay múltiples registros, los combinamos en un solo diccionario
+    if len(records) > 1:
+        print(f"Se encontraron {len(records)} registros en la tabla {tabla_nombre} para {nombre_comercial}")
+        # Para listas o campos que pueden tener múltiples valores, podemos combinarlos
+        combined_fields = {}
+        for idx, record in enumerate(records, 1):
+            for key, value in record['fields'].items():
+                # Si es una lista, extendemos
+                if isinstance(value, list) and key in combined_fields and isinstance(combined_fields[key], list):
+                    combined_fields[key].extend(value)
+                # Si no es una lista o el campo no existe, lo asignamos directamente
+                # O añadimos un sufijo numérico para diferenciar
+                elif key in combined_fields:
+                    combined_fields[f"{key}_{idx}"] = value
+                else:
+                    combined_fields[key] = value
+        return combined_fields
+    
+    # Si solo hay un registro, lo devolvemos directamente
+    return records[0]['fields']
 
-# Leer datos de Excel y pasarlo a formato dataframe 'df'
+# Función para obtener datos de Airtable y tablas relacionadas
+def obtener_datos_airtable():
+    api = Api(AIRTABLE_API_KEY)
+    table = api.table(BASE_ID, TABLE_NAME)
 
+    # Filtrar por categoría y nombre comercial
+    formula = f"AND({{Categoria}}='{CATEGORIA_BUSCAR}', {{nombre_comercial}}='{NOMBRE_COMERCIAL_BUSCAR}')"
+    records = table.all(formula=formula)
 
-def leer_bd(path, worksheet):
-    # Convertir Excel a dataframe
-    excel_df = pd.read_excel(path, worksheet)
+    if not records:
+        print("No se encontraron registros con los criterios especificados")
+        return None
 
-    return excel_df
+    # Tomamos el primer registro que coincida
+    datos_principales = records[0]['fields']
+    nombre_comercial = datos_principales.get('nombre_comercial', '')
 
-# Rutina para crear ficheros Word para cada PIPC
+ # Obtenemos datos de tablas relacionadas
+    tablas_relacionadas = {
+        'inmueble': INMUEBLE_TABLE,
+        'poblacion': POBLACION_TABLE,
+        'otro_equipo': OTRO_EQUIPO_TABLE,
+        'gasolinera': GASOLINERA_TABLE,
+        'perito': PERITO_TABLE
+    }
+    
+    datos_completos = {}  # Creamos un diccionario vacío para los datos completos
+    
+    # Añadir datos principales primero (sin prefijo)
+    datos_completos.update(datos_principales)
+    
+    # Añadir datos de tablas relacionadas con prefijos para evitar colisiones
+    for prefijo, tabla in tablas_relacionadas.items():
+        datos_tabla = obtener_datos_relacionados(api, nombre_comercial, tabla)
+        # Añadimos los datos con prefijo para evitar colisiones
+        for k, v in datos_tabla.items():
+            datos_completos[f"{prefijo}_{k}"] = v
+            # También añadimos los campos sin prefijo para facilitar el acceso en la plantilla
+            # Esto podría sobreescribir datos si hay nombres de campo repetidos entre tablas
+            if k not in datos_completos:  # Solo añadimos si no existe ya para evitar sobrescribir
+                datos_completos[k] = v
+    
+    return datos_completos
 
+# Función para cargar imágenes
+def cargar_imagen(docx_tpl, imagen_nombre_campo, imagen_default, medida_mm, tipo_medida='height', datos_airtable=None):
+    try:
+        img_nombre = datos_airtable.get(f'{imagen_nombre_campo}_nombre', imagen_default)
+        img_path = os.path.join(IMAGES_PATH, img_nombre)
+        
+        if os.path.exists(img_path):
+            # Aplicar altura o ancho según corresponda
+            if tipo_medida.lower() == 'width':
+                return InlineImage(docx_tpl, img_path, width=Mm(medida_mm))
+            else:  # Por defecto usa height
+                return InlineImage(docx_tpl, img_path, height=Mm(medida_mm))
+        else:
+            print(f'Advertencia: No se encontró la imagen {img_nombre}')
+            return ''
+    except Exception as e:
+        print(f'Advertencia: No se pudo cargar la imagen {img_nombre}: {e}')
+        return ''
 
-def crear_word(df_pipc):
-    # Iteramos sobre cada pipc
-    for idx, r_val in df_pipc.iterrows():
+# Función para crear ficheros Word
+def crear_word(datos_airtable):
+    if not datos_airtable:
+        print("No hay datos para procesar")
+        return
+
+    # Determinar qué plantillas usar basado en la categoría
+    categoria = datos_airtable.get('Categoria', '')
+
+    if categoria == 'GASOLINERA':
+        plantillas = [GASOLINERA_WORD_PTLL_PATH,
+                      GASOLINERA_MF_WORD_PTLL_PATH, GASOLINERA_GRI_WORD_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    elif categoria == 'BANORTE':
+        plantillas = [CIDUR_PTLL_PATH, CIDUR_MF_PTLL_PATH,
+                      CIDUR_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    elif categoria == 'GDL':
+        plantillas = [GDL_PTLL_PATH, GDL_MF_PTLL_PATH,
+                      GDL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    elif categoria == 'GENERAL':
+        plantillas = [GENERAL_PTLL_PATH, GENERAL_MF_PTLL_PATH,
+                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    elif categoria == 'BBVA':
+        plantillas = [BBVA_PTLL_PATH, BBVA_MF_PTLL_PATH,
+                      BBVA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    elif categoria == 'UVP':
+        plantillas = [UVP_PTLL_PATH, GENERAL_MF_PTLL_PATH,
+                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    elif categoria == 'DHL':
+        plantillas = [DHL_PTLL_PATH, DHL_MF_PTLL_PATH, DHL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    elif categoria == 'GASERA':
+        plantillas = [GASERA_WORD_PTLL_PATH, GASERA_MF_WORD_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    elif categoria == 'ESTAFETA':
+        plantillas = [ESTAFETA_PTLL_PATH, ESTAFETA_MF_PTLL_PATH,
+                      ESTAFETA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    else:
+        print(f"No se encontraron plantillas para la categoría: {categoria}")
+        return
+
+    for idx, plantilla_path in enumerate(plantillas, start=1):
         # Cargar plantilla
-        if r_val['pipc'] == 'GASOLINERA':
-            plantillas = [GASOLINERA_WORD_PTLL_PATH, GASOLINERA_MF_WORD_PTLL_PATH, GASOLINERA_GRI_WORD_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
-        
-        elif r_val['pipc'] == 'BANORTE':
-            plantillas = [CIDUR_PTLL_PATH,
-                          CIDUR_MF_PTLL_PATH, CIDUR_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
-        
-        elif r_val['pipc'] == 'GDL':
-            plantillas = [GDL_PTLL_PATH, GDL_MF_PTLL_PATH, GDL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
-        
-        elif r_val['pipc'] == 'GENERAL':
-            plantillas = [GENERAL_PTLL_PATH,
-                          GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
-        
-        elif r_val['pipc'] == 'BBVA':
-            plantillas = [BBVA_PTLL_PATH,
-                          BBVA_MF_PTLL_PATH, BBVA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
-        
-        elif r_val['pipc'] == 'UVP':
-            plantillas = [UVP_PTLL_PATH,
-                          GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
-            
-        elif r_val['pipc'] == 'DHL':
-            plantillas = [DHL_PTLL_PATH,
-                          GENERAL_MF_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
-            
-        elif r_val['pipc'] == 'GASERA':
-            plantillas = [GASERA_WORD_PTLL_PATH,
-                          GASERA_MF_WORD_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
-            
-        elif r_val['pipc'] == 'ESTAFETA':
-            plantillas = [ESTAFETA_PTLL_PATH,
-                          ESTAFETA_MF_PTLL_PATH, ESTAFETA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
-
-        for idx, l_tpl in enumerate(plantillas, start=1):
-            # Cargar plantilla
-            docx_tpl = DocxTemplate(l_tpl)
-
-            # Añadir imagen
-            try:
-                img_path_logo1 = os.path.join(IMAGES_PATH, r_val['logo1'])
-                if os.path.exists(img_path_logo1):
-                    logo1 = InlineImage(
-                        docx_tpl, img_path_logo1, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["logo1"]}')
-                    logo1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["logo1"]}: {e}')
-                logo1 = ''
-
-            try:
-                img_path_logo2 = os.path.join(IMAGES_PATH, r_val["logo2"])
-                if os.path.exists(img_path_logo2):
-                    logo2 = InlineImage(
-                        docx_tpl, img_path_logo2, height=Mm(15))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["logo2"]}')
-                    logo2 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["logo2"]}: {e}')
-                logo2 = ''
-
-            try:
-                img_path_fachada = os.path.join(IMAGES_PATH, r_val["fachada"])
-                if os.path.exists(img_path_fachada):
-                    fachada = InlineImage(
-                        docx_tpl, img_path_fachada, height=Mm(90))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["fachada"]}')
-                    fachada = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["fachada"]}: {e}')
-                fachada = ''
-
-            try:
-                img_path_mapa = os.path.join(IMAGES_PATH, r_val["mapa"])
-                if os.path.exists(img_path_mapa):
-                    mapa = InlineImage(docx_tpl, img_path_mapa, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["mapa"]}')
-                    mapa = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["mapa"]}: {e}')
-                mapa = ''
-
-            try:
-                img_path_esc_emer = os.path.join(
-                    IMAGES_PATH, r_val["esc_emer"])
-                if os.path.exists(img_path_esc_emer):
-                    esc_emer = InlineImage(
-                        docx_tpl, img_path_esc_emer, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["esc_emer"]}')
-                    esc_emer = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["esc_emer"]}: {e}')
-                esc_emer = ''
-
-            try:
-                img_path_mueble1 = os.path.join(IMAGES_PATH, r_val["mueble1"])
-                if os.path.exists(img_path_mueble1):
-                    mueble1 = InlineImage(
-                        docx_tpl, img_path_mueble1, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["mueble1"]}')
-                    mueble1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["mueble1"]}: {e}')
-                mueble1 = ''
-
-            try:
-                img_path_mueble2 = os.path.join(IMAGES_PATH, r_val["mueble2"])
-                if os.path.exists(img_path_mueble2):
-                    mueble2 = InlineImage(
-                        docx_tpl, img_path_mueble2, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["mueble2"]}')
-                    mueble2 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["mueble2"]}: {e}')
-                mueble2 = ''
-
-            try:
-                img_path_venteo = os.path.join(IMAGES_PATH, r_val["venteo"])
-                if os.path.exists(img_path_venteo):
-                    venteo = InlineImage(
-                        docx_tpl, img_path_venteo, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["venteo"]}')
-                    venteo = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["venteo"]}: {e}')
-                venteo = ''
-
-            try:
-                img_path_manguera = os.path.join(
-                    IMAGES_PATH, r_val["manguera"])
-                if os.path.exists(img_path_manguera):
-                    manguera = InlineImage(
-                        docx_tpl, img_path_manguera, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["manguera"]}')
-                    manguera = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["manguera"]}: {e}')
-                manguera = ''
-
-            try:
-                img_path_electrico = os.path.join(
-                    IMAGES_PATH, r_val["electrico"])
-                if os.path.exists(img_path_electrico):
-                    electrico = InlineImage(
-                        docx_tpl, img_path_electrico, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["electrico"]}')
-                    electrico = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["electrico"]}: {e}')
-                electrico = ''
-
-            try:
-                img_path_banio = os.path.join(IMAGES_PATH, r_val["banio"])
-                if os.path.exists(img_path_banio):
-                    banio = InlineImage(
-                        docx_tpl, img_path_banio, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["banio"]}')
-                    banio = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["banio"]}: {e}')
-                banio = ''
-
-            try:
-                img_path_cisterna = os.path.join(
-                    IMAGES_PATH, r_val["cisterna"])
-                if os.path.exists(img_path_cisterna):
-                    cisterna = InlineImage(
-                        docx_tpl, img_path_cisterna, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cisterna"]}')
-                    cisterna = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cisterna"]}: {e}')
-                cisterna = ''
-
-            try:
-                img_path_sismo = os.path.join(IMAGES_PATH, r_val["sismo"])
-                if os.path.exists(img_path_sismo):
-                    sismo = InlineImage(
-                        docx_tpl, img_path_sismo, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["sismo"]}')
-                    sismo = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["sismo"]}: {e}')
-                sismo = ''
-
-            try:
-                img_path_inundacion = os.path.join(
-                    IMAGES_PATH, r_val["inundacion"])
-                if os.path.exists(img_path_inundacion):
-                    inundacion = InlineImage(
-                        docx_tpl, img_path_inundacion, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["inundacion"]}')
-                    inundacion = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["inundacion"]}: {e}')
-                inundacion = ''
-
-            try:
-                img_path_torm_elect = os.path.join(
-                    IMAGES_PATH, r_val["torm_elect"])
-                if os.path.exists(img_path_torm_elect):
-                    torm_elect = InlineImage(
-                        docx_tpl, img_path_torm_elect, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["torm_elect"]}')
-                    torm_elect = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["torm_elect"]}: {e}')
-                torm_elect = ''
-
-            try:
-                img_path_incendio = os.path.join(
-                    IMAGES_PATH, r_val["incendio"])
-                if os.path.exists(img_path_incendio):
-                    incendio = InlineImage(
-                        docx_tpl, img_path_incendio, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["incendio"]}')
-                    incendio = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["incendio"]}: {e}')
-                incendio = ''
-
-            try:
-                img_path_influenza = os.path.join(
-                    IMAGES_PATH, r_val["influenza"])
-                if os.path.exists(img_path_influenza):
-                    influenza = InlineImage(
-                        docx_tpl, img_path_influenza, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["influenza"]}')
-                    influenza = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["influenza"]}: {e}')
-                influenza = ''
-
-            try:
-                img_path_radiacion = os.path.join(
-                    IMAGES_PATH, r_val["radiacion"])
-                if os.path.exists(img_path_radiacion):
-                    radiacion = InlineImage(
-                        docx_tpl, img_path_radiacion, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["radiacion"]}')
-                    radiacion = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["radiacion"]}: {e}')
-                radiacion = ''
-
-            try:
-                img_path_ext1 = os.path.join(IMAGES_PATH, r_val["ext1"])
-                if os.path.exists(img_path_ext1):
-                    ext1 = InlineImage(docx_tpl, img_path_ext1, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["ext1"]}')
-                    ext1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["ext1"]}: {e}')
-                ext1 = ''
-
-            try:
-                img_path_ext2 = os.path.join(IMAGES_PATH, r_val["ext2"])
-                if os.path.exists(img_path_ext2):
-                    ext2 = InlineImage(docx_tpl, img_path_ext2, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["ext2"]}')
-                    ext2 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["ext2"]}: {e}')
-                ext2 = ''
-
-            try:
-                img_path_ext3 = os.path.join(IMAGES_PATH, r_val["ext3"])
-                if os.path.exists(img_path_ext3):
-                    ext3 = InlineImage(docx_tpl, img_path_ext3, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["ext3"]}')
-                    ext3 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["ext3"]}: {e}')
-                ext3 = ''
-
-            try:
-                img_path_ext4 = os.path.join(IMAGES_PATH, r_val["ext4"])
-                if os.path.exists(img_path_ext4):
-                    ext4 = InlineImage(docx_tpl, img_path_ext4, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["ext4"]}')
-                    ext4 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["ext4"]}: {e}')
-                ext4 = ''
-
-            try:
-                img_path_botiquin = os.path.join(
-                    IMAGES_PATH, r_val["botiquin"])
-                if os.path.exists(img_path_botiquin):
-                    botiquin = InlineImage(
-                        docx_tpl, img_path_botiquin, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["botiquin"]}')
-                    botiquin = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["botiquin"]}: {e}')
-                botiquin = ''
-
-            try:
-                img_path_ruta1 = os.path.join(IMAGES_PATH, r_val["ruta1"])
-                if os.path.exists(img_path_ruta1):
-                    ruta1 = InlineImage(
-                        docx_tpl, img_path_ruta1, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["ruta1"]}')
-                    ruta1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["ruta1"]}: {e}')
-                ruta1 = ''
-
-            try:
-                img_path_ruta2 = os.path.join(IMAGES_PATH, r_val["ruta2"])
-                if os.path.exists(img_path_ruta2):
-                    ruta2 = InlineImage(
-                        docx_tpl, img_path_ruta2, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["ruta2"]}')
-                    ruta2 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["ruta2"]}: {e}')
-                ruta2 = ''
-
-            try:
-                img_path_ruta3 = os.path.join(IMAGES_PATH, r_val["ruta3"])
-                if os.path.exists(img_path_ruta3):
-                    ruta3 = InlineImage(
-                        docx_tpl, img_path_ruta3, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["ruta3"]}')
-                    ruta3 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["ruta3"]}: {e}')
-                ruta3 = ''
-
-            try:
-                img_path_salida = os.path.join(IMAGES_PATH, r_val["salida"])
-                if os.path.exists(img_path_salida):
-                    salida = InlineImage(
-                        docx_tpl, img_path_salida, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["salida"]}')
-                    salida = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["salida"]}: {e}')
-                salida = ''
-
-            try:
-                img_path_alarma = os.path.join(IMAGES_PATH, r_val["alarma"])
-                if os.path.exists(img_path_alarma):
-                    alarma = InlineImage(
-                        docx_tpl, img_path_alarma, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["alarma"]}')
-                    alarma = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["alarma"]}: {e}')
-                alarma = ''
-
-            try:
-                img_path_prohib1 = os.path.join(IMAGES_PATH, r_val["prohib1"])
-                if os.path.exists(img_path_prohib1):
-                    prohib1 = InlineImage(
-                        docx_tpl, img_path_prohib1, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["prohib1"]}')
-                    prohib1 = ''
-            except Exception as e:
-                print(
-                    f'A  dvertencia: No se pudo cargar la imagen {r_val["prohib1"]}: {e}')
-                prohib1 = ''
-
-            try:
-                img_path_prohib2 = os.path.join(IMAGES_PATH, r_val["prohib2"])
-                if os.path.exists(img_path_prohib2):
-                    prohib2 = InlineImage(
-                        docx_tpl, img_path_prohib2, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["prohib2"]}')
-                    prohib2 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["prohib2"]}: {e}')
-                prohib2 = ''
-
-            try:
-                img_path_prohib3 = os.path.join(IMAGES_PATH, r_val["prohib3"])
-                if os.path.exists(img_path_prohib3):
-                    prohib3 = InlineImage(
-                        docx_tpl, img_path_prohib3, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["prohib3"]}')
-                    prohib3 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["prohib3"]}: {e}')
-                prohib3 = ''
-
-            try:
-                img_path_prohib4 = os.path.join(IMAGES_PATH, r_val["prohib4"])
-                if os.path.exists(img_path_prohib4):
-                    prohib4 = InlineImage(
-                        docx_tpl, img_path_prohib4, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["prohib4"]}')
-                    prohib4 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["prohib4"]}: {e}')
-                prohib4 = ''
-
-            try:
-                img_path_layout = os.path.join(IMAGES_PATH, r_val["layout"])
-                if os.path.exists(img_path_layout):
-                    layout = InlineImage(
-                        docx_tpl, img_path_layout, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["layout"]}')
-                    layout = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["layout"]}: {e}')
-                layout = ''
-
-            try:
-                img_path_cap1 = os.path.join(IMAGES_PATH, r_val["cap1"])
-                if os.path.exists(img_path_cap1):
-                    cap1 = InlineImage(docx_tpl, img_path_cap1, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cap1"]}')
-                    cap1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cap1"]}: {e}')
-                cap1 = ''
-
-            try:
-                img_path_cap2 = os.path.join(IMAGES_PATH, r_val["cap2"])
-                if os.path.exists(img_path_cap2):
-                    cap2 = InlineImage(docx_tpl, img_path_cap2, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cap2"]}')
-                    cap2 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cap2"]}: {e}')
-                cap2 = ''
-
-            try:
-                img_path_cap3 = os.path.join(IMAGES_PATH, r_val["cap3"])
-                if os.path.exists(img_path_cap3):
-                    cap3 = InlineImage(docx_tpl, img_path_cap3, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cap3"]}')
-                    cap3 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cap3"]}: {e}')
-                cap3 = ''
-
-            try:
-                img_path_cap4 = os.path.join(IMAGES_PATH, r_val["cap4"])
-                if os.path.exists(img_path_cap4):
-                    cap4 = InlineImage(docx_tpl, img_path_cap4, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cap4"]}')
-                    cap4 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cap4"]}: {e}')
-                cap4 = ''
-
-            try:
-                img_path_cap5 = os.path.join(IMAGES_PATH, r_val["cap5"])
-                if os.path.exists(img_path_cap5):
-                    cap5 = InlineImage(docx_tpl, img_path_cap5, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cap5"]}')
-                    cap5 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cap5"]}: {e}')
-                cap5 = ''
-
-            try:
-                img_path_cap6 = os.path.join(IMAGES_PATH, r_val["cap6"])
-                if os.path.exists(img_path_cap6):
-                    cap6 = InlineImage(docx_tpl, img_path_cap6, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cap6"]}')
-                    cap6 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cap6"]}: {e}')
-                cap6 = ''
-
-            try:
-                img_path_cap7 = os.path.join(IMAGES_PATH, r_val["cap7"])
-                if os.path.exists(img_path_cap7):
-                    cap7 = InlineImage(docx_tpl, img_path_cap7, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cap7"]}')
-                    cap7 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cap7"]}: {e}')
-                cap7 = ''
-
-            try:
-                img_path_cap8 = os.path.join(IMAGES_PATH, r_val["cap8"])
-                if os.path.exists(img_path_cap8):
-                    cap8 = InlineImage(docx_tpl, img_path_cap8, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cap8"]}')
-                    cap8 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cap8"]}: {e}')
-                cap8 = ''
-
-            try:
-                img_path_cap9 = os.path.join(IMAGES_PATH, r_val["cap9"])
-                if os.path.exists(img_path_cap9):
-                    cap9 = InlineImage(docx_tpl, img_path_cap9, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cap9"]}')
-                    cap9 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cap9"]}: {e}')
-                cap9 = ''
-
-            try:
-                img_path_cap10 = os.path.join(IMAGES_PATH, r_val["cap10"])
-                if os.path.exists(img_path_cap10):
-                    cap10 = InlineImage(
-                        docx_tpl, img_path_cap10, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cap10"]}')
-                    cap10 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cap10"]}: {e}')
-                cap10 = ''
-
-            try:
-                img_path_cap11 = os.path.join(IMAGES_PATH, r_val["cap11"])
-                if os.path.exists(img_path_cap11):
-                    cap11 = InlineImage(
-                        docx_tpl, img_path_cap11, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cap11"]}')
-                    cap11 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cap11"]}: {e}')
-                cap11 = ''
-
-            try:
-                img_path_cap12 = os.path.join(IMAGES_PATH, r_val["cap12"])
-                if os.path.exists(img_path_cap12):
-                    cap12 = InlineImage(
-                        docx_tpl, img_path_cap12, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["cap12"]}')
-                    cap12 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["cap12"]}: {e}')
-                cap12 = ''
-
-            try:
-                img_path_sim1 = os.path.join(IMAGES_PATH, r_val["sim1"])
-                if os.path.exists(img_path_sim1):
-                    sim1 = InlineImage(docx_tpl, img_path_sim1, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["sim1"]}')
-                    sim1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["sim1"]}: {e}')
-                sim1 = ''
-
-            try:
-                img_path_sim2 = os.path.join(IMAGES_PATH, r_val["sim2"])
-                if os.path.exists(img_path_sim2):
-                    sim2 = InlineImage(docx_tpl, img_path_sim2, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["sim2"]}')
-                    sim2 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["sim2"]}: {e}')
-                sim2 = ''
-
-            try:
-                img_path_sim3 = os.path.join(IMAGES_PATH, r_val["sim3"])
-                if os.path.exists(img_path_sim3):
-                    sim3 = InlineImage(docx_tpl, img_path_sim3, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["sim3"]}')
-                    sim3 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["sim3"]}: {e}')
-                sim3 = ''
-
-            try:
-                img_path_sim4 = os.path.join(IMAGES_PATH, r_val["sim4"])
-                if os.path.exists(img_path_sim4):
-                    sim4 = InlineImage(docx_tpl, img_path_sim4, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["sim4"]}')
-                    sim4 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["sim4"]}: {e}')
-                sim4 = ''
-
-            try:
-                img_path_sim5 = os.path.join(IMAGES_PATH, r_val["sim5"])
-                if os.path.exists(img_path_sim5):
-                    sim5 = InlineImage(docx_tpl, img_path_sim5, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["sim5"]}')
-                    sim5 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["sim5"]}: {e}')
-                sim5 = ''
-
-            try:
-                img_path_sim6 = os.path.join(IMAGES_PATH, r_val["sim6"])
-                if os.path.exists(img_path_sim6):
-                    sim6 = InlineImage(docx_tpl, img_path_sim6, height=Mm(60))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["sim6"]}')
-                    sim6 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["sim6"]}: {e}')
-                sim6 = ''
-
-            try:
-                img_path_techo = os.path.join(IMAGES_PATH, r_val["techo"])
-                if os.path.exists(img_path_techo):
-                    techo = InlineImage(
-                        docx_tpl, img_path_techo, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["techo"]}')
-                    techo = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["techo"]}: {e}')
-                techo = ''
-
-            try:
-                img_path_pisos = os.path.join(IMAGES_PATH, r_val["pisos"])
-                if os.path.exists(img_path_pisos):
-                    pisos = InlineImage(
-                        docx_tpl, img_path_pisos, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["pisos"]}')
-                    pisos = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["pisos"]}: {e}')
-                pisos = ''
-
-            try:
-                img_path_puerta = os.path.join(IMAGES_PATH, r_val["puerta"])
-                if os.path.exists(img_path_puerta):
-                    puerta = InlineImage(
-                        docx_tpl, img_path_puerta, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["puerta"]}')
-                    puerta = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["puerta"]}: {e}')
-                puerta = ''
-
-            try:
-                img_path_estantes = os.path.join(
-                    IMAGES_PATH, r_val["estantes"])
-                if os.path.exists(img_path_estantes):
-                    estantes = InlineImage(
-                        docx_tpl, img_path_estantes, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["estantes"]}')
-                    estantes = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["estantes"]}: {e}')
-                estantes = ''
-
-            try:
-                img_path_site = os.path.join(IMAGES_PATH, r_val["site"])
-                if os.path.exists(img_path_site):
-                    site = InlineImage(docx_tpl, img_path_site, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["site"]}')
-                    site = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["site"]}: {e}')
-                site = ''
-
-            try:
-                img_path_dh = os.path.join(IMAGES_PATH, r_val["dh"])
-                if os.path.exists(img_path_dh):
-                    dh = InlineImage(docx_tpl, img_path_dh, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["dh"]}')
-                    dh = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["dh"]}: {e}')
-                dh = ''
-
-            try:
-                img_path_ventanas = os.path.join(
-                    IMAGES_PATH, r_val["ventanas"])
-                if os.path.exists(img_path_ventanas):
-                    ventanas = InlineImage(
-                        docx_tpl, img_path_ventanas, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["ventanas"]}')
-                    ventanas = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["ventanas"]}: {e}')
-                ventanas = ''
-
-            try:
-                img_path_compresor = os.path.join(
-                    IMAGES_PATH, r_val["compresor"])
-                if os.path.exists(img_path_compresor):
-                    compresor = InlineImage(
-                        docx_tpl, img_path_compresor, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["compresor"]}')
-                    compresor = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["compresor"]}: {e}')
-                compresor = ''
-
-            try:
-                img_path_quimicos = os.path.join(
-                    IMAGES_PATH, r_val["quimicos"])
-                if os.path.exists(img_path_quimicos):
-                    quimicos = InlineImage(
-                        docx_tpl, img_path_quimicos, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["quimicos"]}')
-                    quimicos = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["quimicos"]}: {e}')
-                quimicos = ''
-
-            try:
-                img_path_tanques_gaso = os.path.join(
-                    IMAGES_PATH, r_val["tanques_gaso"])
-                if os.path.exists(img_path_tanques_gaso):
-                    tanques_gaso = InlineImage(
-                        docx_tpl, img_path_tanques_gaso, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["tanques_gaso"]}')
-                    tanques_gaso = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["tanques_gaso"]}: {e}')
-                tanques_gaso = ''
-
-            try:
-                img_path_paro = os.path.join(IMAGES_PATH, r_val["paro"])
-                if os.path.exists(img_path_paro):
-                    paro = InlineImage(docx_tpl, img_path_paro, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["paro"]}')
-                    paro = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["paro"]}: {e}')
-                paro = ''
-
-            try:
-                img_path_trampa_grasa = os.path.join(
-                    IMAGES_PATH, r_val["trampa_grasa"])
-                if os.path.exists(img_path_trampa_grasa):
-                    trampa_grasa = InlineImage(
-                        docx_tpl, img_path_trampa_grasa, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["trampa_grasa"]}')
-                    trampa_grasa = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["trampa_grasa"]}: {e}')
-                trampa_grasa = ''
-
-            try:
-                img_path_planta = os.path.join(IMAGES_PATH, r_val["planta"])
-                if os.path.exists(img_path_planta):
-                    planta = InlineImage(
-                        docx_tpl, img_path_planta, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["planta"]}')
-                    planta = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["planta"]}: {e}')
-                planta = ''
-
-            try:
-                img_path_deposito = os.path.join(
-                    IMAGES_PATH, r_val["deposito"])
-                if os.path.exists(img_path_deposito):
-                    deposito = InlineImage(
-                        docx_tpl, img_path_deposito, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["deposito"]}')
-                    deposito = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["deposito"]}: {e}')
-                deposito = ''
-
-            try:
-                img_path_mapa_satel = os.path.join(
-                    IMAGES_PATH, r_val["mapa_satel"])
-                if os.path.exists(img_path_mapa_satel):
-                    mapa_satel = InlineImage(
-                        docx_tpl, img_path_mapa_satel, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["mapa_satel"]}')
-                    mapa_satel = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["mapa_satel"]}: {e}')
-                mapa_satel = ''
-
-            try:
-                img_path_plano = os.path.join(IMAGES_PATH, r_val["plano"])
-                if os.path.exists(img_path_plano):
-                    plano = InlineImage(
-                        docx_tpl, img_path_plano, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["plano"]}')
-                    plano = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["plano"]}: {e}')
-                plano = ''
-
-            try:
-                img_path_inmueble1 = os.path.join(
-                    IMAGES_PATH, r_val["inmueble1"])
-                if os.path.exists(img_path_inmueble1):
-                    inmueble1 = InlineImage(
-                        docx_tpl, img_path_inmueble1, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["inmueble1"]}')
-                    inmueble1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["inmueble1"]}: {e}')
-                inmueble1 = ''
-
-            try:
-                img_path_inmueble2 = os.path.join(
-                    IMAGES_PATH, r_val["inmueble2"])
-                if os.path.exists(img_path_inmueble2):
-                    inmueble2 = InlineImage(
-                        docx_tpl, img_path_inmueble2, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["inmueble2"]}')
-                    inmueble2 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["inmueble2"]}: {e}')
-                inmueble2 = ''
-
-            try:
-                img_path_banio1 = os.path.join(IMAGES_PATH, r_val["banio1"])
-                if os.path.exists(img_path_banio1):
-                    banio1 = InlineImage(
-                        docx_tpl, img_path_banio1, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["banio1"]}')
-                    banio1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["banio1"]}: {e}')
-                banio1 = ''
-
-            try:
-                img_path_electrico1 = os.path.join(
-                    IMAGES_PATH, r_val["electrico1"])
-                if os.path.exists(img_path_electrico1):
-                    electrico1 = InlineImage(
-                        docx_tpl, img_path_electrico1, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["electrico1"]}')
-                    electrico1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["electrico1"]}: {e}')
-                electrico1 = ''
-
-            try:
-                img_path_fachada1 = os.path.join(
-                    IMAGES_PATH, r_val["fachada1"])
-                if os.path.exists(img_path_fachada1):
-                    fachada1 = InlineImage(
-                        docx_tpl, img_path_fachada1, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["fachada1"]}')
-                    fachada1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["fachada1"]}: {e}')
-                fachada1 = ''
-
-            try:
-                img_path_bateria = os.path.join(IMAGES_PATH, r_val["bateria"])
-                if os.path.exists(img_path_bateria):
-                    bateria = InlineImage(
-                        docx_tpl, img_path_bateria, height=Mm(50))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["bateria"]}')
-                    bateria = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["bateria"]}: {e}')
-                bateria = ''
-
-            try:
-                img_path_acta1 = os.path.join(IMAGES_PATH, r_val["acta1"])
-                if os.path.exists(img_path_acta1):
-                    acta1 = InlineImage(
-                        docx_tpl, img_path_acta1, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["acta1"]}')
-                    acta1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["acta1"]}: {e}')
-                acta1 = ''
-
-            try:
-                img_path_acta2 = os.path.join(IMAGES_PATH, r_val["acta2"])
-                if os.path.exists(img_path_acta2):
-                    acta2 = InlineImage(
-                        docx_tpl, img_path_acta2, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["acta2"]}')
-                    acta2 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["acta2"]}: {e}')
-                acta2 = ''
-
-            try:
-                img_path_crono_anual = os.path.join(
-                    IMAGES_PATH, r_val["crono_anual"])
-                if os.path.exists(img_path_crono_anual):
-                    crono_anual = InlineImage(
-                        docx_tpl, img_path_crono_anual, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["crono_anual"]}')
-                    crono_anual = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["crono_anual"]}: {e}')
-                crono_anual = ''
-
-            try:
-                img_path_mantto1 = os.path.join(IMAGES_PATH, r_val["mantto1"])
-                if os.path.exists(img_path_mantto1):
-                    mantto1 = InlineImage(
-                        docx_tpl, img_path_mantto1, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["mantto1"]}')
-                    mantto1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["mantto1"]}: {e}')
-                mantto1 = ''
-
-            try:
-                img_path_mantto2 = os.path.join(IMAGES_PATH, r_val["mantto2"])
-                if os.path.exists(img_path_mantto2):
-                    mantto2 = InlineImage(
-                        docx_tpl, img_path_mantto2, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["mantto2"]}')
-                    mantto2 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["mantto2"]}: {e}')
-                mantto2 = ''
-
-            try:
-                img_path_simulacro = os.path.join(
-                    IMAGES_PATH, r_val["simulacro"])
-                if os.path.exists(img_path_simulacro):
-                    simulacro = InlineImage(
-                        docx_tpl, img_path_simulacro, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["simulacro"]}')
-                    simulacro = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["simulacro"]}: {e}')
-                simulacro = ''
-
-            try:
-                img_path_capacitacion = os.path.join(
-                    IMAGES_PATH, r_val["capacitacion"])
-                if os.path.exists(img_path_capacitacion):
-                    capacitacion = InlineImage(
-                        docx_tpl, img_path_capacitacion, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["capacitacion"]}')
-                    capacitacion = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["capacitacion"]}: {e}')
-                capacitacion = ''
-
-            try:
-                img_path_inv_quim = os.path.join(
-                    IMAGES_PATH, r_val["inv_quim"])
-                if os.path.exists(img_path_inv_quim):
-                    inv_quim = InlineImage(
-                        docx_tpl, img_path_inv_quim, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["inv_quim"]}')
-                    inv_quim = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["inv_quim"]}: {e}')
-                inv_quim = ''
-
-            try:
-                img_path_inv_emer = os.path.join(
-                    IMAGES_PATH, r_val["inv_emer"])
-                if os.path.exists(img_path_inv_emer):
-                    inv_emer = InlineImage(
-                        docx_tpl, img_path_inv_emer, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["inv_emer"]}')
-                    inv_emer = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["inv_emer"]}: {e}')
-                inv_emer = ''
-
-            try:
-                img_path_bit_emer = os.path.join(
-                    IMAGES_PATH, r_val["bit_emer"])
-                if os.path.exists(img_path_bit_emer):
-                    bit_emer = InlineImage(
-                        docx_tpl, img_path_bit_emer, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["bit_emer"]}')
-                    bit_emer = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["bit_emer"]}: {e}')
-                bit_emer = ''
-
-            try:
-                img_path_insp_bot = os.path.join(
-                    IMAGES_PATH, r_val["insp_bot"])
-                if os.path.exists(img_path_insp_bot):
-                    insp_bot = InlineImage(
-                        docx_tpl, img_path_insp_bot, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["insp_bot"]}')
-                    insp_bot = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["insp_bot"]}: {e}')
-                insp_bot = ''
-
-            try:
-                img_path_insp_ext = os.path.join(
-                    IMAGES_PATH, r_val["insp_ext"])
-                if os.path.exists(img_path_insp_ext):
-                    insp_ext = InlineImage(
-                        docx_tpl, img_path_insp_ext, width=Mm(149))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["insp_ext"]}')
-                    insp_ext = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["insp_ext"]}: {e}')
-                insp_ext = ''
-
-            try:
-                img_path_insp_dh = os.path.join(IMAGES_PATH, r_val["insp_dh"])
-                if os.path.exists(img_path_insp_dh):
-                    insp_dh = InlineImage(
-                        docx_tpl, img_path_insp_dh, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["insp_dh"]}')
-                    insp_dh = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["insp_dh"]}: {e}')
-                insp_dh = ''
-
-            try:
-                img_path_insp_lamp = os.path.join(
-                    IMAGES_PATH, r_val["insp_lamp"])
-                if os.path.exists(img_path_insp_lamp):
-                    insp_lamp = InlineImage(
-                        docx_tpl, img_path_insp_lamp, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["insp_lamp"]}')
-                    insp_lamp = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["insp_lamp"]}: {e}')
-                insp_lamp = ''
-
-            try:
-                img_path_insp_alarm = os.path.join(
-                    IMAGES_PATH, r_val["insp_alarm"])
-                if os.path.exists(img_path_insp_alarm):
-                    insp_alarm = InlineImage(
-                        docx_tpl, img_path_insp_alarm, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["insp_alarm"]}')
-                    insp_alarm = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["insp_alarm"]}: {e}')
-                insp_alarm = ''
-
-            try:
-                img_path_ev_sim1 = os.path.join(IMAGES_PATH, r_val["ev_sim1"])
-                if os.path.exists(img_path_ev_sim1):
-                    ev_sim1 = InlineImage(
-                        docx_tpl, img_path_ev_sim1, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["ev_sim1"]}')
-                    ev_sim1 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim1"]}: {e}')
-                ev_sim1 = ''
-
-            try:
-                img_path_ev_sim2 = os.path.join(IMAGES_PATH, r_val["ev_sim2"])
-                if os.path.exists(img_path_ev_sim2):
-                    ev_sim2 = InlineImage(
-                        docx_tpl, img_path_ev_sim2, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["ev_sim2"]}')
-                    ev_sim2 = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim2"]}: {e}')
-                ev_sim2 = ''
-
-            try:
-                img_path_visitas = os.path.join(IMAGES_PATH, r_val["visitas"])
-                if os.path.exists(img_path_visitas):
-                    visitas = InlineImage(
-                        docx_tpl, img_path_visitas, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["visitas"]}')
-                    visitas = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["visitas"]}: {e}')
-                visitas = ''
-
-            try:
-                img_path_dir_emer = os.path.join(
-                    IMAGES_PATH, r_val["dir_emer"])
-                if os.path.exists(img_path_dir_emer):
-                    dir_emer = InlineImage(
-                        docx_tpl, img_path_dir_emer, width=Mm(155))
-                else:
-                    print(
-                        f'Advertencia: No se encontró la imagen {r_val["dir_emer"]}')
-                    dir_emer = ''
-            except Exception as e:
-                print(
-                    f'Advertencia: No se pudo cargar la imagen {r_val["dir_emer"]}: {e}')
-                dir_emer = ''
-
-            try:	
-                img_path_corresp1 = os.path.join(IMAGES_PATH, r_val["corresp1"])	
-                if os.path.exists(img_path_corresp1):	
-                    corresp1 = InlineImage(docx_tpl, img_path_corresp1, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["corresp1"]}')	
-                    corresp1 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["corresp1"]}: {e}')	
-                corresp1 = ''
-
-            try:	
-                img_path_corresp2 = os.path.join(IMAGES_PATH, r_val["corresp2"])	
-                if os.path.exists(img_path_corresp2):	
-                    corresp2 = InlineImage(docx_tpl, img_path_corresp2, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["corresp2"]}')	
-                    corresp2 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["corresp2"]}: {e}')	
-                corresp2 = ''
-            
-            try:	
-                img_path_corresp3 = os.path.join(IMAGES_PATH, r_val["corresp3"])	
-                if os.path.exists(img_path_corresp3):	
-                    corresp3 = InlineImage(docx_tpl, img_path_corresp3, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["corresp3"]}')	
-                    corresp3 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["corresp3"]}: {e}')	
-                corresp3 = ''
-            
-            try:	
-                img_path_carta_respon = os.path.join(IMAGES_PATH, r_val["carta_respon"])	
-                if os.path.exists(img_path_carta_respon):	
-                    carta_respon = InlineImage(docx_tpl, img_path_carta_respon, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["carta_respon"]}')	
-                    carta_respon = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["carta_respon"]}: {e}')	
-                carta_respon = ''
-            
-            try:	
-                img_path_registro1 = os.path.join(IMAGES_PATH, r_val["registro1"])	
-                if os.path.exists(img_path_registro1):	
-                    registro1 = InlineImage(docx_tpl, img_path_registro1, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["registro1"]}')	
-                    registro1 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["registro1"]}: {e}')	
-                registro1 = ''
-            
-            try:	
-                img_path_registro2 = os.path.join(IMAGES_PATH, r_val["registro2"])	
-                if os.path.exists(img_path_registro2):	
-                    registro2 = InlineImage(docx_tpl, img_path_registro2, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["registro2"]}')	
-                    registro2 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["registro2"]}: {e}')	
-                registro2 = ''
-            
-            try:	
-                img_path_ries_circ = os.path.join(IMAGES_PATH, r_val["ries_circ"])	
-                if os.path.exists(img_path_ries_circ):	
-                    ries_circ = InlineImage(docx_tpl, img_path_ries_circ, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["ries_circ"]}')	
-                    ries_circ = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["ries_circ"]}: {e}')	
-                ries_circ = ''
-            
-            try:	
-                img_path_mapa_ext = os.path.join(IMAGES_PATH, r_val["mapa_ext"])
-                if os.path.exists(img_path_mapa_ext):
-                    mapa_ext = InlineImage(docx_tpl, img_path_mapa_ext, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["mapa_ext"]}')	
-                    mapa_ext = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["mapa_ext"]}: {e}')	
-                mapa_ext = ''
-            
-            try:	
-                img_path_rec_ext = os.path.join(IMAGES_PATH, r_val["rec_ext"])	
-                if os.path.exists(img_path_rec_ext):	
-                    rec_ext = InlineImage(docx_tpl, img_path_rec_ext, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["rec_ext"]}')	
-                    rec_ext = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["rec_ext"]}: {e}')	
-                rec_ext = ''
-            
-            try:	
-                img_path_mayor_ries = os.path.join(IMAGES_PATH, r_val["mayor_ries"])	
-                if os.path.exists(img_path_mayor_ries):	
-                    mayor_ries = InlineImage(docx_tpl, img_path_mayor_ries, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["mayor_ries"]}')	
-                    mayor_ries = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["mayor_ries"]}: {e}')	
-                mayor_ries = ''
-            
-            try:	
-                img_path_menor_ries = os.path.join(IMAGES_PATH, r_val["menor_ries"])	
-                if os.path.exists(img_path_menor_ries):	
-                    menor_ries = InlineImage(docx_tpl, img_path_menor_ries, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["menor_ries"]}')	
-                    menor_ries = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["menor_ries"]}: {e}')	
-                menor_ries = ''
-            
-            try:	
-                img_path_zona_evac = os.path.join(IMAGES_PATH, r_val["zona_evac"])	
-                if os.path.exists(img_path_zona_evac):	
-                    zona_evac = InlineImage(docx_tpl, img_path_zona_evac, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["zona_evac"]}')	
-                    zona_evac = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["zona_evac"]}: {e}')	
-                zona_evac = ''
-
-            try:	
-                img_path_firma = os.path.join(IMAGES_PATH, r_val["firma"])	
-                if os.path.exists(img_path_firma):	
-                    firma = InlineImage(docx_tpl, img_path_firma, width=Mm(70))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["firma"]}')	
-                    firma = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["firma"]}: {e}')	
-                firma = ''
-
-            try:	
-                img_path_layout1 = os.path.join(IMAGES_PATH, r_val["layout1"])	
-                if os.path.exists(img_path_layout1):	
-                    layout1 = InlineImage(docx_tpl, img_path_layout1, height=Mm(100))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["layout1"]}')	
-                    layout1 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout1"]}: {e}')	
-                layout1 = ''
-            
-            try:	
-                img_path_layout2 = os.path.join(IMAGES_PATH, r_val["layout2"])	
-                if os.path.exists(img_path_layout2):	
-                    layout2 = InlineImage(docx_tpl, img_path_layout2, height=Mm(100))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["layout2"]}')	
-                    layout2 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout2"]}: {e}')	
-                layout2 = ''
-            
-            try:	
-                img_path_layout3 = os.path.join(IMAGES_PATH, r_val["layout3"])
-                if os.path.exists(img_path_layout3):	
-                    layout3 = InlineImage(docx_tpl, img_path_layout3, height=Mm(100))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["layout3"]}')	
-                    layout3 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout3"]}: {e}')	
-                layout3 = ''
-            
-            try:	
-                img_path_layout4 = os.path.join(IMAGES_PATH, r_val["layout4"])	
-                if os.path.exists(img_path_layout4):
-                    layout4 = InlineImage(docx_tpl, img_path_layout4, height=Mm(100))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["layout4"]}')	
-                    layout4 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout4"]}: {e}')	
-                layout4 = ''
-            
-            try:	
-                img_path_layout5 = os.path.join(IMAGES_PATH, r_val["layout5"])	
-                if os.path.exists(img_path_layout5):	
-                    layout5 = InlineImage(docx_tpl, img_path_layout5, height=Mm(100))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["layout5"]}')	
-                    layout5 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout5"]}: {e}')
-                layout5 = ''
-            
-            try:	
-                img_path_layout6 = os.path.join(IMAGES_PATH, r_val["layout6"])	
-                if os.path.exists(img_path_layout6):	
-                    layout6 = InlineImage(docx_tpl, img_path_layout6, height=Mm(100))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["layout6"]}')	
-                    layout6 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout6"]}: {e}')
-                layout6 = ''
-            
-            try:	
-                img_path_layout7 = os.path.join(IMAGES_PATH, r_val["layout7"])	
-                if os.path.exists(img_path_layout7):	
-                    layout7 = InlineImage(docx_tpl, img_path_layout7, height=Mm(100))
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["layout7"]}')
-                    layout7 = ''	
-            except Exception as e:
-                    print(f'Advertencia: No se pudo cargar la imagen {r_val["layout7"]}: {e}')	
-                    layout7 = ''
-            
-            try:	
-                img_path_layout8 = os.path.join(IMAGES_PATH, r_val["layout8"])
-                if os.path.exists(img_path_layout8):	
-                    layout8 = InlineImage(docx_tpl, img_path_layout8, height=Mm(100))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["layout8"]}')	
-                    layout8 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout8"]}: {e}')
-                layout8 = ''
-            
-            try:	
-                img_path_layout9 = os.path.join(IMAGES_PATH, r_val["layout9"])	
-                if os.path.exists(img_path_layout9):	
-                    layout9 = InlineImage(docx_tpl, img_path_layout9, height=Mm(100))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["layout9"]}')
-                    layout9 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout9"]}: {e}')	
-                layout9 = ''
-            
-            try:	
-                img_path_layout10 = os.path.join(IMAGES_PATH, r_val["layout10"])
-                if os.path.exists(img_path_layout10):	
-                    layout10 = InlineImage(docx_tpl, img_path_layout10, height=Mm(100))
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["layout10"]}')	
-                    layout10 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout10"]}: {e}')	
-                layout10 = ''
-            
-            try:	
-                img_path_layout11 = os.path.join(IMAGES_PATH, r_val["layout11"])	
-                if os.path.exists(img_path_layout11):	
-                    layout11 = InlineImage(docx_tpl, img_path_layout11, height=Mm(100))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["layout11"]}')	
-                    layout11 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout11"]}: {e}')	
-                layout11 = ''
-            
-            try:	
-                img_path_layout12 = os.path.join(IMAGES_PATH, r_val["layout12"])	
-                if os.path.exists(img_path_layout12):
-                        layout12 = InlineImage(docx_tpl, img_path_layout12, height=Mm(100))
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["layout12"]}')	
-                    layout12 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["layout12"]}: {e}')	
-                layout12 = ''
-
-            try:	
-                img_path_ev_sim3 = os.path.join(IMAGES_PATH, r_val["ev_sim3"])	
-                if os.path.exists(img_path_ev_sim3):	
-                    ev_sim3 = InlineImage(docx_tpl, img_path_ev_sim3, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["ev_sim3"]}')	
-                    ev_sim3 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim3"]}: {e}')	
-                ev_sim3 = ''
-            
-            try:	
-                img_path_ev_sim4 = os.path.join(IMAGES_PATH, r_val["ev_sim4"])	
-                if os.path.exists(img_path_ev_sim4):	
-                    ev_sim4 = InlineImage(docx_tpl, img_path_ev_sim4, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["ev_sim4"]}')	
-                    ev_sim4 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim4"]}: {e}')	
-                ev_sim4 = ''
-            
-            try:	
-                img_path_ev_sim5 = os.path.join(IMAGES_PATH, r_val["ev_sim5"])	
-                if os.path.exists(img_path_ev_sim5):	
-                    ev_sim5 = InlineImage(docx_tpl, img_path_ev_sim5, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["ev_sim5"]}')	
-                    ev_sim5 = ''	
-            except Exception as e:
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim5"]}: {e}')	
-                ev_sim5 = ''
-            
-            try:	
-                img_path_ev_sim6 = os.path.join(IMAGES_PATH, r_val["ev_sim6"])	
-                if os.path.exists(img_path_ev_sim6):	
-                    ev_sim6 = InlineImage(docx_tpl, img_path_ev_sim6, width=Mm(155))
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["ev_sim6"]}')	
-                    ev_sim6 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim6"]}: {e}')	
-                ev_sim6 = ''
-            
-            try:	
-                img_path_ev_sim7 = os.path.join(IMAGES_PATH, r_val["ev_sim7"])	
-                if os.path.exists(img_path_ev_sim7):	
-                    ev_sim7 = InlineImage(docx_tpl, img_path_ev_sim7, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["ev_sim7"]}')	
-                    ev_sim7 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim7"]}: {e}')	
-                ev_sim7 = ''
-            
-            try:	
-                img_path_ev_sim8 = os.path.join(IMAGES_PATH, r_val["ev_sim8"])	
-                if os.path.exists(img_path_ev_sim8):	
-                    ev_sim8 = InlineImage(docx_tpl, img_path_ev_sim8, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["ev_sim8"]}')
-                    ev_sim8 = ''	
-            except Exception as e:
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["ev_sim8"]}: {e}')	
-                ev_sim8 = ''
-
-            try:	
-                img_path_acta3 = os.path.join(IMAGES_PATH, r_val["acta3"])	
-                if os.path.exists(img_path_acta3):	
-                    acta3 = InlineImage(docx_tpl, img_path_acta3, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["acta3"]}')	
-                    acta3 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["acta3"]}: {e}')	
-                acta3 = ''
-            
-            try:	
-                img_path_acta4 = os.path.join(IMAGES_PATH, r_val["acta4"])	
-                if os.path.exists(img_path_acta4):	
-                    acta4 = InlineImage(docx_tpl, img_path_acta4, width=Mm(155))	
-                else:	
-                    print(f'Advertencia: No se encontró la imagen {r_val["acta4"]}')	
-                    acta4 = ''	
-            except Exception as e:	
-                print(f'Advertencia: No se pudo cargar la imagen {r_val["acta4"]}: {e}')	
-                acta4 = ''
-
-
-            # Crear contexto
-            context = {
-                # 'id': r_val['id'],
-                'pipc': r_val['pipc'],
-                'razon_social': r_val['razon_social'],
-                'nombre_comercial': r_val['nombre_comercial'],
-                'rfc': r_val['rfc'],
-                'codigo_gasolinera': r_val['codigo_gasolinera'],
-                'giro_comercial': r_val['giro_comercial'],
-                'descripcion_actividades': r_val['descripcion_actividades'],
-                'calle': r_val['calle'],
-                'no_exterior': r_val['no_exterior'],
-                'no_interior': r_val['no_interior'],
-                'colonia_barrio': r_val['colonia_barrio'],
-                'municipio': r_val['municipio'],
-                'estado': r_val['estado'],
-                'codigo_postal': r_val['codigo_postal'],
-                'telefono': r_val['telefono'],
-                'email': r_val['email'],
-                'antiguedad_inmueble': r_val['antiguedad_inmueble'],
-                'inicio_operaciones': r_val['inicio_operaciones'],
-                'registro_perito' : r_val['registro_perito'],
-                'no_registro' : r_val['no_registro'],
-                'terreno_m2': r_val['terreno_m2'],
-                'construccion_m2': r_val['construccion_m2'],
-                'edificios': r_val['edificios'],
-                'niveles': r_val['niveles'],
-                'accesos': r_val['accesos'],
-                'salidas_emergencia': r_val['salidas_emergencia'],
-                'escaleras': r_val['escaleras'],
-                'escaleras_emergencia': r_val['escaleras_emergencia'],
-                'estacionamiento': r_val['estacionamiento'],
-                'representante_legal': r_val['representante_legal'],
-                'responsable_pipc': r_val['responsable_pipc'],
-                'trabajadores': r_val['trabajadores'],
-                'poblacion_discapacidad': r_val['poblacion_discapacidad'],
-                'hombres': r_val['hombres'],
-                'mujeres': r_val['mujeres'],
-                'hombre_dicapacidad': r_val['hombre_dicapacidad'],
-                'mujeres_discapacidad': r_val['mujeres_discapacidad'],
-                'turnos': r_val['turnos'],
-                'visitantes': r_val['visitantes'],
-                'proveedores': r_val['proveedores'],
-                'dias': r_val['dias'],
-                'horario': r_val['horario'],
-                'senial_informacion': r_val['senial_informacion'],
-                'botiquin_emer': r_val['botiquin_emer'],
-                'ubicación_bot': r_val['ubicación_bot'],
-                'extintor': r_val['extintor'],
-                'ubicación_ext': r_val['ubicación_ext'],
-                'ext_pqs': r_val['ext_pqs'],
-                'ext_co2': r_val['ext_co2'],
-                'paros_emergencia': r_val['paros_emergencia'],
-                'ubicación_pe': r_val['ubicación_pe'],
-                'venteo_sist': r_val['venteo_sist'],
-                'ubicación_vent': r_val['ubicación_vent'],
-                'planta_emer': r_val['planta_emer'],
-                'ubicación_plant': r_val['ubicación_plant'],
-                'met_alarma': r_val['met_alarma'],
-                'tipo_alarma': r_val['tipo_alarma'],
-                'silbato': r_val['silbato'],
-                'estrobo': r_val['estrobo'],
-                'ubicacion_alarma': r_val['ubicacion_alarma'],
-                'dh_int' : r_val['dh_int'],
-                'dh_ext' : r_val['dh_ext'],
-                'detectores_humo': r_val['detectores_humo'],
-                'ubicación_dh': r_val['ubicación_dh'],
-                'ruta_evac': r_val['ruta_evac'],
-                'escaleras': r_val['escaleras'],
-                'salida_emerg': r_val['salida_emerg'],
-                'zona_menor_rg': r_val['zona_menor_rg'],
-                'punto_reunion': r_val['punto_reunion'],
-                'sismo_incendio': r_val['sismo_incendio'],
-                'riesgo_electrico': r_val['riesgo_electrico'],
-                'senial_prohibicion': r_val['senial_prohibicion'],
-                'no_fumar': r_val['no_fumar'],
-                'area_restrig': r_val['area_restrig'],
-                'apague_motor': r_val['apague_motor'],
-                'no_celular': r_val['no_celular'],
-                'no_gorra_lentes': r_val['no_gorra_lentes'],
-                'uso_epp': r_val['uso_epp'],
-                'detectores_ext' : r_val['detectores_ext'],
-                'detectores_mov': r_val['detectores_mov'],
-                'ubicación_mov': r_val['ubicación_mov'],
-                'site_emer': r_val['site_emer'],
-                'ubicacion_site': r_val['ubicacion_site'],
-                'hidrantes': r_val['hidrantes'],
-                'aspersores': r_val['aspersores'],
-                'bomberos': r_val['bomberos'],
-                'ubicacion_bombero': r_val['ubicacion_bombero'],
-                'detector_gas': r_val['detector_gas'],
-                'ubicación_gas': r_val['ubicación_gas'],
-                'equipo_brigada': r_val['equipo_brigada'],
-                'ubicacion_brigada': r_val['ubicacion_brigada'],
-                'lampara': r_val['lampara'],
-                'ubicacion_lampara': r_val['ubicacion_lampara'],
-                'baterias': r_val['baterias'],
-                'ubiacion_baterias': r_val['ubiacion_baterias'],
-                'tambo_arena': r_val['tambo_arena'],
-                'ubicacion_tambo': r_val['ubicacion_tambo'],
-                'tanques': r_val['tanques'],
-                'tanque_1': r_val['tanque_1'],
-                'tanque_2': r_val['tanque_2'],
-                'tanque_3': r_val['tanque_3'],
-                'riesgo1' : r_val['riesgo1'],
-                'riesgo2' : r_val['riesgo2'],
-                'riesgo3' : r_val['riesgo3'],
-                'riesgo4' : r_val['riesgo4'],
-                'medidas_ries1' : r_val['medidas_ries1'],
-                'medidas_ries2' : r_val['medidas_ries2'],
-                'medidas_ries3' : r_val['medidas_ries3'],
-                'medidas_ries4' : r_val['medidas_ries4'],
-                'dia': r_val['dia'],
-                'mes': r_val['mes'],
-                'anio': r_val['anio'],
-                'coordenadas': r_val['coordenadas'],
-                'norte': r_val['norte'],
-                'sur': r_val['sur'],
-                'este': r_val['este'],
-                'oeste': r_val['oeste'],
-                'ref_llegar': r_val['ref_llegar'],
-                'ley': r_val['ley'],
-                'reglamento': r_val['reglamento'],
-                'm_dir': r_val['m_dir'],
-                'coord_suplente': r_val['coord_suplente'],
-                'coord_sup_puesto' : r_val['coord_sup_puesto'],
-                'm_jef_caj': r_val['m_jef_caj'],
-                'evacuacion': r_val['evacuacion'],
-                'evac_puesto': r_val['evac_puesto'],
-                'm_evac': r_val['m_evac'],
-                'evac_suplente': r_val['evac_suplente'],
-                'supl_evac_pue': r_val['supl_evac_pue'],
-                'm_supl_evac': r_val['m_supl_evac'],
-                'incendios': r_val['incendios'],
-                'incen_puesto': r_val['incen_puesto'],
-                'm_inc': r_val['m_inc'],
-                'inc_suplente': r_val['inc_suplente'],
-                'supl_inc_puesto': r_val['supl_inc_puesto'],
-                'm_supl_inc': r_val['m_supl_inc'],
-                'primeros_auxilios': r_val['primeros_auxilios'],
-                'prim_aux_puesto': r_val['prim_aux_puesto'],
-                'm_prim_aux': r_val['m_prim_aux'],
-                'aux_suplente': r_val['aux_suplente'],
-                'supl_prim_aux_puesto': r_val['supl_prim_aux_puesto'],
-                'm_supl_paux': r_val['m_supl_paux'],
-                'busqueda': r_val['busqueda'],
-                'busq_puesto': r_val['busq_puesto'],
-                'm_busq': r_val['m_busq'],
-                'busq_suplente': r_val['busq_suplente'],
-                'supl_busq_puesto': r_val['supl_busq_puesto'],
-                'm_supl_busq': r_val['m_supl_busq'],
-                'descrip_gi': r_val['descrip_gi'],
-                'gas_inflamable': r_val['gas_inflamable'],
-                'valor_gi': r_val['valor_gi'],
-                'descrp_li': r_val['descrp_li'],
-                'liquido_inflamable': r_val['liquido_inflamable'],
-                'valor_li': r_val['valor_li'],
-                'descrip_lc': r_val['descrip_lc'],
-                'liquido_combustible': r_val['liquido_combustible'],
-                'valor_lc': r_val['valor_lc'],
-                'descrip_sc': r_val['descrip_sc'],
-                'solido_combusible': r_val['solido_combusible'],
-                'valor_sc': r_val['valor_sc'],
-                'valor_gri' : r_val['valor_gri'],
-                'tipo_riesgo': r_val['tipo_riesgo'],
-                'nombre1': r_val['nombre1'],
-                'puesto1': r_val['puesto1'],
-                'm1': r_val['m1'],
-                'nombre2': r_val['nombre2'],
-                'puesto2': r_val['puesto2'],
-                'm2': r_val['m2'],
-                'barretas' : r_val['barretas'],
-                'barretas_ubicacion' : r_val['barretas_ubicacion'],
-                'banderines' : r_val['banderines'],
-                'banderines_ubicacion' : r_val['banderines_ubicacion'],
-                'casco' : r_val['casco'],
-                'casco_ubicacion' : r_val['casco_ubicacion'],
-                'guantes' : r_val['guantes'],
-                'guantes_ubicacion' : r_val['guantes_ubicacion'],
-                'linterna' : r_val['linterna'],
-                'linterna_ubicacion' : r_val['linterna_ubicacion'],
-                'pala' : r_val['pala'],
-                'pala_ubicacion' : r_val['pala_ubicacion'],
-                'pico' : r_val['pico'],
-                'pico_ubicacion' : r_val['pico_ubicacion'],
-                'camilla' : r_val['camilla'],
-                'camilla_ubicacion' : r_val['camilla_ubicacion'],
-                'logo1': logo1,
-                'logo2': logo2,
-                'fachada': fachada,
-                'mapa': mapa,
-                'esc_emer': esc_emer,
-                'mueble1': mueble1,
-                'mueble2': mueble2,
-                'venteo': venteo,
-                'manguera': manguera,
-                'electrico': electrico,
-                'banio': banio,
-                'cisterna': cisterna,
-                'sismo': sismo,
-                'inundacion': inundacion,
-                'torm_elect': torm_elect,
-                'incendio': incendio,
-                'influenza': influenza,
-                'radiacion': radiacion,
-                'ext1': ext1,
-                'ext2': ext2,
-                'ext3': ext3,
-                'ext4': ext4,
-                'botiquin': botiquin,
-                'ruta1': ruta1,
-                'ruta2': ruta2,
-                'ruta3': ruta3,
-                'salida': salida,
-                'alarma': alarma,
-                'prohib1': prohib1,
-                'prohib2': prohib2,
-                'prohib3': prohib3,
-                'prohib4': prohib4,
-                'layout': layout,
-                'cap1': cap1,
-                'cap2': cap2,
-                'cap3': cap3,
-                'cap4': cap4,
-                'cap5': cap5,
-                'cap6': cap6,
-                'cap7': cap7,
-                'cap8': cap8,
-                'cap9': cap9,
-                'cap10': cap10,
-                'cap11': cap11,
-                'cap12': cap12,
-                'sim1': sim1,
-                'sim2': sim2,
-                'sim3': sim3,
-                'sim4': sim4,
-                'sim5': sim5,
-                'sim6': sim6,
-                'techo': techo,
-                'pisos': pisos,
-                'puerta': puerta,
-                'estantes': estantes,
-                'site': site,
-                'dh': dh,
-                'ventanas': ventanas,
-                'compresor': compresor,
-                'quimicos': quimicos,
-                'tanques_gaso': tanques_gaso,
-                'paro': paro,
-                'trampa_grasa': trampa_grasa,
-                'planta': planta,
-                'deposito': deposito,
-                'mapa_satel': mapa_satel,
-                'plano': plano,
-                'inmueble1': inmueble1,
-                'inmueble2': inmueble2,
-                'banio1': banio1,
-                'electrico1': electrico1,
-                'fachada1': fachada1,
-                'bateria': bateria,
-                'acta1': acta1,
-                'acta2': acta2,
-                'crono_anual': crono_anual,
-                'mantto1': mantto1,
-                'mantto2': mantto2,
-                'simulacro': simulacro,
-                'capacitacion': capacitacion,
-                'inv_quim': inv_quim,
-                'inv_emer': inv_emer,
-                'bit_emer': bit_emer,
-                'insp_bot': insp_bot,
-                'insp_ext': insp_ext,
-                'insp_dh': insp_dh,
-                'insp_lamp': insp_lamp,
-                'insp_alarm': insp_alarm,
-                'ev_sim1': ev_sim1,
-                'ev_sim2': ev_sim2,
-                'visitas': visitas,
-                'dir_emer': dir_emer,
-                'corresp1': corresp1,
-                'corresp2': corresp2,
-                'corresp3': corresp3,
-                'carta_respon': carta_respon,
-                'registro1': registro1,
-                'registro2': registro2,
-                'ries_circ': ries_circ,
-                'mapa_ext': mapa_ext,
-                'rec_ext': rec_ext,
-                'mayor_ries': mayor_ries,
-                'menor_ries': menor_ries,
-                'zona_evac': zona_evac,
-                'firma': firma,
-                'layout1': layout1,
-                'layout2': layout2,
-                'layout3': layout3,
-                'layout4': layout4,
-                'layout5': layout5,
-                'layout6': layout6,
-                'layout7': layout7,
-                'layout8': layout8,
-                'layout9': layout9,
-                'layout10': layout10,
-                'layout11': layout11,
-                'layout12': layout12,
-                'ev_sim3': ev_sim3,
-                'ev_sim4': ev_sim4,
-                'ev_sim5': ev_sim5,
-                'ev_sim6': ev_sim6,
-                'ev_sim7': ev_sim7,
-                'ev_sim8': ev_sim8,
-                'acta3': acta3,
-                'acta4': acta4
-            }
-
-            try:
-
-                # Renderizamos usando el contexto creado
-                docx_tpl.render(context)
-
-                # Guardar documento
-                if idx == 1:
-                    nombre_pipc = '1. PIPC ' + \
-                        r_val['nombre_comercial'] + '.docx'
-                elif idx == 2:
-                    nombre_pipc = '2. MEMORIA FOTOGRAFICA ' + \
-                        r_val['nombre_comercial'] + '.docx'
-                elif idx == 3:
-                    nombre_pipc = '3. RIESGO DE INCENDIO ' + \
-                        r_val['nombre_comercial'] + '.docx'
-                    
-                elif idx == 4:
-                    nombre_pipc = '4. CARTAS GOWER ' + \
-                        r_val['nombre_comercial'] + '.docx'
-                    
-                elif idx == 5:
-                    nombre_pipc = '5. CARTAS NOE ' + \
-                        r_val['nombre_comercial'] + '.docx'
-                    
-                elif idx == 6:
-                    nombre_pipc = '6. LEVANTAMIENTO ' + \
-                        r_val['nombre_comercial'] + '.docx'
-
-                # Guardar el documento con un nombre único
-                docx_tpl.save(OUTPUT_PATH + '\\' + nombre_pipc)
-
-            except Exception as e:
-                print(f'Error al guardar el documento: {str(e)}')
-
-# Rutina principal
-
-
+        docx_tpl = DocxTemplate(plantilla_path)
+
+        # Cargar las imágenes
+        logo1 = cargar_imagen(docx_tpl, 'logo1', 'logo1.jpg', 145, 'height',datos_airtable)
+        logo2 = cargar_imagen(docx_tpl, 'logo2', 'logo2.jpg', 15, 'heigth',datos_airtable)
+        fachada = cargar_imagen(docx_tpl, 'fachada', 'fachada.jpg', 150, 'width', datos_airtable)
+        mapa = cargar_imagen(docx_tpl, 'mapa', 'mapa.png', 144, 'width', datos_airtable)
+        esc_emer = cargar_imagen(docx_tpl, 'esc_emer', 'esc_emer.jpg', 50, 'height', datos_airtable)
+        mueble1 = cargar_imagen(docx_tpl, 'mueble1', 'mueble (1).jpg', 50, 'height', datos_airtable)
+        mueble2 = cargar_imagen(docx_tpl, 'mueble2', 'mueble (2).jpg', 50, 'height', datos_airtable)
+        venteo = cargar_imagen(docx_tpl, 'venteo', 'venteo.jpg', 50, 'height', datos_airtable)
+        manguera = cargar_imagen(docx_tpl, 'manguera', 'manguera.jpg', 50, 'height', datos_airtable)
+        electrico = cargar_imagen(docx_tpl, 'electrico', 'electrico.jpg', 50, 'height', datos_airtable)
+        banio = cargar_imagen(docx_tpl, 'banio', 'banio.jpg', 50, 'height', datos_airtable)
+        cisterna = cargar_imagen(docx_tpl, 'cisterna', 'cisterna.jpg', 50, 'height', datos_airtable)
+        sismo = cargar_imagen(docx_tpl, 'sismo', 'sismo.png', 155, 'width', datos_airtable)
+        inundacion = cargar_imagen(docx_tpl, 'inundacion', 'inundacion.png', 155, 'width', datos_airtable)
+        torm_elect = cargar_imagen(docx_tpl, 'torm_elect', 'torm_elect.png', 155, 'width', datos_airtable)
+        incendio = cargar_imagen(docx_tpl, 'incendio', 'incendio.png', 155, 'width', datos_airtable)
+        influenza = cargar_imagen(docx_tpl, 'influenza', 'influenza.png', 155, 'width', datos_airtable)
+        radiacion = cargar_imagen(docx_tpl, 'radiacion', 'radiacion.png', 155, 'width', datos_airtable)
+        ext1 = cargar_imagen(docx_tpl, 'ext1', 'ext (1).jpg', 50, 'height', datos_airtable)
+        ext2 = cargar_imagen(docx_tpl, 'ext2', 'ext (2).jpg', 50, 'height', datos_airtable)
+        ext3 = cargar_imagen(docx_tpl, 'ext3', 'ext (3).jpg', 50, 'height', datos_airtable)
+        ext4 = cargar_imagen(docx_tpl, 'ext4', 'ext (4).jpg', 50, 'height', datos_airtable)
+        botiquin = cargar_imagen(docx_tpl, 'botiquin', 'botiquin.jpg', 50, 'height', datos_airtable)
+        ruta1 = cargar_imagen(docx_tpl, 'ruta1', 'ruta (1).jpg', 50, 'height', datos_airtable)
+        ruta2 = cargar_imagen(docx_tpl, 'ruta2', 'ruta (2).jpg', 50, 'height', datos_airtable)
+        ruta3 = cargar_imagen(docx_tpl, 'ruta3', 'ruta (3).jpg', 50, 'height', datos_airtable)
+        salida = cargar_imagen(docx_tpl, 'salida', 'salida.jpg', 50, 'height', datos_airtable)
+        alarma = cargar_imagen(docx_tpl, 'alarma', 'alarma.jpg', 50, 'height', datos_airtable)
+        prohib1 = cargar_imagen(docx_tpl, 'prohib1', 'prohib (1).jpg', 50, 'height', datos_airtable)
+        prohib2 = cargar_imagen(docx_tpl, 'prohib2', 'prohib (2).jpg', 50, 'height', datos_airtable)
+        prohib3 = cargar_imagen(docx_tpl, 'prohib3', 'prohib (3).jpg', 50, 'height', datos_airtable)
+        prohib4 = cargar_imagen(docx_tpl, 'prohib4', 'prohib (4).jpg', 50, 'height', datos_airtable)
+        layout = cargar_imagen(docx_tpl, 'layout', 'layout.png', 155, 'width', datos_airtable)
+        cap1 = cargar_imagen(docx_tpl, 'cap1', 'cap (1).jpg', 60, 'height', datos_airtable)
+        cap2 = cargar_imagen(docx_tpl, 'cap2', 'cap (2).jpg', 60, 'height', datos_airtable)
+        cap3 = cargar_imagen(docx_tpl, 'cap3', 'cap (3).jpg', 60, 'height', datos_airtable)
+        cap4 = cargar_imagen(docx_tpl, 'cap4', 'cap (4).jpg', 60, 'height', datos_airtable)
+        cap5 = cargar_imagen(docx_tpl, 'cap5', 'cap (5).jpg', 60, 'height', datos_airtable)
+        cap6 = cargar_imagen(docx_tpl, 'cap6', 'cap (6).jpg', 60, 'height', datos_airtable)
+        cap7 = cargar_imagen(docx_tpl, 'cap7', 'cap (7).jpg', 60, 'height', datos_airtable)
+        cap8 = cargar_imagen(docx_tpl, 'cap8', 'cap (8).jpg', 60, 'height', datos_airtable)
+        cap9 = cargar_imagen(docx_tpl, 'cap9', 'cap (9).jpg', 60, 'height', datos_airtable)
+        cap10 = cargar_imagen(docx_tpl, 'cap10', 'cap (10).jpg', 60, 'height', datos_airtable)
+        cap11 = cargar_imagen(docx_tpl, 'cap11', 'cap (11).jpg', 60, 'height', datos_airtable)
+        cap12 = cargar_imagen(docx_tpl, 'cap12', 'cap (12).jpg', 60, 'height', datos_airtable)
+        sim1 = cargar_imagen(docx_tpl, 'sim1', 'sim (1).jpg', 60, 'height', datos_airtable)
+        sim2 = cargar_imagen(docx_tpl, 'sim2', 'sim (2).jpg', 60, 'height', datos_airtable)
+        sim3 = cargar_imagen(docx_tpl, 'sim3', 'sim (3).jpg', 60, 'height', datos_airtable)
+        sim4 = cargar_imagen(docx_tpl, 'sim4', 'sim (4).jpg', 60, 'height', datos_airtable)
+        sim5 = cargar_imagen(docx_tpl, 'sim5', 'sim (5).jpg', 60, 'height', datos_airtable)
+        sim6 = cargar_imagen(docx_tpl, 'sim6', 'sim (6).jpg', 60, 'height', datos_airtable)
+        techo = cargar_imagen(docx_tpl, 'techo', 'techo.jpg', 60, 'height', datos_airtable)
+        pisos = cargar_imagen(docx_tpl, 'pisos', 'pisos.jpg', 50, 'height', datos_airtable)
+        puerta = cargar_imagen(docx_tpl, 'puerta', 'puerta.jpg', 50, 'height', datos_airtable)
+        estantes = cargar_imagen(docx_tpl, 'estantes', 'estantes.jpg', 50, 'height', datos_airtable)
+        site = cargar_imagen(docx_tpl, 'site', 'site.jpg', 50, 'height', datos_airtable)
+        dh = cargar_imagen(docx_tpl, 'dh', 'dh.jpg', 50, 'height', datos_airtable)
+        ventanas = cargar_imagen(docx_tpl, 'ventanas', 'ventanas.jpg', 50, 'height', datos_airtable)
+        compresor = cargar_imagen(docx_tpl, 'compresor', 'compresor.jpg', 50, 'height', datos_airtable)
+        quimicos = cargar_imagen(docx_tpl, 'quimicos', 'quimicos.jpg', 50, 'height', datos_airtable)
+        tanques_gaso = cargar_imagen(docx_tpl, 'tanques_gaso', 'tanques_gaso.jpg', 50, 'height', datos_airtable)
+        paro = cargar_imagen(docx_tpl, 'paro', 'paro.jpg', 50, 'height', datos_airtable)
+        trampa_grasa = cargar_imagen(docx_tpl, 'trampa_grasa', 'trampa_grasa.jpg', 50, 'height', datos_airtable)
+        planta = cargar_imagen(docx_tpl, 'planta', 'planta.jpg', 50, 'height', datos_airtable)
+        deposito = cargar_imagen(docx_tpl, 'deposito', 'deposito.jpg', 50, 'height', datos_airtable)
+        mapa_satel = cargar_imagen(docx_tpl, 'mapa_satel', 'mapa_satel.png', 144, 'width', datos_airtable)
+        plano = cargar_imagen(docx_tpl, 'plano', 'plano.jpg', 160, 'width', datos_airtable)
+        inmueble1 = cargar_imagen(docx_tpl, 'inmueble1', 'inmueble (1).jpg', 50, 'height', datos_airtable)
+        inmueble2 = cargar_imagen(docx_tpl, 'inmueble2', 'inmueble (2).jpg', 50, 'height', datos_airtable)
+        banio1 = cargar_imagen(docx_tpl, 'banio1', 'banio1.jpg', 50, 'height', datos_airtable)
+        electrico1 = cargar_imagen(docx_tpl, 'electrico1', 'electrico1.jpg', 50, 'height', datos_airtable)
+        fachada1 = cargar_imagen(docx_tpl, 'fachada1', 'fachada1.jpg', 50, 'height', datos_airtable)
+        bateria = cargar_imagen(docx_tpl, 'bateria', 'bateria.jpg', 50, 'height', datos_airtable)
+        acta1 = cargar_imagen(docx_tpl, 'acta1', 'acta1.png', 155, 'width', datos_airtable)
+        acta2 = cargar_imagen(docx_tpl, 'acta2', 'acta2.png', 155, 'width', datos_airtable)
+        crono_anual = cargar_imagen(docx_tpl, 'crono_anual', 'crono_anual.png', 155, 'width', datos_airtable)
+        mantto1 = cargar_imagen(docx_tpl, 'mantto1', 'mantto1.png', 155, 'width', datos_airtable)
+        mantto2 = cargar_imagen(docx_tpl, 'mantto2', 'mantto2.png', 155, 'width', datos_airtable)
+        simulacro = cargar_imagen(docx_tpl, 'simulacro', 'simulacro.png', 155, 'width', datos_airtable)
+        capacitacion = cargar_imagen(docx_tpl, 'capacitacion', 'capacitacion.png', 155, 'width', datos_airtable)
+        inv_quim = cargar_imagen(docx_tpl, 'inv_quim', 'inv_quim.png', 155, 'width', datos_airtable)
+        inv_emer = cargar_imagen(docx_tpl, 'inv_emer', 'inv_emer.png', 155, 'width', datos_airtable)
+        bit_emer = cargar_imagen(docx_tpl, 'bit_emer', 'bit_emer.png', 155, 'width', datos_airtable)
+        insp_bot = cargar_imagen(docx_tpl, 'insp_bot', 'insp_bot.png', 155, 'width', datos_airtable)
+        insp_ext = cargar_imagen(docx_tpl, 'insp_ext', 'insp_ext.png', 149, 'width', datos_airtable)
+        insp_dh = cargar_imagen(docx_tpl, 'insp_dh', 'insp_dh.png', 155, 'width', datos_airtable)
+        insp_lamp = cargar_imagen(docx_tpl, 'insp_lamp', 'insp_lamp.png', 155, 'width', datos_airtable)
+        insp_alarm = cargar_imagen(docx_tpl, 'insp_alarm', 'insp_alarm.png', 155, 'width', datos_airtable)
+        ev_sim1 = cargar_imagen(docx_tpl, 'ev_sim1', 'ev_sim1.png', 155, 'width', datos_airtable)
+        ev_sim2 = cargar_imagen(docx_tpl, 'ev_sim2', 'ev_sim2.png', 155, 'width', datos_airtable)
+        visitas = cargar_imagen(docx_tpl, 'visitas', 'visitas.png', 155, 'width', datos_airtable)
+        dir_emer = cargar_imagen(docx_tpl, 'dir_emer', 'dir_emer.png', 155, 'width', datos_airtable)
+        corresp1 = cargar_imagen(docx_tpl, 'corresp1', 'corresp1.png', 155, 'width', datos_airtable)
+        corresp2 = cargar_imagen(docx_tpl, 'corresp2', 'corresp2.png', 155, 'width', datos_airtable)
+        corresp3 = cargar_imagen(docx_tpl, 'corresp3', 'corresp3.png', 155, 'width', datos_airtable)
+        carta_respon = cargar_imagen(docx_tpl, 'carta_respon', 'carta_respon.png', 155, 'width', datos_airtable)
+        registro1 = cargar_imagen(docx_tpl, 'registro1', 'registro1.png', 155, 'width', datos_airtable)
+        registro2 = cargar_imagen(docx_tpl, 'registro2', 'registro2.png', 155, 'width', datos_airtable)
+        ries_circ = cargar_imagen(docx_tpl, 'ries_circ', 'ries_circ.png', 155, 'width', datos_airtable)
+        mapa_ext = cargar_imagen(docx_tpl, 'mapa_ext', 'mapa_ext.png', 155, 'width', datos_airtable)
+        rec_ext = cargar_imagen(docx_tpl, 'rec_ext', 'rec_ext.png', 155, 'width', datos_airtable)
+        mayor_ries = cargar_imagen(docx_tpl, 'mayor_ries', 'mayor_ries.png', 155, 'width', datos_airtable)
+        menor_ries = cargar_imagen(docx_tpl, 'menor_ries', 'menor_ries.png', 155, 'width', datos_airtable)
+        zona_evac = cargar_imagen(docx_tpl, 'zona_evac', 'zona_evac.png', 155, 'width', datos_airtable)
+        firma = cargar_imagen(docx_tpl, 'firma', 'firma.png', 14, 'height', datos_airtable)
+        layout1 = cargar_imagen(docx_tpl, 'layout1', 'layout (1).png', 160, 'width', datos_airtable)
+        layout2 = cargar_imagen(docx_tpl, 'layout2', 'layout (2).png', 160, 'width', datos_airtable)
+        layout3 = cargar_imagen(docx_tpl, 'layout3', 'layout (3).png', 160, 'width', datos_airtable)
+        layout4 = cargar_imagen(docx_tpl, 'layout4', 'layout (4).png', 160, 'width', datos_airtable)
+        layout5 = cargar_imagen(docx_tpl, 'layout5', 'layout (5).png', 160, 'width', datos_airtable)
+        layout6 = cargar_imagen(docx_tpl, 'layout6', 'layout (6).png', 160, 'width', datos_airtable)
+        layout7 = cargar_imagen(docx_tpl, 'layout7', 'layout (7).png', 160, 'width', datos_airtable)
+        layout8 = cargar_imagen(docx_tpl, 'layout8', 'layout (8).png', 160, 'width', datos_airtable)
+        layout9 = cargar_imagen(docx_tpl, 'layout9', 'layout (9).png', 160, 'width', datos_airtable)
+        layout10 = cargar_imagen(docx_tpl, 'layout10', 'layout (10).png', 160, 'width', datos_airtable)
+        layout11 = cargar_imagen(docx_tpl, 'layout11', 'layout (11).png', 160, 'width', datos_airtable)
+        layout12 = cargar_imagen(docx_tpl, 'layout12', 'layout (12).png', 160, 'width', datos_airtable)
+        ev_sim3 = cargar_imagen(docx_tpl, 'ev_sim3', 'ev_sim (3).png', 155, 'width', datos_airtable)
+        ev_sim4 = cargar_imagen(docx_tpl, 'ev_sim4', 'ev_sim (4).png', 155, 'width', datos_airtable)
+        ev_sim5 = cargar_imagen(docx_tpl, 'ev_sim5', 'ev_sim (5).png', 155, 'width', datos_airtable)
+        ev_sim6 = cargar_imagen(docx_tpl, 'ev_sim6', 'ev_sim (6).png', 155, 'width', datos_airtable)
+        ev_sim7 = cargar_imagen(docx_tpl, 'ev_sim7', 'ev_sim (7).png', 155, 'width', datos_airtable)
+        ev_sim8 = cargar_imagen(docx_tpl, 'ev_sim8', 'ev_sim (8).png', 155, 'width', datos_airtable)
+        acta3 = cargar_imagen(docx_tpl, 'acta3', 'acta3.png', 155, 'width', datos_airtable)
+        acta4 = cargar_imagen(docx_tpl, 'acta4', 'acta4.png', 155, 'width', datos_airtable)
+        plan1 = cargar_imagen(docx_tpl, 'plan1', 'plan (1).jpg', 50, 'width', datos_airtable)
+        plan2 = cargar_imagen(docx_tpl, 'plan2', 'plan (2).jpg', 50, 'width', datos_airtable)
+        plan3 = cargar_imagen(docx_tpl, 'plan3', 'plan (3).jpg', 50, 'width', datos_airtable)
+        lampara = cargar_imagen(docx_tpl, 'lampara', 'lampara.jpg', 50, 'heigth', datos_airtable)
+        bombas = cargar_imagen(docx_tpl, 'bombas', 'bombas.jpg', 50, 'heigth', datos_airtable)
+        atencion_clientes = cargar_imagen(docx_tpl, 'atencion_clientes', 'atencion_clientes.jpg', 50, 'heigth', datos_airtable)
+        bardas = cargar_imagen(docx_tpl, 'bardas', 'bardas.jpg', 50, 'heigth', datos_airtable)
+        sis_inc = cargar_imagen(docx_tpl, 'sis_inc', 'sis_inc.jpg', 50, 'heigth', datos_airtable)
+        zona_sec = cargar_imagen(docx_tpl, 'zona_sec', 'zona_sec.jpg', 50, 'heigth', datos_airtable)
+        punto_reun = cargar_imagen(docx_tpl, 'punto_reun', 'punto_reun.jpg', 50, 'heigth', datos_airtable)
+
+        try:
+            # Renderizar documento - pasamos todos los datos directamente
+            docx_tpl.render({**datos_airtable, 
+                            'logo1': logo1, 
+                            'logo2': logo2,
+                            'fachada': fachada,
+                            'mapa': mapa,
+                            'esc_emer': esc_emer,
+                            'mueble1': mueble1,
+                            'mueble2': mueble2,
+                            'venteo': venteo,
+                            'manguera': manguera,
+                            'electrico': electrico,
+                            'banio': banio,
+                            'cisterna': cisterna,
+                            'sismo': sismo,
+                            'inundacion': inundacion,
+                            'torm_elect': torm_elect,
+                            'incendio': incendio,
+                            'influenza': influenza,
+                            'radiacion': radiacion,
+                            'ext1': ext1,
+                            'ext2': ext2,
+                            'ext3': ext3,
+                            'ext4': ext4,
+                            'botiquin': botiquin,
+                            'ruta1': ruta1,
+                            'ruta2': ruta2,
+                            'ruta3': ruta3,
+                            'salida': salida,
+                            'alarma': alarma,
+                            'prohib1': prohib1,
+                            'prohib2': prohib2,
+                            'prohib3': prohib3,
+                            'prohib4': prohib4,
+                            'layout': layout,
+                            'cap1': cap1,
+                            'cap2': cap2,
+                            'cap3': cap3,
+                            'cap4': cap4,
+                            'cap5': cap5,
+                            'cap6': cap6,
+                            'cap7': cap7,
+                            'cap8': cap8,
+                            'cap9': cap9,
+                            'cap10': cap10,
+                            'cap11': cap11,
+                            'cap12': cap12,
+                            'sim1': sim1,
+                            'sim2': sim2,
+                            'sim3': sim3,
+                            'sim4': sim4,
+                            'sim5': sim5,
+                            'sim6': sim6,
+                            'techo': techo,
+                            'pisos': pisos,
+                            'puerta': puerta,
+                            'estantes': estantes,
+                            'site': site,
+                            'dh': dh,
+                            'ventanas': ventanas,
+                            'compresor': compresor,
+                            'quimicos': quimicos,
+                            'tanques_gaso': tanques_gaso,
+                            'paro': paro,
+                            'trampa_grasa': trampa_grasa,
+                            'planta': planta,
+                            'deposito': deposito,
+                            'mapa_satel': mapa_satel,
+                            'plano': plano,
+                            'inmueble1': inmueble1,
+                            'inmueble2': inmueble2,
+                            'banio1': banio1,
+                            'electrico1': electrico1,
+                            'fachada1': fachada1,
+                            'bateria': bateria,
+                            'acta1': acta1,
+                            'acta2': acta2,
+                            'crono_anual': crono_anual,
+                            'mantto1': mantto1,
+                            'mantto2': mantto2,
+                            'simulacro': simulacro,
+                            'capacitacion': capacitacion,
+                            'inv_quim': inv_quim,
+                            'inv_emer': inv_emer,
+                            'bit_emer': bit_emer,
+                            'insp_bot': insp_bot,
+                            'insp_ext': insp_ext,
+                            'insp_dh': insp_dh,
+                            'insp_lamp': insp_lamp,
+                            'insp_alarm': insp_alarm,
+                            'ev_sim1': ev_sim1,
+                            'ev_sim2': ev_sim2,
+                            'visitas': visitas,
+                            'dir_emer': dir_emer,
+                            'corresp1': corresp1,
+                            'corresp2': corresp2,
+                            'corresp3': corresp3,
+                            'carta_respon': carta_respon,
+                            'registro1': registro1,
+                            'registro2': registro2,
+                            'ries_circ': ries_circ,
+                            'mapa_ext': mapa_ext,
+                            'rec_ext': rec_ext,
+                            'mayor_ries': mayor_ries,
+                            'menor_ries': menor_ries,
+                            'zona_evac': zona_evac,
+                            'firma': firma,
+                            'layout1': layout1,
+                            'layout2': layout2,
+                            'layout3': layout3,
+                            'layout4': layout4,
+                            'layout5': layout5,
+                            'layout6': layout6,
+                            'layout7': layout7,
+                            'layout8': layout8,
+                            'layout9': layout9,
+                            'layout10': layout10,
+                            'layout11': layout11,
+                            'layout12': layout12,
+                            'ev_sim3': ev_sim3,
+                            'ev_sim4': ev_sim4,
+                            'ev_sim5': ev_sim5,
+                            'ev_sim6': ev_sim6,
+                            'ev_sim7': ev_sim7,
+                            'ev_sim8': ev_sim8,
+                            'acta3': acta3,
+                            'acta4': acta4,
+                            'plan1': plan1,
+                            'plan2': plan2,
+                            'plan3': plan3,
+                            'lampara': lampara,
+                            'bombas': bombas,
+                            'atencion_clientes': atencion_clientes,
+                            'bardas': bardas,
+                            'sis_inc': sis_inc,
+                            'zona_sec': zona_sec,
+                            'punto_reun': punto_reun
+                             })
+
+            # Determinar nombre del archivo de salida
+            nombre_comercial = datos_airtable.get("nombre_comercial", "Documento")
+            if idx == 1:
+                nombre_pipc = f'1. PIPC {nombre_comercial}.docx'
+            elif idx == 2:
+                nombre_pipc = f'2. MEMORIA FOTOGRAFICA {nombre_comercial}.docx'
+            elif idx == 3:
+                nombre_pipc = f'3. RIESGO DE INCENDIO {nombre_comercial}.docx'
+            elif idx == 4:
+                nombre_pipc = f'4. CARTA NOE {nombre_comercial}.docx'
+            elif idx == 5:
+                nombre_pipc = f'5. LEVANTAMIENTO {nombre_comercial}.docx'
+            else:
+                nombre_pipc = f'{idx}. DOCUMENTO {nombre_comercial}.docx'
+
+            # Guardar el documento
+            docx_tpl.save(os.path.join(OUTPUT_PATH, nombre_pipc))
+            print(f"Documento creado: {nombre_pipc}")
+
+        except Exception as e:
+            print(f'Error al guardar el documento: {str(e)}')
+
+# Función principal
 def main():
     # Eliminar y volver a crear carpeta 'Outputs'
     eliminar_crear_carpetas(OUTPUT_PATH)
 
-    # Leer datos de DB Excel
-    df_bd = leer_bd(EXCEL_PATH, 'DATOS')
+    # Obtener datos de Airtable
+    datos_airtable = obtener_datos_airtable()
 
     # Crear ficheros Word
-    crear_word(df_bd)
+    crear_word(datos_airtable)
 
 
 if __name__ == '__main__':
