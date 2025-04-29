@@ -21,7 +21,7 @@ PERITO_TABLE = 'Perito'
 
 # Valores específicos para buscar en Airtable
 CATEGORIA_BUSCAR = 'GENERAL'
-NOMBRE_COMERCIAL_BUSCAR = 'ESTACION DE GAS LP PARA CARBURACION'
+NOMBRE_COMERCIAL_BUSCAR = 'MD CONSTRUCCION ARQUITECTONICA'
 
 # Ruta base absoluta
 BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
@@ -268,7 +268,7 @@ def crear_word(datos_airtable):
         sim4 = cargar_imagen(docx_tpl, 'sim4', 'sim (4).jpg', 60, 'height', datos_airtable)
         sim5 = cargar_imagen(docx_tpl, 'sim5', 'sim (5).jpg', 60, 'height', datos_airtable)
         sim6 = cargar_imagen(docx_tpl, 'sim6', 'sim (6).jpg', 60, 'height', datos_airtable)
-        techo = cargar_imagen(docx_tpl, 'techo', 'techo.jpg', 60, 'height', datos_airtable)
+        techo = cargar_imagen(docx_tpl, 'techo', 'techo.jpg', 50, 'height', datos_airtable)
         pisos = cargar_imagen(docx_tpl, 'pisos', 'pisos.jpg', 50, 'height', datos_airtable)
         puerta = cargar_imagen(docx_tpl, 'puerta', 'puerta.jpg', 50, 'height', datos_airtable)
         estantes = cargar_imagen(docx_tpl, 'estantes', 'estantes.jpg', 50, 'height', datos_airtable)
