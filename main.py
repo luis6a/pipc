@@ -20,8 +20,8 @@ GASOLINERA_TABLE = 'Gasolinera'
 PERITO_TABLE = 'Perito'
 
 # Valores específicos para buscar en Airtable
-CATEGORIA_BUSCAR = 'GENERAL'
-NOMBRE_COMERCIAL_BUSCAR = 'MD CONSTRUCCION ARQUITECTONICA'
+CATEGORIA_BUSCAR = 'UVP'
+NOMBRE_COMERCIAL_BUSCAR = 'STUDIO'
 
 # Ruta base absoluta
 BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
@@ -352,6 +352,7 @@ def crear_word(datos_airtable):
         sis_inc = cargar_imagen(docx_tpl, 'sis_inc', 'sis_inc.jpg', 50, 'heigth', datos_airtable)
         zona_sec = cargar_imagen(docx_tpl, 'zona_sec', 'zona_sec.jpg', 50, 'heigth', datos_airtable)
         punto_reun = cargar_imagen(docx_tpl, 'punto_reun', 'punto_reun.jpg', 50, 'heigth', datos_airtable)
+        valvulas = cargar_imagen(docx_tpl, 'valvulas', 'valvulas.jpg', 50, 'heigth', datos_airtable)
 
         try:
             # Renderizar documento - pasamos todos los datos directamente
@@ -490,7 +491,8 @@ def crear_word(datos_airtable):
                             'bardas': bardas,
                             'sis_inc': sis_inc,
                             'zona_sec': zona_sec,
-                            'punto_reun': punto_reun
+                            'punto_reun': punto_reun,
+                            'valvulas': valvulas
                              })
 
             # Determinar nombre del archivo de salida
