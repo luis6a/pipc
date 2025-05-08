@@ -20,8 +20,8 @@ GASOLINERA_TABLE = 'Gasolinera'
 PERITO_TABLE = 'Perito'
 
 # Valores específicos para buscar en Airtable
-CATEGORIA_BUSCAR = 'UVP'
-NOMBRE_COMERCIAL_BUSCAR = 'STUDIO'
+CATEGORIA_BUSCAR = 'GENERAL'
+NOMBRE_COMERCIAL_BUSCAR = 'LA ORIENTAL CENTRO COMERCIAL BARRIO CASCATTA'
 
 # Ruta base absoluta
 BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
@@ -224,6 +224,8 @@ def crear_word(datos_airtable):
         esc_emer = cargar_imagen(docx_tpl, 'esc_emer', 'esc_emer.jpg', 50, 'height', datos_airtable)
         mueble1 = cargar_imagen(docx_tpl, 'mueble1', 'mueble (1).jpg', 50, 'height', datos_airtable)
         mueble2 = cargar_imagen(docx_tpl, 'mueble2', 'mueble (2).jpg', 50, 'height', datos_airtable)
+        mueble3 = cargar_imagen(docx_tpl, 'mueble3', 'mueble (3).jpg', 50, 'height', datos_airtable)
+        mueble4 = cargar_imagen(docx_tpl, 'mueble4', 'mueble (4).jpg', 50, 'height', datos_airtable)
         venteo = cargar_imagen(docx_tpl, 'venteo', 'venteo.jpg', 50, 'height', datos_airtable)
         manguera = cargar_imagen(docx_tpl, 'manguera', 'manguera.jpg', 50, 'height', datos_airtable)
         electrico = cargar_imagen(docx_tpl, 'electrico', 'electrico.jpg', 50, 'height', datos_airtable)
@@ -239,10 +241,14 @@ def crear_word(datos_airtable):
         ext2 = cargar_imagen(docx_tpl, 'ext2', 'ext (2).jpg', 50, 'height', datos_airtable)
         ext3 = cargar_imagen(docx_tpl, 'ext3', 'ext (3).jpg', 50, 'height', datos_airtable)
         ext4 = cargar_imagen(docx_tpl, 'ext4', 'ext (4).jpg', 50, 'height', datos_airtable)
+        ext5 = cargar_imagen(docx_tpl, 'ext5', 'ext (5).jpg', 50, 'height', datos_airtable)
+        ext6 = cargar_imagen(docx_tpl, 'ext6', 'ext (6).jpg', 50, 'height', datos_airtable)
         botiquin = cargar_imagen(docx_tpl, 'botiquin', 'botiquin.jpg', 50, 'height', datos_airtable)
+        botiquin1 = cargar_imagen(docx_tpl, 'botiquin1', 'botiquin1.jpg', 50, 'height', datos_airtable)
         ruta1 = cargar_imagen(docx_tpl, 'ruta1', 'ruta (1).jpg', 50, 'height', datos_airtable)
         ruta2 = cargar_imagen(docx_tpl, 'ruta2', 'ruta (2).jpg', 50, 'height', datos_airtable)
         ruta3 = cargar_imagen(docx_tpl, 'ruta3', 'ruta (3).jpg', 50, 'height', datos_airtable)
+        ruta4 = cargar_imagen(docx_tpl, 'ruta4', 'ruta (4).jpg', 50, 'height', datos_airtable)
         salida = cargar_imagen(docx_tpl, 'salida', 'salida.jpg', 50, 'height', datos_airtable)
         alarma = cargar_imagen(docx_tpl, 'alarma', 'alarma.jpg', 50, 'height', datos_airtable)
         prohib1 = cargar_imagen(docx_tpl, 'prohib1', 'prohib (1).jpg', 50, 'height', datos_airtable)
@@ -262,22 +268,44 @@ def crear_word(datos_airtable):
         cap10 = cargar_imagen(docx_tpl, 'cap10', 'cap (10).jpg', 60, 'height', datos_airtable)
         cap11 = cargar_imagen(docx_tpl, 'cap11', 'cap (11).jpg', 60, 'height', datos_airtable)
         cap12 = cargar_imagen(docx_tpl, 'cap12', 'cap (12).jpg', 60, 'height', datos_airtable)
+        cap13 = cargar_imagen(docx_tpl, 'cap13', 'cap (13).jpg', 60, 'height', datos_airtable)
+        cap14 = cargar_imagen(docx_tpl, 'cap14', 'cap (14).jpg', 60, 'height', datos_airtable)
+        cap15 = cargar_imagen(docx_tpl, 'cap15', 'cap (15).jpg', 60, 'height', datos_airtable)
+        cap16 = cargar_imagen(docx_tpl, 'cap16', 'cap (16).jpg', 60, 'height', datos_airtable)
+        cap17 = cargar_imagen(docx_tpl, 'cap17', 'cap (17).jpg', 60, 'height', datos_airtable)
+        cap18 = cargar_imagen(docx_tpl, 'cap18', 'cap (18).jpg', 60, 'height', datos_airtable)
+        cap19 = cargar_imagen(docx_tpl, 'cap19', 'cap (19).jpg', 60, 'height', datos_airtable)
+        cap20 = cargar_imagen(docx_tpl, 'cap20', 'cap (20).jpg', 60, 'height', datos_airtable)
+        cap21 = cargar_imagen(docx_tpl, 'cap21', 'cap (21).jpg', 60, 'height', datos_airtable)
+        cap22 = cargar_imagen(docx_tpl, 'cap22', 'cap (22).jpg', 60, 'height', datos_airtable)
+        cap23 = cargar_imagen(docx_tpl, 'cap23', 'cap (23).jpg', 60, 'height', datos_airtable)
+        cap24 = cargar_imagen(docx_tpl, 'cap24', 'cap (24).jpg', 60, 'height', datos_airtable)
         sim1 = cargar_imagen(docx_tpl, 'sim1', 'sim (1).jpg', 60, 'height', datos_airtable)
         sim2 = cargar_imagen(docx_tpl, 'sim2', 'sim (2).jpg', 60, 'height', datos_airtable)
         sim3 = cargar_imagen(docx_tpl, 'sim3', 'sim (3).jpg', 60, 'height', datos_airtable)
         sim4 = cargar_imagen(docx_tpl, 'sim4', 'sim (4).jpg', 60, 'height', datos_airtable)
         sim5 = cargar_imagen(docx_tpl, 'sim5', 'sim (5).jpg', 60, 'height', datos_airtable)
         sim6 = cargar_imagen(docx_tpl, 'sim6', 'sim (6).jpg', 60, 'height', datos_airtable)
+        sim7 = cargar_imagen(docx_tpl, 'sim7', 'sim (7).jpg', 60, 'height', datos_airtable)
+        sim8 = cargar_imagen(docx_tpl, 'sim8', 'sim (8).jpg', 60, 'height', datos_airtable)
+        sim9 = cargar_imagen(docx_tpl, 'sim9', 'sim (9).jpg', 60, 'height', datos_airtable)
+        sim10 = cargar_imagen(docx_tpl, 'sim10', 'sim (10).jpg', 60, 'height', datos_airtable)
+        sim11 = cargar_imagen(docx_tpl, 'sim11', 'sim (11).jpg', 60, 'height', datos_airtable)
+        sim12 = cargar_imagen(docx_tpl, 'sim12', 'sim (12).jpg', 60, 'height', datos_airtable)
         techo = cargar_imagen(docx_tpl, 'techo', 'techo.jpg', 50, 'height', datos_airtable)
+        techo1 = cargar_imagen(docx_tpl, 'techo1', 'techo1.jpg', 50, 'height', datos_airtable)
         pisos = cargar_imagen(docx_tpl, 'pisos', 'pisos.jpg', 50, 'height', datos_airtable)
+        pisos1 = cargar_imagen(docx_tpl, 'pisos1', 'pisos1.jpg', 50, 'height', datos_airtable)
         puerta = cargar_imagen(docx_tpl, 'puerta', 'puerta.jpg', 50, 'height', datos_airtable)
         estantes = cargar_imagen(docx_tpl, 'estantes', 'estantes.jpg', 50, 'height', datos_airtable)
         site = cargar_imagen(docx_tpl, 'site', 'site.jpg', 50, 'height', datos_airtable)
         dh = cargar_imagen(docx_tpl, 'dh', 'dh.jpg', 50, 'height', datos_airtable)
+        dh1 = cargar_imagen(docx_tpl, 'dh1', 'dh1.jpg', 50, 'height', datos_airtable)
         ventanas = cargar_imagen(docx_tpl, 'ventanas', 'ventanas.jpg', 50, 'height', datos_airtable)
         compresor = cargar_imagen(docx_tpl, 'compresor', 'compresor.jpg', 50, 'height', datos_airtable)
         quimicos = cargar_imagen(docx_tpl, 'quimicos', 'quimicos.jpg', 50, 'height', datos_airtable)
         tanques_gaso = cargar_imagen(docx_tpl, 'tanques_gaso', 'tanques_gaso.jpg', 50, 'height', datos_airtable)
+        tanques_gaso1 = cargar_imagen(docx_tpl, 'tanques_gaso1', 'tanques_gaso1.jpg', 50, 'height', datos_airtable)
         paro = cargar_imagen(docx_tpl, 'paro', 'paro.jpg', 50, 'height', datos_airtable)
         trampa_grasa = cargar_imagen(docx_tpl, 'trampa_grasa', 'trampa_grasa.jpg', 50, 'height', datos_airtable)
         planta = cargar_imagen(docx_tpl, 'planta', 'planta.jpg', 50, 'height', datos_airtable)
@@ -286,6 +314,8 @@ def crear_word(datos_airtable):
         plano = cargar_imagen(docx_tpl, 'plano', 'plano.jpg', 160, 'width', datos_airtable)
         inmueble1 = cargar_imagen(docx_tpl, 'inmueble1', 'inmueble (1).jpg', 50, 'height', datos_airtable)
         inmueble2 = cargar_imagen(docx_tpl, 'inmueble2', 'inmueble (2).jpg', 50, 'height', datos_airtable)
+        inmueble3 = cargar_imagen(docx_tpl, 'inmueble3', 'inmueble (3).jpg', 50, 'height', datos_airtable)
+        inmueble4 = cargar_imagen(docx_tpl, 'inmueble4', 'inmueble (4).jpg', 50, 'height', datos_airtable)
         banio1 = cargar_imagen(docx_tpl, 'banio1', 'banio1.jpg', 50, 'height', datos_airtable)
         electrico1 = cargar_imagen(docx_tpl, 'electrico1', 'electrico1.jpg', 50, 'height', datos_airtable)
         fachada1 = cargar_imagen(docx_tpl, 'fachada1', 'fachada1.jpg', 50, 'height', datos_airtable)
@@ -346,11 +376,14 @@ def crear_word(datos_airtable):
         plan2 = cargar_imagen(docx_tpl, 'plan2', 'plan (2).jpg', 50, 'width', datos_airtable)
         plan3 = cargar_imagen(docx_tpl, 'plan3', 'plan (3).jpg', 50, 'width', datos_airtable)
         lampara = cargar_imagen(docx_tpl, 'lampara', 'lampara.jpg', 50, 'heigth', datos_airtable)
+        lampara1 = cargar_imagen(docx_tpl, 'lampara1', 'lampara1.jpg', 50, 'heigth', datos_airtable)
         bombas = cargar_imagen(docx_tpl, 'bombas', 'bombas.jpg', 50, 'heigth', datos_airtable)
         atencion_clientes = cargar_imagen(docx_tpl, 'atencion_clientes', 'atencion_clientes.jpg', 50, 'heigth', datos_airtable)
         bardas = cargar_imagen(docx_tpl, 'bardas', 'bardas.jpg', 50, 'heigth', datos_airtable)
         sis_inc = cargar_imagen(docx_tpl, 'sis_inc', 'sis_inc.jpg', 50, 'heigth', datos_airtable)
+        sis_inc1 = cargar_imagen(docx_tpl, 'sis_inc1', 'sis_inc1.jpg', 50, 'heigth', datos_airtable)
         zona_sec = cargar_imagen(docx_tpl, 'zona_sec', 'zona_sec.jpg', 50, 'heigth', datos_airtable)
+        zona_sec1 = cargar_imagen(docx_tpl, 'zona_sec1', 'zona_sec1.jpg', 50, 'heigth', datos_airtable)
         punto_reun = cargar_imagen(docx_tpl, 'punto_reun', 'punto_reun.jpg', 50, 'heigth', datos_airtable)
         valvulas = cargar_imagen(docx_tpl, 'valvulas', 'valvulas.jpg', 50, 'heigth', datos_airtable)
 
@@ -492,7 +525,38 @@ def crear_word(datos_airtable):
                             'sis_inc': sis_inc,
                             'zona_sec': zona_sec,
                             'punto_reun': punto_reun,
-                            'valvulas': valvulas
+                            'valvulas': valvulas,
+                            'lampara1': lampara1,
+                            'dh1': dh1,
+                            'sis_inc1': sis_inc1,
+                            'zona_sec1': zona_sec1,
+                            'mueble3': mueble3,
+                            'mueble4': mueble4,
+                            'ext4': ext4,
+                            'ext5': ext5,
+                            'ext6': ext6,
+                            'botiquin1': botiquin1,
+                            'ruta4': ruta4,
+                            'cap13': cap13,
+                            'cap14': cap14,
+                            'cap15': cap15,
+                            'cap16': cap16,
+                            'cap17': cap17,
+                            'cap18': cap18,
+                            'cap19': cap19,
+                            'cap20': cap20,
+                            'cap21': cap21,
+                            'cap22': cap22,
+                            'cap23': cap23,
+                            'cap24': cap24,
+                            'sim7': sim7,
+                            'sim8': sim8,
+                            'sim9': sim9,
+                            'sim10': sim10,
+                            'sim11': sim11,
+                            'sim12': sim12,
+                            'techo1': techo1,
+                            'pisos1': pisos1
                              })
 
             # Determinar nombre del archivo de salida
