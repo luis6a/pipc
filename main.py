@@ -21,7 +21,7 @@ PERITO_TABLE = 'Perito'
 
 # Valores específicos para buscar en Airtable
 CATEGORIA_BUSCAR = 'GENERAL'
-NOMBRE_COMERCIAL_BUSCAR = 'LA ORIENTAL CENTRO COMERCIAL BARRIO CASCATTA'
+NOMBRE_COMERCIAL_BUSCAR = 'FRAICHE CHEDRAUI'
 
 # Ruta base absoluta
 BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
@@ -50,6 +50,8 @@ BBVA_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF BBVA.docx"
 BBVA_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI BBVA.docx"
 ALL_NOE_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Cartas Noe.docx"
 UVP_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/PIPC UVP.docx"
+UVP_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF UVP.docx"
+UVP_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI UVP.docx"
 DHL_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/DHL.docx"
 DHL_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF DHL.docx"
 DHL_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI DHL.docx"
@@ -199,8 +201,8 @@ def crear_word(datos_airtable):
         plantillas = [BBVA_PTLL_PATH, BBVA_MF_PTLL_PATH,
                       BBVA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'UVP':
-        plantillas = [UVP_PTLL_PATH, GENERAL_MF_PTLL_PATH,
-                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+        plantillas = [UVP_PTLL_PATH, UVP_MF_PTLL_PATH,
+                      UVP_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'DHL':
         plantillas = [DHL_PTLL_PATH, DHL_MF_PTLL_PATH, DHL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'GASERA':
@@ -251,6 +253,7 @@ def crear_word(datos_airtable):
         ruta4 = cargar_imagen(docx_tpl, 'ruta4', 'ruta (4).jpg', 50, 'height', datos_airtable)
         salida = cargar_imagen(docx_tpl, 'salida', 'salida.jpg', 50, 'height', datos_airtable)
         alarma = cargar_imagen(docx_tpl, 'alarma', 'alarma.jpg', 50, 'height', datos_airtable)
+        alarma1 = cargar_imagen(docx_tpl, 'alarma1', 'alarma1.jpg', 50, 'height', datos_airtable)
         prohib1 = cargar_imagen(docx_tpl, 'prohib1', 'prohib (1).jpg', 50, 'height', datos_airtable)
         prohib2 = cargar_imagen(docx_tpl, 'prohib2', 'prohib (2).jpg', 50, 'height', datos_airtable)
         prohib3 = cargar_imagen(docx_tpl, 'prohib3', 'prohib (3).jpg', 50, 'height', datos_airtable)
@@ -412,12 +415,15 @@ def crear_word(datos_airtable):
                             'ext2': ext2,
                             'ext3': ext3,
                             'ext4': ext4,
+                            'ext5': ext5,
+                            'ext6': ext6,
                             'botiquin': botiquin,
                             'ruta1': ruta1,
                             'ruta2': ruta2,
                             'ruta3': ruta3,
                             'salida': salida,
                             'alarma': alarma,
+                            'alarma1': alarma1,
                             'prohib1': prohib1,
                             'prohib2': prohib2,
                             'prohib3': prohib3,
@@ -451,6 +457,7 @@ def crear_word(datos_airtable):
                             'compresor': compresor,
                             'quimicos': quimicos,
                             'tanques_gaso': tanques_gaso,
+                            'tanques_gaso1': tanques_gaso1,
                             'paro': paro,
                             'trampa_grasa': trampa_grasa,
                             'planta': planta,
@@ -532,10 +539,8 @@ def crear_word(datos_airtable):
                             'zona_sec1': zona_sec1,
                             'mueble3': mueble3,
                             'mueble4': mueble4,
-                            'ext4': ext4,
-                            'ext5': ext5,
-                            'ext6': ext6,
-                            'botiquin1': botiquin1,
+                            'inmueble3': inmueble3,
+                            'inmueble4': inmueble4,                          'botiquin1': botiquin1,
                             'ruta4': ruta4,
                             'cap13': cap13,
                             'cap14': cap14,
