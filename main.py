@@ -21,7 +21,7 @@ PERITO_TABLE = 'Perito'
 
 # Valores específicos para buscar en Airtable
 CATEGORIA_BUSCAR = 'GENERAL'
-NOMBRE_COMERCIAL_BUSCAR = 'FRAICHE CHEDRAUI'
+NOMBRE_COMERCIAL_BUSCAR = 'ABARROTES EL HALCON'
 
 # Ruta base absoluta
 BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
@@ -219,8 +219,8 @@ def crear_word(datos_airtable):
         docx_tpl = DocxTemplate(plantilla_path)
 
         # Cargar las imágenes
-        logo1 = cargar_imagen(docx_tpl, 'logo1', 'logo1.jpg', 145, 'height',datos_airtable)
-        logo2 = cargar_imagen(docx_tpl, 'logo2', 'logo2.jpg', 15, 'heigth',datos_airtable)
+        logo1 = cargar_imagen(docx_tpl, 'logo1', 'logo1.jpg', 150, 'width', datos_airtable)
+        logo2 = cargar_imagen(docx_tpl, 'logo2', 'logo2.jpg', 15, 'height', datos_airtable)
         fachada = cargar_imagen(docx_tpl, 'fachada', 'fachada.jpg', 150, 'width', datos_airtable)
         mapa = cargar_imagen(docx_tpl, 'mapa', 'mapa.png', 144, 'width', datos_airtable)
         esc_emer = cargar_imagen(docx_tpl, 'esc_emer', 'esc_emer.jpg', 50, 'height', datos_airtable)
@@ -389,6 +389,7 @@ def crear_word(datos_airtable):
         zona_sec1 = cargar_imagen(docx_tpl, 'zona_sec1', 'zona_sec1.jpg', 50, 'heigth', datos_airtable)
         punto_reun = cargar_imagen(docx_tpl, 'punto_reun', 'punto_reun.jpg', 50, 'heigth', datos_airtable)
         valvulas = cargar_imagen(docx_tpl, 'valvulas', 'valvulas.jpg', 50, 'heigth', datos_airtable)
+        bomberos = cargar_imagen(docx_tpl, 'bomberos', 'bomberos.jpg', 50, 'heigth', datos_airtable)
 
         try:
             # Renderizar documento - pasamos todos los datos directamente
@@ -561,7 +562,8 @@ def crear_word(datos_airtable):
                             'sim11': sim11,
                             'sim12': sim12,
                             'techo1': techo1,
-                            'pisos1': pisos1
+                            'pisos1': pisos1,
+                            'bomberos': bomberos
                              })
 
             # Determinar nombre del archivo de salida
