@@ -20,8 +20,8 @@ GASOLINERA_TABLE = 'Gasolinera'
 PERITO_TABLE = 'Perito'
 
 # Valores específicos para buscar en Airtable
-CATEGORIA_BUSCAR = 'GENERAL'
-NOMBRE_COMERCIAL_BUSCAR = 'ABARROTES EL HALCON'
+CATEGORIA_BUSCAR = 'UVP'
+NOMBRE_COMERCIAL_BUSCAR = 'COMPLEJO TLALOC'
 
 # Ruta base absoluta
 BASE_DIR = "C:/Users/gutie/OneDrive/Documentos/GitHub/Proyecto_PIPC"
@@ -60,6 +60,7 @@ GASERA_MF_WORD_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Gasera.docx"
 ESTAFETA_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Estafeta.docx"
 ESTAFETA_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Estafeta.docx"
 ESTAFETA_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Estafeta.docx"
+CONTINGENCIA_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Contingencia.docx"
 ALL_LEVANTAMIENTO_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Levantamiento.docx"
 
 # Ruta imágenes
@@ -206,10 +207,13 @@ def crear_word(datos_airtable):
     elif categoria == 'DHL':
         plantillas = [DHL_PTLL_PATH, DHL_MF_PTLL_PATH, DHL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'GASERA':
-        plantillas = [GASERA_WORD_PTLL_PATH, GASERA_MF_WORD_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+        plantillas = [GASERA_WORD_PTLL_PATH, GASERA_MF_WORD_PTLL_PATH, GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     elif categoria == 'ESTAFETA':
         plantillas = [ESTAFETA_PTLL_PATH, ESTAFETA_MF_PTLL_PATH,
                       ESTAFETA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+    elif categoria == 'CONTINGENCIA':
+        plantillas = [CONTINGENCIA_PTLL_PATH, GENERAL_MF_PTLL_PATH,
+                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
     else:
         print(f"No se encontraron plantillas para la categoría: {categoria}")
         return
@@ -335,6 +339,7 @@ def crear_word(datos_airtable):
         bit_emer = cargar_imagen(docx_tpl, 'bit_emer', 'bit_emer.png', 155, 'width', datos_airtable)
         insp_bot = cargar_imagen(docx_tpl, 'insp_bot', 'insp_bot.png', 155, 'width', datos_airtable)
         insp_ext = cargar_imagen(docx_tpl, 'insp_ext', 'insp_ext.png', 149, 'width', datos_airtable)
+        insp_ext1 = cargar_imagen(docx_tpl, 'insp_ext1', 'insp_ext1.png', 149, 'width', datos_airtable)
         insp_dh = cargar_imagen(docx_tpl, 'insp_dh', 'insp_dh.png', 155, 'width', datos_airtable)
         insp_lamp = cargar_imagen(docx_tpl, 'insp_lamp', 'insp_lamp.png', 155, 'width', datos_airtable)
         insp_alarm = cargar_imagen(docx_tpl, 'insp_alarm', 'insp_alarm.png', 155, 'width', datos_airtable)
@@ -375,6 +380,7 @@ def crear_word(datos_airtable):
         ev_sim8 = cargar_imagen(docx_tpl, 'ev_sim8', 'ev_sim (8).png', 155, 'width', datos_airtable)
         acta3 = cargar_imagen(docx_tpl, 'acta3', 'acta3.png', 155, 'width', datos_airtable)
         acta4 = cargar_imagen(docx_tpl, 'acta4', 'acta4.png', 155, 'width', datos_airtable)
+        acta5 = cargar_imagen(docx_tpl, 'acta5', 'acta5.png', 155, 'width', datos_airtable)
         plan1 = cargar_imagen(docx_tpl, 'plan1', 'plan (1).jpg', 50, 'width', datos_airtable)
         plan2 = cargar_imagen(docx_tpl, 'plan2', 'plan (2).jpg', 50, 'width', datos_airtable)
         plan3 = cargar_imagen(docx_tpl, 'plan3', 'plan (3).jpg', 50, 'width', datos_airtable)
@@ -483,6 +489,7 @@ def crear_word(datos_airtable):
                             'bit_emer': bit_emer,
                             'insp_bot': insp_bot,
                             'insp_ext': insp_ext,
+                            'insp_ext1': insp_ext1,
                             'insp_dh': insp_dh,
                             'insp_lamp': insp_lamp,
                             'insp_alarm': insp_alarm,
@@ -523,6 +530,7 @@ def crear_word(datos_airtable):
                             'ev_sim8': ev_sim8,
                             'acta3': acta3,
                             'acta4': acta4,
+                            'acta5': acta5,
                             'plan1': plan1,
                             'plan2': plan2,
                             'plan3': plan3,
@@ -541,7 +549,8 @@ def crear_word(datos_airtable):
                             'mueble3': mueble3,
                             'mueble4': mueble4,
                             'inmueble3': inmueble3,
-                            'inmueble4': inmueble4,                          'botiquin1': botiquin1,
+                            'inmueble4': inmueble4,                          
+                            'botiquin1': botiquin1,
                             'ruta4': ruta4,
                             'cap13': cap13,
                             'cap14': cap14,
