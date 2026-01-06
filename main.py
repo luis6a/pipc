@@ -1,5 +1,7 @@
 import os
 import shutil
+import stat
+import time
 import pandas as pd
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Mm
@@ -85,8 +87,18 @@ IMAGES_PATH = f"{BASE_DIR}/Inputs/Images"
 
 def eliminar_crear_carpetas(path):
     if os.path.exists(path):
-        shutil.rmtree(path)
-    os.mkdir(path)
+
+        def on_rm_exc(func, path, exc_info):
+            os.chmod(path, stat.S_IWRITE)
+            func(path)
+
+        try:
+            shutil.rmtree(path, onexc=on_rm_exc)
+        except PermissionError:
+            time.sleep(1)
+            shutil.rmtree(path, onexc=on_rm_exc)
+
+    os.makedirs(path, exist_ok=True)
 
 # Función para obtener datos de tablas relacionadas
 def obtener_datos_relacionados(api, nombre_comercial, tabla_nombre):
