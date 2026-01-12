@@ -26,8 +26,8 @@ GASOLINERA_TABLE = 'Gasolinera'
 PERITO_TABLE = 'Perito'
 
 # Valores específicos para buscar en Airtable
-CATEGORIA_BUSCAR = 'GENERAL'
-NOMBRE_COMERCIAL_BUSCAR = 'PRUEBA'
+CATEGORIA_BUSCAR = 'GASOLINERA'
+NOMBRE_COMERCIAL_BUSCAR = 'E.S. 0814 SERVICIO TLAXCALTECA'
 
 # Ruta base absoluta
 BASE_DIR = "C:/Users/luis6/OneDrive/Documentos/GitHub/PIPC"
