@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>PIPC Campo</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #222535;
+    --border: #2e3245;
+    --accent: #f0b429;
+    --accent2: #4ade80;
+    --danger: #f87171;
+    --text: #e8eaf0;
+    --text2: #8b90a7;
+    --field-bg: #131620;
+    --radius: 8px;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
+    padding: 12px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-logo {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+  .header-site {
+    flex: 1;
+    font-size: 12px;
+    color: var(--text2);
+    font-family: var(--mono);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .header-site span { color: var(--text); font-weight: 600; }
+
+  .btn-save-header {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 7px 14px;
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    transition: opacity .15s;
+  }
+  .btn-save-header:active { opacity: .7; }
+  .btn-save-header:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* SEARCH SCREEN */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .search-wrap {
+    padding: 32px 20px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .search-title {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .search-sub {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 28px;
+  }
+
+  .config-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .config-box label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--text2);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .config-box input {
+    width: 100%;
+    background: var(--field-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    outline: none;
+    margin-bottom: 12px;
+  }
+  .config-box input:focus { border-color: var(--accent); }
+  .config-box input:last-child { margin-bottom: 0; }
+
+  .search-input-wrap {
+    position: relative;
+    margin-bottom: 12px;
+  }
+  .search-input {
+    width: 100%;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+
+  .results-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .result-item {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .result-item:last-child { border-bottom: none; }
+  .result-item:active { background: var(--surface2); }
+  .result-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .result-sub {
+    font-size: 11px;
+    color: var(--text2);
+    font-family: var(--mono);
+    margin-top: 3px;
+  }
+
+  .btn-new {
+    width: 100%;
+    background: transparent;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    color: var(--text2);
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .2s;
+    margin-top: 12px;
+    letter-spacing: 1px;
+  }
+  .btn-new:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .status-msg {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    display: none;
+  }
+  .status-msg.info { background: #1e2a3a; color: #60a5fa; border: 1px solid #1d4ed8; display: block; }
+  .status-msg.success { background: #14261e; color: var(--accent2); border: 1px solid #166534; display: block; }
+  .status-msg.error { background: #2a1515; color: var(--danger); border: 1px solid #7f1d1d; display: block; }
+
+  /* FORM SCREEN */
+  .form-wrap {
+    padding: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text2);
+    transition: all .15s;
+  }
+  .tab.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+  }
+  .tab.field-tab.active {
+    background: var(--accent2);
+    border-color: var(--accent2);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 20px;
+  }
+  .section-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text2);
+    text-transform: uppercase;
+    padding: 0 0 8px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title .badge {
+    background: var(--accent);
+    color: #000;
+    font-size: 8px;
+    padding: 2px 6px;
+    border-radius: 10px;
+  }
+  .section-title .badge.field {
+    background: var(--accent2);
+  }
+
+  /* FIELD */
+  .field {
+    margin-bottom: 14px;
+  }
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text2);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .field input[type="text"],
+  .field input[type="number"],
+  .field input[type="email"],
+  .field input[type="tel"],
+  .field textarea,
+  .field select {
+    width: 100%;
+    background: var(--field-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    outline: none;
+    transition: border-color .15s;
+    -webkit-appearance: none;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus { border-color: var(--accent); }
+  .field textarea { resize: vertical; min-height: 72px; }
+  .field select { background-image: none; }
+
+  /* CAMPO highlight */
+  .field.is-field input,
+  .field.is-field textarea,
+  .field.is-field select {
+    border-color: #2d4a35;
+    background: #111a14;
+  }
+  .field.is-field input:focus,
+  .field.is-field textarea:focus { border-color: var(--accent2); }
+  .field.is-field label { color: var(--accent2); }
+
+  /* COUNTER FIELD */
+  .counter-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--field-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .counter-wrap.is-field { border-color: #2d4a35; background: #111a14; }
+  .counter-wrap.is-field:focus-within { border-color: var(--accent2); }
+  .counter-btn {
+    background: var(--surface2);
+    border: none;
+    color: var(--text);
+    font-size: 20px;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .1s;
+    flex-shrink: 0;
+  }
+  .counter-btn:active { background: var(--border); }
+  .counter-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    outline: none;
+    width: 0;
+    padding: 0;
+  }
+
+  /* CHECKBOX GRID */
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .checkbox-item {
+    background: var(--field-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .checkbox-item.checked {
+    border-color: var(--accent2);
+    background: #111a14;
+  }
+  .checkbox-item.is-field { border-color: #2d4a35; background: #111a14; }
+  .checkbox-item.is-field.checked { border-color: var(--accent2); }
+  .checkbox-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all .15s;
+  }
+  .checkbox-item.checked .checkbox-box {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: #000;
+  }
+  .checkbox-label {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  /* 2-col layout */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* BOTTOM SAVE */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+  }
+  .btn-back {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .btn-save {
+    flex: 1;
+    background: var(--accent);
+    border: none;
+    color: #000;
+    padding: 12px;
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: opacity .15s;
+  }
+  .btn-save:active { opacity: .8; }
+  .btn-save:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    opacity: 0;
+    transition: all .3s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 200;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast.success { border-color: var(--accent2); color: var(--accent2); }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">PIPC<br>CAMPO</div>
+  <div class="header-site" id="headerSite">— selecciona un sitio —</div>
+  <button class="btn-save-header" id="btnSaveHeader" onclick="guardarRegistro()" style="display:none">GUARDAR</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<!-- ============ PANTALLA SETUP API KEY ============ -->
+<div class="screen" id="screenSetup">
+  <div class="search-wrap">
+    <div class="search-title">Configuración</div>
+    <div class="search-sub">Ingresa tu token de Airtable para comenzar.<br>Solo se pide una vez y se guarda en este dispositivo.</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;">
+      <label style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:8px;">Personal Access Token de Airtable</label>
+      <input type="text" id="inputApiKey" placeholder="pat..." style="width:100%;background:var(--field-bg);border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;margin-bottom:10px;">
+      <p id="setupError" style="color:var(--danger);font-family:var(--mono);font-size:11px;min-height:16px;margin-bottom:10px;"></p>
+      <p style="font-size:11px;color:var(--text2);margin-bottom:16px;">Encuéntralo en Airtable → tu perfil → Developer Hub → Personal access tokens</p>
+      <button onclick="guardarApiKey()" style="width:100%;background:var(--accent);border:none;color:#000;padding:12px;border-radius:var(--radius);font-family:var(--mono);font-size:13px;font-weight:600;cursor:pointer;letter-spacing:1px;">GUARDAR Y CONTINUAR</button>
+    </div>
+  </div>
+</div>
+<!-- ============ PANTALLA BÚSQUEDA ============ -->
+<div class="screen active" id="screenSearch">
+  <div class="search-wrap">
+    <div class="search-title">Levantamiento</div>
+    <div class="search-sub">Busca el sitio o crea uno nuevo</div>
+
+    <div class="config-box" style="display:none">
+      <label>API Key de Airtable</label>
+      <input type="text" id="cfgApiKey" placeholder="pat..." oninput="saveConfig()">
+      <label>Base ID</label>
+      <input type="text" id="cfgBaseId" placeholder="app..." oninput="saveConfig()">
+      <label>Tabla</label>
+      <input type="text" id="cfgTable" placeholder="Inmueble-Vista de cuadrícula" oninput="saveConfig()">
+    </div>
+
+    <div class="status-msg" id="statusMsg"></div>
+
+    <input class="search-input" type="text" id="searchInput"
+      placeholder="Buscar por nombre del sitio..."
+      oninput="buscarSitio(this.value)">
+
+    <div class="results-list" id="resultsList" style="display:none"></div>
+
+    <button class="btn-new" onclick="nuevoRegistro()">+ NUEVO SITIO</button>
+    <button onclick="limpiarApiKey()" style="width:100%;background:transparent;border:none;color:var(--text2);font-family:var(--mono);font-size:10px;margin-top:20px;cursor:pointer;letter-spacing:1px;">⚙ Cambiar API Key</button>
+  </div>
+</div>
+
+<!-- ============ PANTALLA FORMULARIO ============ -->
+<div class="screen" id="screenForm">
+  <div class="form-wrap">
+
+    <div class="tabs" id="tabsNav">
+      <button class="tab active" onclick="switchTab('tGeneral', this)">General</button>
+      <button class="tab" onclick="switchTab('tUbicacion', this)">Ubicación</button>
+      <button class="tab field-tab" onclick="switchTab('tInventario', this)">📋 Inventario</button>
+      <button class="tab field-tab" onclick="switchTab('tSeñales', this)">🔰 Señales</button>
+      <button class="tab" onclick="switchTab('tRiesgos', this)">Riesgos</button>
+      <button class="tab" onclick="switchTab('tPersonal', this)">Personal</button>
+      <button class="tab" onclick="switchTab('tBrigadas', this)">Brigadas</button>
+    </div>
+
+    <!-- TAB: GENERAL -->
+    <div class="tab-content active" id="tGeneral">
+      <div class="section">
+        <div class="section-title">Identificación</div>
+        <div class="field"><label>Nombre Comercial</label><input type="text" id="nombre_comercial"></div>
+        <div class="two-col">
+          <div class="field"><label>Categoría</label><input type="text" id="Categoria"></div>
+          <div class="field"><label>RFC</label><input type="text" id="rfc"></div>
+        </div>
+        <div class="field"><label>Razón Social</label><input type="text" id="razon_social"></div>
+        <div class="field"><label>Giro Comercial</label><textarea id="giro_comercial"></textarea></div>
+        <div class="field"><label>Descripción de Actividades</label><textarea id="descripcion_actividades"></textarea></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Contacto</div>
+        <div class="field"><label>Teléfono</label><input type="tel" id="telefono"></div>
+        <div class="field"><label>Email</label><input type="email" id="email"></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Operación</div>
+        <div class="field"><label>Días de Trabajo</label><input type="text" id="dias_trabajo"></div>
+        <div class="field"><label>Horario</label><input type="text" id="horario"></div>
+        <div class="two-col">
+          <div class="field"><label>Turnos</label><input type="number" id="turnos" min="1"></div>
+          <div class="field"><label>Antigüedad (años)</label><input type="number" id="antiguedad_inmueble" min="0"></div>
+        </div>
+        <div class="field"><label>Inicio de Operaciones</label><input type="text" id="inicio_operaciones"></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Estructura del Inmueble</div>
+        <div class="two-col">
+          <div class="field"><label>Edificios</label>
+            <div class="counter-wrap"><button class="counter-btn" onclick="counter('edificios',-1)">−</button><input class="counter-input" type="number" id="edificios" value="0" min="0"><button class="counter-btn" onclick="counter('edificios',1)">+</button></div>
+          </div>
+          <div class="field"><label>Niveles</label>
+            <div class="counter-wrap"><button class="counter-btn" onclick="counter('niveles',-1)">−</button><input class="counter-input" type="number" id="niveles" value="0" min="0"><button class="counter-btn" onclick="counter('niveles',1)">+</button></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field"><label>Terreno m²</label><input type="number" id="terreno_m2" step="0.01"></div>
+          <div class="field"><label>Construcción m²</label><input type="number" id="construccion_m2" step="0.01"></div>
+        </div>
+        <div class="field"><label>Estacionamiento</label><input type="text" id="estacionamiento"></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Personal</div>
+        <div class="two-col">
+          <div class="field"><label>Hombres</label><input type="number" id="hombres" min="0"></div>
+          <div class="field"><label>Mujeres</label><input type="number" id="mujeres" min="0"></div>
+        </div>
+        <div class="two-col">
+          <div class="field"><label>Turno 1</label><input type="number" id="turno_1" min="0"></div>
+          <div class="field"><label>Turno 2</label><input type="number" id="turno_2" min="0"></div>
+        </div>
+        <div class="two-col">
+          <div class="field"><label>Turno 3</label><input type="number" id="turno_3" min="0"></div>
+          <div class="field"><label>Visitantes</label><input type="number" id="visitantes" min="0"></div>
+        </div>
+        <div class="field"><label>Proveedores</label><input type="number" id="proveedores" min="0"></div>
+      </div>
+    </div>
+
+    <!-- TAB: UBICACIÓN -->
+    <div class="tab-content" id="tUbicacion">
+      <div class="section">
+        <div class="section-title">Dirección</div>
+        <div class="field"><label>Calle</label><input type="text" id="calle"></div>
+        <div class="two-col">
+          <div class="field"><label>No. Exterior</label><input type="text" id="no_exterior"></div>
+          <div class="field"><label>C.P.</label><input type="number" id="codigo_postal"></div>
+        </div>
+        <div class="field"><label>Colonia / Barrio</label><input type="text" id="colonia_barrio"></div>
+        <div class="two-col">
+          <div class="field"><label>Municipio</label><input type="text" id="municipio"></div>
+          <div class="field"><label>Estado</label><input type="text" id="estado"></div>
+        </div>
+        <div class="field"><label>Coordenadas GPS</label><input type="text" id="coordenadas" placeholder="lat, lng"></div>
+        <button onclick="obtenerGPS()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:8px 14px;border-radius:6px;font-family:var(--mono);font-size:11px;cursor:pointer;margin-bottom:14px;">📍 Obtener GPS actual</button>
+      </div>
+      <div class="section">
+        <div class="section-title">Colindancias</div>
+        <div class="field"><label>Norte</label><input type="text" id="norte"></div>
+        <div class="field"><label>Sur</label><input type="text" id="sur"></div>
+        <div class="field"><label>Este</label><input type="text" id="este"></div>
+        <div class="field"><label>Oeste</label><input type="text" id="oeste"></div>
+        <div class="field"><label>Referencia para llegar</label><textarea id="referencia_llegar"></textarea></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Acta / Fecha</div>
+        <div class="two-col">
+          <div class="field"><label>Día</label><input type="number" id="dia" min="1" max="31"></div>
+          <div class="field"><label>Mes</label><input type="text" id="mes"></div>
+        </div>
+        <div class="field"><label>Año</label><input type="number" id="anio"></div>
+      </div>
+    </div>
+
+    <!-- TAB: INVENTARIO (CAMPO) -->
+    <div class="tab-content" id="tInventario">
+      <div class="section">
+        <div class="section-title">Salidas y Accesos <span class="badge field">CAMPO</span></div>
+        <div class="two-col">
+          <div class="field is-field"><label>Accesos</label>
+            <div class="counter-wrap is-field"><button class="counter-btn" onclick="counter('accesos',-1)">−</button><input class="counter-input" type="number" id="accesos" value="0" min="0"><button class="counter-btn" onclick="counter('accesos',1)">+</button></div>
+          </div>
+          <div class="field is-field"><label>Salidas Emergencia</label>
+            <div class="counter-wrap is-field"><button class="counter-btn" onclick="counter('salidas_emergencia',-1)">−</button><input class="counter-input" type="number" id="salidas_emergencia" value="0" min="0"><button class="counter-btn" onclick="counter('salidas_emergencia',1)">+</button></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field is-field"><label>Escaleras</label>
+            <div class="counter-wrap is-field"><button class="counter-btn" onclick="counter('escaleras',-1)">−</button><input class="counter-input" type="number" id="escaleras" value="0" min="0"><button class="counter-btn" onclick="counter('escaleras',1)">+</button></div>
+          </div>
+          <div class="field is-field"><label>Escaleras Emergencia</label>
+            <div class="counter-wrap is-field"><button class="counter-btn" onclick="counter('escaleras_emergencia',-1)">−</button><input class="counter-input" type="number" id="escaleras_emergencia" value="0" min="0"><button class="counter-btn" onclick="counter('escaleras_emergencia',1)">+</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Extintores <span class="badge field">CAMPO</span></div>
+        <div class="two-col">
+          <div class="field is-field"><label>PQS</label>
+            <div class="counter-wrap is-field"><button class="counter-btn" onclick="counter('extintor_pqs',-1)">−</button><input class="counter-input" type="number" id="extintor_pqs" value="0" min="0"><button class="counter-btn" onclick="counter('extintor_pqs',1)">+</button></div>
+          </div>
+          <div class="field is-field"><label>CO₂</label>
+            <div class="counter-wrap is-field"><button class="counter-btn" onclick="counter('extintor_co2',-1)">−</button><input class="counter-input" type="number" id="extintor_co2" value="0" min="0"><button class="counter-btn" onclick="counter('extintor_co2',1)">+</button></div>
+          </div>
+        </div>
+        <div class="field is-field"><label>Ubicación de Extintores</label><textarea id="ubicacion_extintores"></textarea></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Alarmas <span class="badge field">CAMPO</span></div>
+        <div class="field is-field"><label>Cantidad</label>
+          <div class="counter-wrap is-field"><button class="counter-btn" onclick="counter('alarmas',-1)">−</button><input class="counter-input" type="number" id="alarmas" value="0" min="0"><button class="counter-btn" onclick="counter('alarmas',1)">+</button></div>
+        </div>
+        <div class="field is-field"><label>Tipo de Alarma</label><input type="text" id="tipo_alarma"></div>
+        <div class="field is-field"><label>Ubicación de Alarmas</label><textarea id="ubicacion_alarma"></textarea></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Detectores de Humo <span class="badge field">CAMPO</span></div>
+        <div class="field is-field"><label>Cantidad</label>
+          <div class="counter-wrap is-field"><button class="counter-btn" onclick="counter('detectores_humo',-1)">−</button><input class="counter-input" type="number" id="detectores_humo" value="0" min="0"><button class="counter-btn" onclick="counter('detectores_humo',1)">+</button></div>
+        </div>
+        <div class="field is-field"><label>Ubicación</label><textarea id="ubicacion_dh"></textarea></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Lámparas de Emergencia <span class="badge field">CAMPO</span></div>
+        <div class="field is-field"><label>Cantidad</label>
+          <div class="counter-wrap is-field"><button class="counter-wrap is-field"><button class="counter-btn" onclick="counter('lamparas_emergencia',-1)">−</button><input class="counter-input" type="number" id="lamparas_emergencia" value="0" min="0"><button class="counter-btn" onclick="counter('lamparas_emergencia',1)">+</button></div>
+        </div>
+        <div class="field is-field"><label>Ubicación</label><textarea id="ubicacion_lamparas_emergencia"></textarea></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Botiquín <span class="badge field">CAMPO</span></div>
+        <div class="field is-field"><label>Cantidad</label>
+          <div class="counter-wrap is-field"><button class="counter-btn" onclick="counter('botiquin_emergencia',-1)">−</button><input class="counter-input" type="number" id="botiquin_emergencia" value="0" min="0"><button class="counter-btn" onclick="counter('botiquin_emergencia',1)">+</button></div>
+        </div>
+        <div class="field is-field"><label>Ubicación</label><textarea id="ubicacion_botiquin"></textarea></div>
+      </div>
+    </div>
+
+    <!-- TAB: SEÑALES (CAMPO) -->
+    <div class="tab-content" id="tSeñales">
+      <div class="section">
+        <div class="section-title">Señalamientos de Evacuación <span class="badge field">CAMPO</span></div>
+        <div class="checkbox-grid">
+          <div class="checkbox-item is-field" onclick="toggleCheck(this, 'ruta_evacuacion_bool')" id="chk_ruta_evacuacion">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">Ruta de Evacuación</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this, 'salida_emergencia_bool')" id="chk_salida_emergencia">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">Salida de Emergencia</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this, 'punto_reunion_bool')" id="chk_punto_reunion">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">Punto de Reunión</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this, 'sismo_incendio_bool')" id="chk_sismo_incendio">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">Sismo / Incendio</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this, 'señal_escaleras_bool')" id="chk_señal_escaleras">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">Escaleras</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this, 'zona_menor_riesgo_bool')" id="chk_zona_menor_riesgo">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">Zona Menor Riesgo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" style="margin-top:16px">
+        <div class="section-title">Señalamientos de Prevención <span class="badge field">CAMPO</span></div>
+        <div class="checkbox-grid">
+          <div class="checkbox-item is-field" onclick="toggleCheck(this,'riesgo_electrico_bool')" id="chk_riesgo_electrico">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">Riesgo Eléctrico</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this,'area_restringida_bool')" id="chk_area_restringida">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">Área Restringida</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this,'no_fumar_bool')" id="chk_no_fumar">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">No Fumar</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this,'no_celular_bool')" id="chk_no_celular">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">No Celular</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this,'no_gorra_bool')" id="chk_no_gorra">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">No Gorra</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this,'no_lentes_bool')" id="chk_no_lentes">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">No Lentes</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this,'no_estacionarse_bool')" id="chk_no_estacionarse">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">No Estacionarse</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this,'estacionamiento_discapacidad_bool')" id="chk_estacionamiento_discapacidad">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">Est. Discapacidad</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this,'rampa_discapacidad_bool')" id="chk_rampa_discapacidad">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">Rampa Discapacidad</div>
+          </div>
+          <div class="checkbox-item is-field" onclick="toggleCheck(this,'velocidad_max_bool')" id="chk_velocidad_max">
+            <div class="checkbox-box">✓</div><div class="checkbox-label">Vel. Máxima</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" style="margin-top:16px">
+        <div class="section-title">Conteos por señal</div>
+        <p style="font-size:11px;color:var(--text2);margin-bottom:12px;font-family:var(--mono)">Ingresa la cantidad de cada señalamiento si necesitas el detalle numérico</p>
+        <div class="two-col">
+          <div class="field is-field"><label>Ruta Evacuación (cant.)</label><input type="number" id="ruta_evacuacion" min="0"></div>
+          <div class="field is-field"><label>Salida Emergencia (cant.)</label><input type="number" id="salida_emergencia" min="0"></div>
+        </div>
+        <div class="two-col">
+          <div class="field is-field"><label>Punto Reunión (cant.)</label><input type="number" id="punto_reunion" min="0"></div>
+          <div class="field is-field"><label>Sismo/Incendio (cant.)</label><input type="number" id="sismo_incendio" min="0"></div>
+        </div>
+        <div class="two-col">
+          <div class="field is-field"><label>Señal Escaleras (cant.)</label><input type="number" id="señal_escaleras" min="0"></div>
+          <div class="field is-field"><label>Zona Menor Riesgo (cant.)</label><input type="number" id="zona_menor_riesgo" min="0"></div>
+        </div>
+        <div class="two-col">
+          <div class="field is-field"><label>Riesgo Eléctrico (cant.)</label><input type="number" id="riesgo_electrico" min="0"></div>
+          <div class="field is-field"><label>Área Restringida (cant.)</label><input type="number" id="area_restringida" min="0"></div>
+        </div>
+        <div class="two-col">
+          <div class="field is-field"><label>No Fumar (cant.)</label><input type="number" id="no_fumar" min="0"></div>
+          <div class="field is-field"><label>No Celular (cant.)</label><input type="number" id="no_celular" min="0"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: RIESGOS -->
+    <div class="tab-content" id="tRiesgos">
+      <div class="section">
+        <div class="section-title">Riesgos Colindantes</div>
+        <div class="field"><label>Riesgo Bajo 1</label><input type="text" id="riesgo_bajo1"></div>
+        <div class="field"><label>Riesgo Bajo 2</label><input type="text" id="riesgo_bajo2"></div>
+        <div class="field"><label>Riesgo Bajo 3</label><input type="text" id="riesgo_bajo3"></div>
+        <div class="field"><label>Riesgo Medio 1</label><input type="text" id="riesgo_medio1"></div>
+        <div class="field"><label>Riesgo Medio 2</label><input type="text" id="riesgo_medio2"></div>
+        <div class="field"><label>Riesgo Medio 3</label><input type="text" id="riesgo_medio3"></div>
+        <div class="field"><label>Riesgo Alto 1</label><input type="text" id="riesgo_alto1"></div>
+        <div class="field"><label>Riesgo Alto 2</label><input type="text" id="riesgo_alto2"></div>
+        <div class="field"><label>Riesgo Alto 3</label><input type="text" id="riesgo_alto3"></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Materiales Peligrosos</div>
+        <div class="field"><label>Cocina</label>
+          <select id="cocina"><option>NO</option><option>SÍ</option></select>
+        </div>
+        <div class="field"><label>Gas / Inflamable (desc.)</label><textarea id="descripcion_gas_inflamable"></textarea></div>
+        <div class="field"><label>Líquido Inflamable (desc.)</label><textarea id="descripcion_liquido_inflamable"></textarea></div>
+        <div class="field"><label>Líquido Combustible (desc.)</label><textarea id="descripcion_liquido_combustible"></textarea></div>
+        <div class="field"><label>Sólido Combustible (desc.)</label><textarea id="descripcion_solido_combustible"></textarea></div>
+        <div class="two-col">
+          <div class="field"><label>Gas Inflamable (kg/lt)</label><input type="number" id="gas_inflamable" min="0"></div>
+          <div class="field"><label>Líquido Combustible</label><input type="number" id="liquido_combustible" min="0"></div>
+        </div>
+        <div class="field"><label>Sólido Combustible (kg)</label><input type="number" id="solido_combustible" min="0"></div>
+      </div>
+    </div>
+
+    <!-- TAB: PERSONAL -->
+    <div class="tab-content" id="tPersonal">
+      <div class="section">
+        <div class="section-title">Representantes</div>
+        <div class="field"><label>Representante Legal</label><input type="text" id="representante_legal"></div>
+        <div class="field"><label>Coordinador</label><input type="text" id="coordinador"></div>
+        <div class="field"><label>Puesto Coordinador</label><input type="text" id="puesto_coordinador"></div>
+        <div class="field"><label>Coordinador Suplente</label><input type="text" id="coord_suplente"></div>
+        <div class="field"><label>Puesto Coord. Suplente</label><input type="text" id="puesto_coord_suplente"></div>
+      </div>
+    </div>
+
+    <!-- TAB: BRIGADAS -->
+    <div class="tab-content" id="tBrigadas">
+      <div class="section">
+        <div class="section-title">Brigada Incendios</div>
+        <div class="field"><label>Titular</label><input type="text" id="incendios"></div>
+        <div class="field"><label>Puesto</label><input type="text" id="incendios_puesto"></div>
+        <div class="field"><label>Suplente</label><input type="text" id="suplente_incendios"></div>
+        <div class="field"><label>Puesto Suplente</label><input type="text" id="puesto_suplente_incendios"></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Brigada Primeros Auxilios</div>
+        <div class="field"><label>Titular</label><input type="text" id="primeros_auxilios"></div>
+        <div class="field"><label>Puesto</label><input type="text" id="puesto_primeros_auxilios"></div>
+        <div class="field"><label>Suplente</label><input type="text" id="suplente_primeros_auxilios"></div>
+        <div class="field"><label>Puesto Suplente</label><input type="text" id="puesto_suplente_primeros_auxilios"></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Brigada Evacuación</div>
+        <div class="field"><label>Titular</label><input type="text" id="evacuacion"></div>
+        <div class="field"><label>Puesto</label><input type="text" id="puesto_evacuacion"></div>
+        <div class="field"><label>Suplente</label><input type="text" id="suplente_evacuacion"></div>
+        <div class="field"><label>Puesto Suplente</label><input type="text" id="puesto_suplente_evacuacion"></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Brigada Búsqueda y Rescate</div>
+        <div class="field"><label>Titular</label><input type="text" id="busqueda"></div>
+        <div class="field"><label>Puesto</label><input type="text" id="puesto_busqueda"></div>
+        <div class="field"><label>Suplente</label><input type="text" id="suplente_busqueda"></div>
+        <div class="field"><label>Puesto Suplente</label><input type="text" id="puesto_suplente_busqueda"></div>
+      </div>
+    </div>
+
+  </div><!-- /form-wrap -->
+
+  <div class="bottom-bar">
+    <button class="btn-back" onclick="volverBusqueda()">← Volver</button>
+    <button class="btn-save" id="btnSave" onclick="guardarRegistro()">💾 GUARDAR EN AIRTABLE</button>
+  </div>
+</div><!-- /screenForm -->
+
+<script>
+// ============ CREDENCIALES FIJAS ============
+// Credenciales: se guardan en localStorage del navegador, nunca en el código
+const BASE_ID       = 'appy6PazgVEt6DWzU';
+const TBL_INMUEBLE  = 'tblGLidPHPZP7M7ds';
+const TBL_POBLACION = 'tblUf7enRg2f9vpSK';
+let API_KEY = localStorage.getItem('pipc_api_key') || '';
+
+// ============ DEFINICIÓN DE CAMPOS ============
+
+// Campos que van a la tabla INMUEBLE
+const FIELDS_INMUEBLE = [
+  'nombre_comercial','Categoria','razon_social','rfc','calle','no_exterior',
+  'colonia_barrio','codigo_postal','municipio','estado','giro_comercial',
+  'descripcion_actividades','telefono','email','dias_trabajo','horario',
+  'turnos','antiguedad_inmueble','inicio_operaciones','edificios','niveles',
+  'accesos','salidas_emergencia','escaleras','escaleras_emergencia','estacionamiento',
+  'terreno_m2','construccion_m2','coordenadas','norte','sur','este','oeste',
+  'referencia_llegar','ruta_evacuacion','salida_emergencia','punto_reunion',
+  'sismo_incendio','señal_escaleras','zona_menor_riesgo','riesgo_electrico',
+  'area_restringida','no_fumar','no_celular','no_gorra','no_lentes',
+  'no_estacionarse','estacionamiento_discapacidad','rampa_discapacidad',
+  'velocidad_max','botiquin_emergencia','ubicacion_botiquin','extintor_pqs',
+  'extintor_co2','ubicacion_extintores','alarmas','tipo_alarma','ubicacion_alarma',
+  'detectores_humo','ubicacion_dh','lamparas_emergencia','ubicacion_lamparas_emergencia',
+  'dia','mes','anio','riesgo_bajo1','riesgo_bajo2','riesgo_bajo3',
+  'riesgo_medio1','riesgo_medio2','riesgo_medio3','riesgo_alto1','riesgo_alto2','riesgo_alto3',
+  'cocina','descripcion_gas_inflamable','gas_inflamable','descripcion_liquido_inflamable',
+  'descripcion_liquido_combustible','liquido_combustible','descripcion_solido_combustible',
+  'solido_combustible'
+];
+
+// Campos que van a la tabla POBLACIÓN (excluye el campo de vínculo "Inmueble", se agrega al guardar)
+const FIELDS_POBLACION = [
+  'hombres','mujeres','turno_1','turno_2','turno_3','visitantes','proveedores',
+  'representante_legal','coordinador','puesto_coordinador',
+  'coord_suplente','puesto_coord_suplente',
+  'incendios','incendios_puesto','suplente_incendios','puesto_suplente_incendios',
+  'primeros_auxilios','puesto_primeros_auxilios','suplente_primeros_auxilios','puesto_suplente_primeros_auxilios',
+  'evacuacion','puesto_evacuacion','suplente_evacuacion','puesto_suplente_evacuacion',
+  'busqueda','puesto_busqueda','suplente_busqueda','puesto_suplente_busqueda'
+];
+
+const FIELDS_MAP = [...FIELDS_INMUEBLE, ...FIELDS_POBLACION];
+
+// Campos numéricos (no se convierten a mayúsculas ni se envían como string)
+const NUM_FIELDS = new Set([
+  'turnos','antiguedad_inmueble','edificios','niveles','accesos','salidas_emergencia',
+  'escaleras','escaleras_emergencia','terreno_m2','construccion_m2','ruta_evacuacion',
+  'salida_emergencia','punto_reunion','sismo_incendio','señal_escaleras','zona_menor_riesgo',
+  'riesgo_electrico','area_restringida','no_fumar','no_celular','no_gorra','no_lentes',
+  'no_estacionarse','estacionamiento_discapacidad','rampa_discapacidad','velocidad_max',
+  'botiquin_emergencia','extintor_pqs','extintor_co2','alarmas','detectores_humo',
+  'lamparas_emergencia','dia','anio','gas_inflamable','liquido_combustible','solido_combustible',
+  'hombres','mujeres','turno_1','turno_2','turno_3','visitantes','proveedores',
+  'telefono','codigo_postal'
+]);
+
+// Estado
+let currentRecordId = null;   // ID del registro en tabla Inmueble
+let currentPobId    = null;   // ID del registro en tabla Población
+let checkStates = {};
+
+// ============ HELPERS API ============
+function apiHeaders() {
+  return { Authorization: `Bearer ${API_KEY}`, 'Content-Type': 'application/json' };
+}
+
+async function apiGet(tableId, params) {
+  const url = `https://api.airtable.com/v0/${BASE_ID}/${tableId}?${params}`;
+  const res = await fetch(url, { headers: apiHeaders() });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data;
+}
+
+async function apiPost(tableId, fields) {
+  const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${tableId}`, {
+    method: 'POST',
+    headers: apiHeaders(),
+    body: JSON.stringify({ fields })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data;
+}
+
+async function apiPatch(tableId, recordId, fields) {
+  const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${tableId}/${recordId}`, {
+    method: 'PATCH',
+    headers: apiHeaders(),
+    body: JSON.stringify({ fields })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data;
+}
+
+// ============ TRANSFORMAR VALOR (mayúsculas) ============
+function transformVal(fieldName, val) {
+  if (NUM_FIELDS.has(fieldName)) return val; // numérico, sin cambio
+  if (fieldName === 'email') return val;      // email en minúsculas
+  if (typeof val === 'string') return val.toUpperCase();
+  return val;
+}
+
+// ============ CONSTRUIR OBJETO DE CAMPOS ============
+function buildFields(fieldList) {
+  const fields = {};
+  fieldList.forEach(f => {
+    const el = document.getElementById(f);
+    if (!el) return;
+    let val = el.tagName === 'SELECT' ? el.value : el.value.trim();
+    if (val === '') return;
+    if (NUM_FIELDS.has(f)) {
+      const n = parseFloat(val);
+      if (!isNaN(n)) fields[f] = n;
+    } else {
+      fields[f] = transformVal(f, val);
+    }
+  });
+  return fields;
+}
+
+// ============ SEARCH ============
+let searchTimeout;
+async function buscarSitio(q) {
+  clearTimeout(searchTimeout);
+  const list = document.getElementById('resultsList');
+  if (q.length < 2) { list.style.display = 'none'; return; }
+  searchTimeout = setTimeout(async () => {
+    showStatus('Buscando...', 'info');
+    try {
+      const formula = encodeURIComponent(`SEARCH("${q.toUpperCase()}",UPPER({nombre_comercial}))`);
+      const data = await apiGet(TBL_INMUEBLE, `filterByFormula=${formula}&maxRecords=10`);
+      hideStatus();
+      renderResults(data.records || []);
+    } catch(e) {
+      showStatus('Error: ' + e.message, 'error');
+    }
+  }, 400);
+}
+
+function renderResults(records) {
+  const list = document.getElementById('resultsList');
+  if (records.length === 0) { list.style.display = 'none'; return; }
+  list.innerHTML = records.map(r => `
+    <div class="result-item" onclick='abrirRegistro(${JSON.stringify(r.id)}, ${JSON.stringify(r.fields)})'>
+      <div class="result-name">${r.fields.nombre_comercial || '(sin nombre)'}</div>
+      <div class="result-sub">${r.fields.municipio || ''} · ${r.fields.estado || ''}</div>
+    </div>
+  `).join('');
+  list.style.display = 'block';
+}
+
+async function abrirRegistro(id, fields) {
+  currentRecordId = id;
+  currentPobId = null;
+  llenarFormulario(fields);
+  // Buscar registro de Población vinculado
+  try {
+    const formula = encodeURIComponent(`SEARCH("${id}",ARRAYJOIN({Inmueble}))`);
+    const data = await apiGet(TBL_POBLACION, `filterByFormula=${formula}&maxRecords=1`);
+    if (data.records && data.records.length > 0) {
+      currentPobId = data.records[0].id;
+      llenarFormularioPoblacion(data.records[0].fields);
+    }
+  } catch(e) {
+    console.warn('No se encontró registro de Población:', e.message);
+  }
+  mostrarFormulario(fields.nombre_comercial || 'Sitio');
+}
+
+function nuevoRegistro() {
+  currentRecordId = null;
+  currentPobId = null;
+  limpiarFormulario();
+  mostrarFormulario('NUEVO SITIO');
+}
+
+// ============ FORM ============
+function mostrarFormulario(nombre) {
+  document.getElementById('screenSearch').classList.remove('active');
+  document.getElementById('screenForm').classList.add('active');
+  document.getElementById('headerSite').innerHTML = `<span>${nombre}</span>`;
+  document.getElementById('btnSaveHeader').style.display = 'block';
+  switchTab('tGeneral', document.querySelector('.tab'));
+}
+
+function volverBusqueda() {
+  document.getElementById('screenForm').classList.remove('active');
+  document.getElementById('screenSearch').classList.add('active');
+  document.getElementById('btnSaveHeader').style.display = 'none';
+  document.getElementById('headerSite').textContent = '— selecciona un sitio —';
+}
+
+function llenarFormulario(fields) {
+  FIELDS_INMUEBLE.forEach(f => {
+    const el = document.getElementById(f);
+    if (!el) return;
+    const val = fields[f];
+    if (el.tagName === 'SELECT') {
+      el.value = val || 'NO';
+    } else {
+      el.value = (val !== null && val !== undefined) ? val : '';
+    }
+  });
+  actualizarCheckboxes(fields);
+}
+
+function llenarFormularioPoblacion(fields) {
+  FIELDS_POBLACION.forEach(f => {
+    const el = document.getElementById(f);
+    if (!el) return;
+    const val = fields[f];
+    el.value = (val !== null && val !== undefined) ? val : '';
+  });
+}
+
+function actualizarCheckboxes(fields) {
+  const boolMap = {
+    ruta_evacuacion_bool: 'ruta_evacuacion', salida_emergencia_bool: 'salida_emergencia',
+    punto_reunion_bool: 'punto_reunion', sismo_incendio_bool: 'sismo_incendio',
+    señal_escaleras_bool: 'señal_escaleras', zona_menor_riesgo_bool: 'zona_menor_riesgo',
+    riesgo_electrico_bool: 'riesgo_electrico', area_restringida_bool: 'area_restringida',
+    no_fumar_bool: 'no_fumar', no_celular_bool: 'no_celular', no_gorra_bool: 'no_gorra',
+    no_lentes_bool: 'no_lentes', no_estacionarse_bool: 'no_estacionarse',
+    estacionamiento_discapacidad_bool: 'estacionamiento_discapacidad',
+    rampa_discapacidad_bool: 'rampa_discapacidad', velocidad_max_bool: 'velocidad_max'
+  };
+  Object.entries(boolMap).forEach(([boolKey, numKey]) => {
+    const val = fields[numKey];
+    const checked = val !== null && val !== undefined && Number(val) > 0;
+    checkStates[boolKey] = checked;
+    const el = document.getElementById('chk_' + numKey);
+    if (el) {
+      if (checked) el.classList.add('checked');
+      else el.classList.remove('checked');
+    }
+  });
+}
+
+function limpiarFormulario() {
+  FIELDS_MAP.forEach(f => {
+    const el = document.getElementById(f);
+    if (!el) return;
+    el.value = '';
+  });
+  checkStates = {};
+  document.querySelectorAll('.checkbox-item').forEach(el => el.classList.remove('checked'));
+}
+
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function counter(fieldId, delta) {
+  const el = document.getElementById(fieldId);
+  const val = parseInt(el.value) || 0;
+  el.value = Math.max(0, val + delta);
+}
+
+function toggleCheck(el, key) {
+  const checked = !el.classList.contains('checked');
+  checkStates[key] = checked;
+  if (checked) el.classList.add('checked');
+  else el.classList.remove('checked');
+}
+
+function obtenerGPS() {
+  if (!navigator.geolocation) { showToast('GPS no disponible', 'error'); return; }
+  showToast('Obteniendo ubicación...', '');
+  navigator.geolocation.getCurrentPosition(pos => {
+    document.getElementById('coordenadas').value =
+      `${pos.coords.latitude.toFixed(8)}, ${pos.coords.longitude.toFixed(8)}`;
+    showToast('✓ Coordenadas capturadas', 'success');
+  }, () => showToast('No se pudo obtener GPS', 'error'));
+}
+
+// ============ GUARDAR EN DOS TABLAS ============
+async function guardarRegistro() {
+  const btnSave = document.getElementById('btnSave');
+  const btnHead = document.getElementById('btnSaveHeader');
+  btnSave.disabled = true;
+  btnSave.textContent = 'Guardando...';
+  btnHead.disabled = true;
+
+  try {
+    // --- 1. TABLA INMUEBLE ---
+    const fieldsInmueble = buildFields(FIELDS_INMUEBLE);
+
+    let inmuebleId;
+    if (currentRecordId) {
+      const res = await apiPatch(TBL_INMUEBLE, currentRecordId, fieldsInmueble);
+      inmuebleId = res.id;
+    } else {
+      const res = await apiPost(TBL_INMUEBLE, fieldsInmueble);
+      inmuebleId = res.id;
+      currentRecordId = inmuebleId;
+    }
+
+    // --- 2. TABLA POBLACIÓN ---
+    const fieldsPoblacion = buildFields(FIELDS_POBLACION);
+    // El campo de vínculo "Inmueble" requiere un array de record IDs
+    fieldsPoblacion['Inmueble'] = [inmuebleId];
+
+    if (currentPobId) {
+      await apiPatch(TBL_POBLACION, currentPobId, fieldsPoblacion);
+    } else {
+      // Verificar si ya existe un registro de Población para este Inmueble
+      // (puede pasar si se creó desde Airtable directamente)
+      try {
+        const formula = encodeURIComponent(`SEARCH("${inmuebleId}",ARRAYJOIN({Inmueble}))`);
+        const existing = await apiGet(TBL_POBLACION, `filterByFormula=${formula}&maxRecords=1`);
+        if (existing.records && existing.records.length > 0) {
+          currentPobId = existing.records[0].id;
+          await apiPatch(TBL_POBLACION, currentPobId, fieldsPoblacion);
+        } else {
+          const res = await apiPost(TBL_POBLACION, fieldsPoblacion);
+          currentPobId = res.id;
+        }
+      } catch(e) {
+        // Si falla la búsqueda, crear de todas formas
+        const res = await apiPost(TBL_POBLACION, fieldsPoblacion);
+        currentPobId = res.id;
+      }
+    }
+
+    showToast('✓ Guardado en Inmueble y Población', 'success');
+
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  } finally {
+    btnSave.disabled = false;
+    btnSave.textContent = '💾 GUARDAR EN AIRTABLE';
+    btnHead.disabled = false;
+  }
+}
+
+// ============ UI HELPERS ============
+function showStatus(msg, type) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = 'status-msg ' + type;
+}
+function hideStatus() {
+  document.getElementById('statusMsg').className = 'status-msg';
+}
+
+let toastTimer;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.classList.remove('show'); }, 3000);
+}
+
+// ============ SETUP API KEY ============
+function checkApiKey() {
+  if (!API_KEY) {
+    document.getElementById('screenSetup').classList.add('active');
+    document.getElementById('screenSearch').classList.remove('active');
+  }
+}
+
+function guardarApiKey() {
+  const val = document.getElementById('inputApiKey').value.trim();
+  if (!val.startsWith('pat')) {
+    document.getElementById('setupError').textContent = 'El token debe empezar con "pat"';
+    return;
+  }
+  API_KEY = val;
+  localStorage.setItem('pipc_api_key', val);
+  document.getElementById('screenSetup').classList.remove('active');
+  document.getElementById('screenSearch').classList.add('active');
+}
+
+function limpiarApiKey() {
+  if (!confirm('¿Seguro que quieres cambiar el API Key?')) return;
+  localStorage.removeItem('pipc_api_key');
+  API_KEY = '';
+  location.reload();
+}
+
+// ============ INIT ============
+checkApiKey();
+</script>
+</body>
+</html>
