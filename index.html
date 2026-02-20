@@ -608,11 +608,23 @@ function llenarPob(fields) {
   });
 }
 
+// Campos que se resetean a 0 (contadores), excepto PQS y CO2
+const CERO = new Set([
+  'accesos','salidas_emergencia','escaleras','escaleras_emergencia',
+  'alarmas','detectores_humo','lamparas_emergencia','botiquin_emergencia',
+  'ruta_evacuacion','salida_emergencia','punto_reunion','sismo_incendio',
+  'señal_escaleras','zona_menor_riesgo','riesgo_electrico','area_restringida',
+  'no_fumar','no_celular','no_gorra','no_lentes','no_estacionarse',
+  'estacionamiento_discapacidad','rampa_discapacidad','velocidad_max',
+  'edificios','niveles'
+]);
+
 function limpiar() {
   F_INM.concat(F_POB).forEach(function(f) {
     var el = document.getElementById(f);
     if (!el) return;
     if (el.tagName === 'SELECT') el.value = 'NO';
+    else if (CERO.has(f)) el.value = '0';
     else el.value = '';
   });
 }
