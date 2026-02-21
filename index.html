@@ -87,6 +87,17 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .brig{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px;}
 .brig-t{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
 small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;display:block;}
+.foto-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;display:none;align-items:flex-end;}
+.foto-menu-overlay.show{display:flex;}
+.foto-menu{background:var(--surface);border-radius:16px 16px 0 0;padding:20px 16px 32px;width:100%;}
+.foto-menu-title{font-family:var(--mono);font-size:11px;color:var(--text2);letter-spacing:1.5px;
+  text-align:center;margin-bottom:16px;}
+.foto-menu-btn{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);
+  padding:14px;border-radius:var(--radius);font-family:var(--sans);font-size:15px;cursor:pointer;
+  margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.foto-menu-btn:active{opacity:.7;}
+.foto-menu-cancel{width:100%;background:transparent;border:none;color:var(--text2);
+  font-family:var(--mono);font-size:12px;padding:12px;cursor:pointer;margin-top:4px;}
 .foto-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
 .foto-slot{background:var(--field-bg);border:1px solid var(--border);border-radius:6px;
   padding:8px;cursor:pointer;transition:border-color .15s;-webkit-tap-highlight-color:transparent;
@@ -1085,21 +1096,48 @@ function toast(msg, type) {
 // Almacén en memoria: { filename → File }
 var fotosEnMemoria = {};
 
+// Estado temporal del slot que se está editando
+var _slotActivo = null;
+var _fileActivo = null;
+
 function selectFoto(slotId, filename) {
+  _slotActivo = { slotId: slotId, filename: filename };
+  document.getElementById('fotoMenuLabel').textContent = filename;
+  document.getElementById('fotoMenuOverlay').classList.add('show');
+}
+
+function cerrarMenuFoto(e) {
+  if (e && e.target !== document.getElementById('fotoMenuOverlay')) return;
+  document.getElementById('fotoMenuOverlay').classList.remove('show');
+}
+
+function usarCamara() {
+  document.getElementById('fotoMenuOverlay').classList.remove('show');
+  _abrirInput(true);
+}
+
+function usarGaleria() {
+  document.getElementById('fotoMenuOverlay').classList.remove('show');
+  _abrirInput(false);
+}
+
+function _abrirInput(camara) {
+  if (!_slotActivo) return;
   var input = document.createElement('input');
   input.type = 'file';
   input.accept = 'image/*';
+  if (camara) input.setAttribute('capture', 'environment');
   input.onchange = function() {
     if (!input.files[0]) return;
     var file = input.files[0];
-    // Guardar en memoria con el nombre correcto
-    fotosEnMemoria[filename] = file;
-    // Mostrar thumbnail
-    var slot  = document.getElementById('slot_' + slotId);
-    var thumb = document.getElementById('thumb_' + slotId);
+    var s = _slotActivo;
+    fotosEnMemoria[s.filename] = file;
+    var slot  = document.getElementById('slot_'  + s.slotId);
+    var thumb = document.getElementById('thumb_' + s.slotId);
     thumb.src = URL.createObjectURL(file);
     slot.classList.add('done');
     actualizarContadorFotos();
+    _slotActivo = null;
   };
   input.click();
 }
@@ -1208,5 +1246,20 @@ checkKey();
 actualizarOfflineBar();
 actualizarBadge();
 </script>
+<!-- Menú foto individual -->
+<div class="foto-menu-overlay" id="fotoMenuOverlay" onclick="cerrarMenuFoto(event)">
+  <div class="foto-menu">
+    <div class="foto-menu-title" id="fotoMenuLabel">SELECCIONAR FOTO</div>
+    <button class="foto-menu-btn" onclick="usarCamara()">
+      <span style="font-size:22px">📷</span>
+      <span>Tomar foto</span>
+    </button>
+    <button class="foto-menu-btn" onclick="usarGaleria()">
+      <span style="font-size:22px">🖼️</span>
+      <span>Elegir de galería</span>
+    </button>
+    <button class="foto-menu-cancel" onclick="cerrarMenuFoto()">Cancelar</button>
+  </div>
+</div>
 </body>
 </html>
