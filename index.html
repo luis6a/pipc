@@ -815,7 +815,7 @@ function llenarInm(fields) {
       el.value = val ? val.substring(0, 10) : '';
       return;
     }
-    if (val === null || val === undefined) { el.value = ''; return; }
+    if (val === null || val === undefined) { el.value = CERO.has(f) ? '0' : ''; return; }
     if (el.tagName === 'SELECT') { el.value = val; return; }
     el.value = val;
   });
