@@ -435,7 +435,7 @@ small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;d
 
     <!-- FOTOS -->
     <div class="tc" id="tFotos">
-      <!-- Barra de descarga ZIP fija -->
+      <!-- Barra ZIP fija -->
       <div style="background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius);padding:14px;margin-bottom:16px;position:sticky;top:58px;z-index:50;">
         <div style="font-family:var(--mono);font-size:10px;color:var(--text2);margin-bottom:8px;" id="lblFotosZip">Selecciona fotos para generar el ZIP</div>
         <button id="btnDescargaZip" onclick="descargarZip()" disabled
@@ -448,13 +448,11 @@ small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;d
           Se crea la carpeta con el nombre del sitio y las fotos ya renombradas.
         </div>
       </div>
-      <div class="sec"><div class="sec-title" style="color:var(--accent2)">
-        Fotos de campo
-        <span class="bdg f">JPG</span>
-      </div>
+
+      <!-- INDIVIDUALES -->
+      <div class="sec"><div class="sec-title" style="color:var(--accent2)">Fotos individuales <span class="bdg f">CÁMARA / GALERÍA</span></div>
         <p style="font-size:11px;color:var(--text2);font-family:var(--mono);margin-bottom:12px;line-height:1.6;">
-          Toca cada cuadro → elige cámara o galería → la foto queda en memoria.<br>
-          Cuando termines presiona <b style="color:var(--accent)">DESCARGAR ZIP</b> arriba.
+          Toca el cuadro → elige cámara o galería → queda en memoria.
         </p>
       </div>
       <div class="sec"><div class="sec-title">Fachada / Exterior</div>
@@ -467,72 +465,16 @@ small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;d
       </div>
       <div class="sec"><div class="sec-title">Interior</div>
         <div class="foto-grid">
-<div class="foto-slot" id="slot_inmueble1" onclick="selectFoto('inmueble1','inmueble (1).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_inmueble1"><div class="foto-name">inmueble (1).jpg</div></div>
-<div class="foto-slot" id="slot_inmueble2" onclick="selectFoto('inmueble2','inmueble (2).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_inmueble2"><div class="foto-name">inmueble (2).jpg</div></div>
-<div class="foto-slot" id="slot_inmueble3" onclick="selectFoto('inmueble3','inmueble (3).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_inmueble3"><div class="foto-name">inmueble (3).jpg</div></div>
-<div class="foto-slot" id="slot_inmueble4" onclick="selectFoto('inmueble4','inmueble (4).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_inmueble4"><div class="foto-name">inmueble (4).jpg</div></div>
-<div class="foto-slot" id="slot_mueble1" onclick="selectFoto('mueble1','mueble (1).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_mueble1"><div class="foto-name">mueble (1).jpg</div></div>
-<div class="foto-slot" id="slot_mueble2" onclick="selectFoto('mueble2','mueble (2).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_mueble2"><div class="foto-name">mueble (2).jpg</div></div>
-<div class="foto-slot" id="slot_mueble3" onclick="selectFoto('mueble3','mueble (3).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_mueble3"><div class="foto-name">mueble (3).jpg</div></div>
-<div class="foto-slot" id="slot_mueble4" onclick="selectFoto('mueble4','mueble (4).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_mueble4"><div class="foto-name">mueble (4).jpg</div></div>
-<div class="foto-slot" id="slot_techo" onclick="selectFoto('techo','techo.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_techo"><div class="foto-name">techo.jpg</div></div>
-<div class="foto-slot" id="slot_techo1" onclick="selectFoto('techo1','techo1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_techo1"><div class="foto-name">techo1.jpg</div></div>
-<div class="foto-slot" id="slot_pisos" onclick="selectFoto('pisos','pisos.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_pisos"><div class="foto-name">pisos.jpg</div></div>
-<div class="foto-slot" id="slot_pisos1" onclick="selectFoto('pisos1','pisos1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_pisos1"><div class="foto-name">pisos1.jpg</div></div>
+<div class="foto-slot" id="slot_site" onclick="selectFoto('site','site.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_site"><div class="foto-name">site.jpg</div></div>
+<div class="foto-slot" id="slot_atencion_clientes" onclick="selectFoto('atencion_clientes','atencion_clientes.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_atencion_clientes"><div class="foto-name">atencion_clientes.jpg</div></div>
 <div class="foto-slot" id="slot_puerta" onclick="selectFoto('puerta','puerta.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_puerta"><div class="foto-name">puerta.jpg</div></div>
 <div class="foto-slot" id="slot_ventanas" onclick="selectFoto('ventanas','ventanas.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ventanas"><div class="foto-name">ventanas.jpg</div></div>
 <div class="foto-slot" id="slot_estantes" onclick="selectFoto('estantes','estantes.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_estantes"><div class="foto-name">estantes.jpg</div></div>
-<div class="foto-slot" id="slot_banio" onclick="selectFoto('banio','banio.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_banio"><div class="foto-name">banio.jpg</div></div>
-<div class="foto-slot" id="slot_banio1" onclick="selectFoto('banio1','banio1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_banio1"><div class="foto-name">banio1.jpg</div></div>
-<div class="foto-slot" id="slot_site" onclick="selectFoto('site','site.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_site"><div class="foto-name">site.jpg</div></div>
-<div class="foto-slot" id="slot_atencion_clientes" onclick="selectFoto('atencion_clientes','atencion_clientes.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_atencion_clientes"><div class="foto-name">atencion_clientes.jpg</div></div>
         </div>
       </div>
-      <div class="sec"><div class="sec-title">Contra Incendio</div>
+      <div class="sec"><div class="sec-title">Instalaciones</div>
         <div class="foto-grid">
-<div class="foto-slot" id="slot_ext1" onclick="selectFoto('ext1','ext (1).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ext1"><div class="foto-name">ext (1).jpg</div></div>
-<div class="foto-slot" id="slot_ext2" onclick="selectFoto('ext2','ext (2).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ext2"><div class="foto-name">ext (2).jpg</div></div>
-<div class="foto-slot" id="slot_ext3" onclick="selectFoto('ext3','ext (3).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ext3"><div class="foto-name">ext (3).jpg</div></div>
-<div class="foto-slot" id="slot_ext4" onclick="selectFoto('ext4','ext (4).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ext4"><div class="foto-name">ext (4).jpg</div></div>
-<div class="foto-slot" id="slot_ext5" onclick="selectFoto('ext5','ext (5).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ext5"><div class="foto-name">ext (5).jpg</div></div>
-<div class="foto-slot" id="slot_ext6" onclick="selectFoto('ext6','ext (6).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ext6"><div class="foto-name">ext (6).jpg</div></div>
-<div class="foto-slot" id="slot_alarma" onclick="selectFoto('alarma','alarma.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_alarma"><div class="foto-name">alarma.jpg</div></div>
-<div class="foto-slot" id="slot_alarma1" onclick="selectFoto('alarma1','alarma1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_alarma1"><div class="foto-name">alarma1.jpg</div></div>
-<div class="foto-slot" id="slot_dh" onclick="selectFoto('dh','dh.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_dh"><div class="foto-name">dh.jpg</div></div>
-<div class="foto-slot" id="slot_dh1" onclick="selectFoto('dh1','dh1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_dh1"><div class="foto-name">dh1.jpg</div></div>
-<div class="foto-slot" id="slot_esc_emer" onclick="selectFoto('esc_emer','esc_emer.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_esc_emer"><div class="foto-name">esc_emer.jpg</div></div>
 <div class="foto-slot" id="slot_salida" onclick="selectFoto('salida','salida.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_salida"><div class="foto-name">salida.jpg</div></div>
-<div class="foto-slot" id="slot_lampara" onclick="selectFoto('lampara','lampara.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_lampara"><div class="foto-name">lampara.jpg</div></div>
-<div class="foto-slot" id="slot_lampara1" onclick="selectFoto('lampara1','lampara1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_lampara1"><div class="foto-name">lampara1.jpg</div></div>
-<div class="foto-slot" id="slot_botiquin" onclick="selectFoto('botiquin','botiquin.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_botiquin"><div class="foto-name">botiquin.jpg</div></div>
-<div class="foto-slot" id="slot_botiquin1" onclick="selectFoto('botiquin1','botiquin1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_botiquin1"><div class="foto-name">botiquin1.jpg</div></div>
-        </div>
-      </div>
-      <div class="sec"><div class="sec-title">Señalamientos</div>
-        <div class="foto-grid">
-<div class="foto-slot" id="slot_ruta1" onclick="selectFoto('ruta1','ruta (1).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ruta1"><div class="foto-name">ruta (1).jpg</div></div>
-<div class="foto-slot" id="slot_ruta2" onclick="selectFoto('ruta2','ruta (2).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ruta2"><div class="foto-name">ruta (2).jpg</div></div>
-<div class="foto-slot" id="slot_ruta3" onclick="selectFoto('ruta3','ruta (3).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ruta3"><div class="foto-name">ruta (3).jpg</div></div>
-<div class="foto-slot" id="slot_ruta4" onclick="selectFoto('ruta4','ruta (4).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ruta4"><div class="foto-name">ruta (4).jpg</div></div>
-<div class="foto-slot" id="slot_prohib1" onclick="selectFoto('prohib1','prohib (1).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_prohib1"><div class="foto-name">prohib (1).jpg</div></div>
-<div class="foto-slot" id="slot_prohib2" onclick="selectFoto('prohib2','prohib (2).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_prohib2"><div class="foto-name">prohib (2).jpg</div></div>
-<div class="foto-slot" id="slot_prohib3" onclick="selectFoto('prohib3','prohib (3).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_prohib3"><div class="foto-name">prohib (3).jpg</div></div>
-<div class="foto-slot" id="slot_prohib4" onclick="selectFoto('prohib4','prohib (4).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_prohib4"><div class="foto-name">prohib (4).jpg</div></div>
-<div class="foto-slot" id="slot_punto_reun" onclick="selectFoto('punto_reun','punto_reun.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_punto_reun"><div class="foto-name">punto_reun.jpg</div></div>
-<div class="foto-slot" id="slot_zona_sec" onclick="selectFoto('zona_sec','zona_sec.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_zona_sec"><div class="foto-name">zona_sec.jpg</div></div>
-<div class="foto-slot" id="slot_zona_sec1" onclick="selectFoto('zona_sec1','zona_sec1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_zona_sec1"><div class="foto-name">zona_sec1.jpg</div></div>
-<div class="foto-slot" id="slot_sis_inc" onclick="selectFoto('sis_inc','sis_inc.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_sis_inc"><div class="foto-name">sis_inc.jpg</div></div>
-<div class="foto-slot" id="slot_sis_inc1" onclick="selectFoto('sis_inc1','sis_inc1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_sis_inc1"><div class="foto-name">sis_inc1.jpg</div></div>
-        </div>
-      </div>
-      <div class="sec"><div class="sec-title">Eléctrico / Gas / Instalaciones</div>
-        <div class="foto-grid">
-<div class="foto-slot" id="slot_electrico" onclick="selectFoto('electrico','electrico.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_electrico"><div class="foto-name">electrico.jpg</div></div>
-<div class="foto-slot" id="slot_electrico1" onclick="selectFoto('electrico1','electrico1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_electrico1"><div class="foto-name">electrico1.jpg</div></div>
-<div class="foto-slot" id="slot_bateria" onclick="selectFoto('bateria','bateria.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_bateria"><div class="foto-name">bateria.jpg</div></div>
-<div class="foto-slot" id="slot_cisterna" onclick="selectFoto('cisterna','cisterna.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_cisterna"><div class="foto-name">cisterna.jpg</div></div>
-<div class="foto-slot" id="slot_venteo" onclick="selectFoto('venteo','venteo.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_venteo"><div class="foto-name">venteo.jpg</div></div>
-<div class="foto-slot" id="slot_manguera" onclick="selectFoto('manguera','manguera.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_manguera"><div class="foto-name">manguera.jpg</div></div>
 <div class="foto-slot" id="slot_valvulas" onclick="selectFoto('valvulas','valvulas.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_valvulas"><div class="foto-name">valvulas.jpg</div></div>
 <div class="foto-slot" id="slot_paro" onclick="selectFoto('paro','paro.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_paro"><div class="foto-name">paro.jpg</div></div>
 <div class="foto-slot" id="slot_planta" onclick="selectFoto('planta','planta.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_planta"><div class="foto-name">planta.jpg</div></div>
@@ -540,66 +482,205 @@ small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;d
 <div class="foto-slot" id="slot_trampa_grasa" onclick="selectFoto('trampa_grasa','trampa_grasa.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_trampa_grasa"><div class="foto-name">trampa_grasa.jpg</div></div>
 <div class="foto-slot" id="slot_compresor" onclick="selectFoto('compresor','compresor.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_compresor"><div class="foto-name">compresor.jpg</div></div>
 <div class="foto-slot" id="slot_quimicos" onclick="selectFoto('quimicos','quimicos.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_quimicos"><div class="foto-name">quimicos.jpg</div></div>
-<div class="foto-slot" id="slot_tanques_gaso" onclick="selectFoto('tanques_gaso','tanques_gaso.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_tanques_gaso"><div class="foto-name">tanques_gaso.jpg</div></div>
-<div class="foto-slot" id="slot_tanques_gaso1" onclick="selectFoto('tanques_gaso1','tanques_gaso1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_tanques_gaso1"><div class="foto-name">tanques_gaso1.jpg</div></div>
 <div class="foto-slot" id="slot_caldera" onclick="selectFoto('caldera','caldera.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_caldera"><div class="foto-name">caldera.jpg</div></div>
 <div class="foto-slot" id="slot_bombas" onclick="selectFoto('bombas','bombas.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_bombas"><div class="foto-name">bombas.jpg</div></div>
 <div class="foto-slot" id="slot_hidrante" onclick="selectFoto('hidrante','hidrante.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_hidrante"><div class="foto-name">hidrante.jpg</div></div>
 <div class="foto-slot" id="slot_bomberos" onclick="selectFoto('bomberos','bomberos.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_bomberos"><div class="foto-name">bomberos.jpg</div></div>
 <div class="foto-slot" id="slot_brigadas" onclick="selectFoto('brigadas','brigadas.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_brigadas"><div class="foto-name">brigadas.jpg</div></div>
+<div class="foto-slot" id="slot_punto_reun" onclick="selectFoto('punto_reun','punto_reun.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_punto_reun"><div class="foto-name">punto_reun.jpg</div></div>
         </div>
       </div>
-      <div class="sec"><div class="sec-title">Planes</div>
-        <div class="foto-grid">
-<div class="foto-slot" id="slot_plan1" onclick="selectFoto('plan1','plan (1).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_plan1"><div class="foto-name">plan (1).jpg</div></div>
-<div class="foto-slot" id="slot_plan2" onclick="selectFoto('plan2','plan (2).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_plan2"><div class="foto-name">plan (2).jpg</div></div>
-<div class="foto-slot" id="slot_plan3" onclick="selectFoto('plan3','plan (3).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_plan3"><div class="foto-name">plan (3).jpg</div></div>
-        </div>
-      </div>
-      <div class="sec"><div class="sec-title">Fotos en lote</div>
+
+      <!-- LOTES -->
+      <div class="sec" style="margin-top:8px"><div class="sec-title" style="color:var(--accent2)">Fotos en lote <span class="bdg f">SELECCIÓN MÚLTIPLE</span></div>
         <p style="font-size:11px;color:var(--text2);font-family:var(--mono);margin-bottom:12px;line-height:1.6;">
-          Selecciona varias fotos a la vez. Se descargan numeradas automáticamente.
+          Selecciona varias fotos a la vez. Se nombran automáticamente en el orden que las elijas.
         </p>
-      <div class="sec"><div class="sec-title">Capacitaciones <span class="bdg f">LOTE</span></div>
-        <div class="bulk-box">
+      </div>
+      <div class="sec"><div class="sec-title">Interior / Inmueble</div>
+      <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">cap (1) — cap (24)</span>
-            <span class="bulk-count" id="cnt_cap">0 seleccionadas</span>
+            <span class="bulk-label">Inmueble (1–4)</span>
+            <span class="bulk-count" id="cnt_inmueble">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulk('cap','cap',24)">📂 Seleccionar fotos (capacitaciones)</button>
+          <button class="btn-bulk" onclick="selectBulk('inmueble','inmueble',4)">📂 Inmueble (1–4)</button>
+          <div class="bulk-thumbs" id="thumbs_inmueble"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Mueble (1–4)</span>
+            <span class="bulk-count" id="cnt_mueble">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulk('mueble','mueble',4)">📂 Mueble (1–4)</button>
+          <div class="bulk-thumbs" id="thumbs_mueble"></div>
+        </div>
+
+      </div>
+      <div class="sec"><div class="sec-title">Contra Incendio y Señalamientos</div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Extintores (1–6)</span>
+            <span class="bulk-count" id="cnt_ext">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulk('ext','ext',6)">📂 Extintores (1–6)</button>
+          <div class="bulk-thumbs" id="thumbs_ext"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Alarmas</span>
+            <span class="bulk-count" id="cnt_alarma">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulkSufijo('alarma','alarma',2)">📂 Alarmas</button>
+          <div class="bulk-thumbs" id="thumbs_alarma"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Det. Humo</span>
+            <span class="bulk-count" id="cnt_dh">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulkSufijo('dh','dh',2)">📂 Det. Humo</button>
+          <div class="bulk-thumbs" id="thumbs_dh"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Lámparas</span>
+            <span class="bulk-count" id="cnt_lampara">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulkSufijo('lampara','lampara',2)">📂 Lámparas</button>
+          <div class="bulk-thumbs" id="thumbs_lampara"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Botiquín</span>
+            <span class="bulk-count" id="cnt_botiquin">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulkSufijo('botiquin','botiquin',2)">📂 Botiquín</button>
+          <div class="bulk-thumbs" id="thumbs_botiquin"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Esc. Emergencia</span>
+            <span class="bulk-count" id="cnt_esc_emer">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulkSufijo('esc_emer','esc_emer',2)">📂 Esc. Emergencia</button>
+          <div class="bulk-thumbs" id="thumbs_esc_emer"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Rutas (1–4)</span>
+            <span class="bulk-count" id="cnt_ruta">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulk('ruta','ruta',4)">📂 Rutas (1–4)</button>
+          <div class="bulk-thumbs" id="thumbs_ruta"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Prohibiciones (1–4)</span>
+            <span class="bulk-count" id="cnt_prohib">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulk('prohib','prohib',4)">📂 Prohibiciones (1–4)</button>
+          <div class="bulk-thumbs" id="thumbs_prohib"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Zona Segura</span>
+            <span class="bulk-count" id="cnt_zona_sec">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulkSufijo('zona_sec','zona_sec',2)">📂 Zona Segura</button>
+          <div class="bulk-thumbs" id="thumbs_zona_sec"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Sis. Incendio</span>
+            <span class="bulk-count" id="cnt_sis_inc">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulkSufijo('sis_inc','sis_inc',2)">📂 Sis. Incendio</button>
+          <div class="bulk-thumbs" id="thumbs_sis_inc"></div>
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title">Estructura e Instalaciones</div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Techo</span>
+            <span class="bulk-count" id="cnt_techo">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulkSufijo('techo','techo',2)">📂 Techo</button>
+          <div class="bulk-thumbs" id="thumbs_techo"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Pisos</span>
+            <span class="bulk-count" id="cnt_pisos">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulkSufijo('pisos','pisos',2)">📂 Pisos</button>
+          <div class="bulk-thumbs" id="thumbs_pisos"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Baño</span>
+            <span class="bulk-count" id="cnt_banio">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulkSufijo('banio','banio',2)">📂 Baño</button>
+          <div class="bulk-thumbs" id="thumbs_banio"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Eléctrico</span>
+            <span class="bulk-count" id="cnt_electrico">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulkSufijo('electrico','electrico',2)">📂 Eléctrico</button>
+          <div class="bulk-thumbs" id="thumbs_electrico"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Tanques Gas</span>
+            <span class="bulk-count" id="cnt_tanques_gaso">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulkSufijo('tanques_gaso','tanques_gaso',2)">📂 Tanques Gas</button>
+          <div class="bulk-thumbs" id="thumbs_tanques_gaso"></div>
+        </div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Planes (1–3)</span>
+            <span class="bulk-count" id="cnt_plan">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulk('plan','plan',3)">📂 Planes (1–3)</button>
+          <div class="bulk-thumbs" id="thumbs_plan"></div>
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title">Capacitaciones y Simulacros</div>
+      <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">Capacitaciones (1–24)</span>
+            <span class="bulk-count" id="cnt_cap">0 sel.</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulk('cap','cap',24)">📂 Capacitaciones (1–24)</button>
           <div class="bulk-thumbs" id="thumbs_cap"></div>
         </div>
-      </div>
-      <div class="sec"><div class="sec-title">Simulacros <span class="bdg f">LOTE</span></div>
-        <div class="bulk-box">
+      <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">sim (1) — sim (12)</span>
-            <span class="bulk-count" id="cnt_sim">0 seleccionadas</span>
+            <span class="bulk-label">Simulacros (1–12)</span>
+            <span class="bulk-count" id="cnt_sim">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulk('sim','sim',12)">📂 Seleccionar fotos (simulacros)</button>
+          <button class="btn-bulk" onclick="selectBulk('sim','sim',12)">📂 Simulacros (1–12)</button>
           <div class="bulk-thumbs" id="thumbs_sim"></div>
         </div>
-      </div>
-      <div class="sec"><div class="sec-title">Estructuras <span class="bdg f">LOTE</span></div>
-        <div class="bulk-box">
+      <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">est (1) — est (18)</span>
-            <span class="bulk-count" id="cnt_est">0 seleccionadas</span>
+            <span class="bulk-label">Estructuras (1–18)</span>
+            <span class="bulk-count" id="cnt_est">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulk('est','est',18)">📂 Seleccionar fotos (estructuras)</button>
+          <button class="btn-bulk" onclick="selectBulk('est','est',18)">📂 Estructuras (1–18)</button>
           <div class="bulk-thumbs" id="thumbs_est"></div>
         </div>
-      </div>
-      <div class="sec"><div class="sec-title">Elementos <span class="bdg f">LOTE</span></div>
-        <div class="bulk-box">
+      <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">ele (1) — ele (12)</span>
-            <span class="bulk-count" id="cnt_ele">0 seleccionadas</span>
+            <span class="bulk-label">Elementos (1–12)</span>
+            <span class="bulk-count" id="cnt_ele">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulk('ele','ele',12)">📂 Seleccionar fotos (elementos)</button>
+          <button class="btn-bulk" onclick="selectBulk('ele','ele',12)">📂 Elementos (1–12)</button>
           <div class="bulk-thumbs" id="thumbs_ele"></div>
         </div>
-      </div>
       </div>
     </div>
 
@@ -1138,6 +1219,39 @@ function _abrirInput(camara) {
     slot.classList.add('done');
     actualizarContadorFotos();
     _slotActivo = null;
+  };
+  input.click();
+}
+
+function selectBulkSufijo(bid, base, maxFiles) {
+  // Genera: base.jpg, base1.jpg, base2.jpg ...
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.multiple = true;
+  input.onchange = function() {
+    var files = Array.from(input.files);
+    if (!files.length) return;
+    var container = document.getElementById('thumbs_' + bid);
+    var counter   = document.getElementById('cnt_' + bid);
+    container.innerHTML = '';
+    // Limpiar entradas anteriores de este lote
+    Object.keys(fotosEnMemoria).forEach(function(k) {
+      if (k === base + '.jpg' || k.startsWith(base + '0') || k.match(new RegExp('^' + base + '\\d+\\.jpg$'))) {
+        delete fotosEnMemoria[k];
+      }
+    });
+    files.forEach(function(file, i) {
+      var fname = i === 0 ? base + '.jpg' : base + i + '.jpg';
+      fotosEnMemoria[fname] = file;
+      var img = document.createElement('img');
+      img.className = 'bulk-thumb';
+      img.title = fname;
+      img.src = URL.createObjectURL(file);
+      container.appendChild(img);
+    });
+    counter.textContent = files.length + ' sel.';
+    actualizarContadorFotos();
   };
   input.click();
 }
