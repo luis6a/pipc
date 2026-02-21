@@ -39,6 +39,17 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .status{font-family:var(--mono);font-size:11px;padding:8px 12px;border-radius:6px;margin-bottom:12px;display:none;}
 .status.info{background:#1e2a3a;color:#60a5fa;border:1px solid #1d4ed8;display:block;}
 .status.error{background:#2a1515;color:var(--danger);border:1px solid #7f1d1d;display:block;}
+.offline-bar{background:#2a1515;border:1px solid var(--danger);border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;display:none;font-family:var(--mono);font-size:11px;color:var(--danger);align-items:center;gap:10px;}
+.offline-bar.show{display:flex;}
+.sync-bar{background:#14261e;border:1px solid var(--accent2);border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;display:none;font-family:var(--mono);font-size:11px;color:var(--accent2);align-items:center;gap:10px;}
+.sync-bar.show{display:flex;}
+.sync-bar span{flex:1;}
+.btn-sync{background:var(--accent2);color:#000;border:none;padding:7px 14px;border-radius:6px;font-family:var(--mono);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.pending-badge{background:var(--danger);color:#fff;font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;margin-left:6px;}
+.offline-item{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.offline-item-name{flex:1;font-size:13px;font-weight:600;}
+.offline-item-meta{font-family:var(--mono);font-size:10px;color:var(--text2);}
+.offline-item-err{font-family:var(--mono);font-size:10px;color:var(--danger);margin-top:3px;}
 .form-wrap{padding:16px;max-width:600px;margin:0 auto;padding-bottom:90px;}
 .tabs{display:flex;gap:4px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
@@ -76,7 +87,31 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .brig{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px;}
 .brig-t{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
 small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;display:block;}
+.foto-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.foto-slot{background:var(--field-bg);border:1px solid var(--border);border-radius:6px;
+  padding:8px;cursor:pointer;transition:border-color .15s;-webkit-tap-highlight-color:transparent;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+.foto-slot:active{opacity:.7;}
+.foto-slot.done{border-color:var(--accent2);}
+.foto-thumb{width:100%;height:64px;object-fit:cover;border-radius:4px;display:none;}
+.foto-icon{font-size:28px;height:64px;display:flex;align-items:center;justify-content:center;width:100%;}
+.foto-slot.done .foto-icon{display:none;}
+.foto-slot.done .foto-thumb{display:block;}
+.foto-name{font-family:var(--mono);font-size:9px;color:var(--text2);text-align:center;
+  word-break:break-all;line-height:1.3;}
+.foto-slot.done .foto-name{color:var(--accent2);}
+.bulk-box{background:var(--field-bg);border:1px solid var(--border);border-radius:6px;
+  padding:14px;margin-bottom:8px;}
+.bulk-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.bulk-label{font-family:var(--mono);font-size:11px;color:var(--text2);letter-spacing:1px;}
+.bulk-count{font-family:var(--mono);font-size:11px;color:var(--accent2);font-weight:600;}
+.btn-bulk{background:var(--surface2);border:1px solid var(--border);color:var(--text);
+  padding:8px 14px;border-radius:6px;font-family:var(--mono);font-size:11px;cursor:pointer;width:100%;}
+.btn-bulk:active{opacity:.7;}
+.bulk-thumbs{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.bulk-thumb{width:48px;height:48px;object-fit:cover;border-radius:4px;border:1px solid var(--accent2);}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
 
@@ -105,8 +140,13 @@ small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;d
 <!-- BÚSQUEDA -->
 <div class="screen" id="sSearch">
   <div class="wrap">
-    <div class="pg-title">Levantamiento</div>
+    <div class="pg-title">Levantamiento <span id="pendBadge" class="pending-badge" style="display:none"></span></div>
     <div class="pg-sub">Busca el sitio o crea uno nuevo</div>
+    <div class="offline-bar" id="offlineBar">⚠ Sin conexión — los registros se guardarán localmente</div>
+    <div class="sync-bar" id="syncBar">
+      <span id="syncMsg"></span>
+      <button class="btn-sync" onclick="sincronizar()">↑ SINCRONIZAR</button>
+    </div>
     <div class="status" id="statusMsg"></div>
     <input class="srch-inp" type="text" id="srchInp" placeholder="Buscar por nombre del sitio..." oninput="buscar(this.value)">
     <div class="res-list" id="resList" style="display:none"></div>
@@ -126,6 +166,7 @@ small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;d
       <button class="tab"        onclick="tab('tRie',this)">Riesgos</button>
       <button class="tab"        onclick="tab('tPob',this)">Población</button>
       <button class="tab"        onclick="tab('tBri',this)">Brigadas</button>
+      <button class="tab"        onclick="tab('tFotos',this)">📷 Fotos</button>
     </div>
 
     <!-- GENERAL -->
@@ -380,6 +421,177 @@ small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;d
       </div>
     </div>
 
+
+    <!-- FOTOS -->
+    <div class="tc" id="tFotos">
+      <!-- Barra de descarga ZIP fija -->
+      <div style="background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius);padding:14px;margin-bottom:16px;position:sticky;top:58px;z-index:50;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text2);margin-bottom:8px;" id="lblFotosZip">Selecciona fotos para generar el ZIP</div>
+        <button id="btnDescargaZip" onclick="descargarZip()" disabled
+          style="width:100%;background:var(--accent);border:none;color:#000;padding:11px;border-radius:6px;
+                 font-family:var(--mono);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;">
+          📦 DESCARGAR ZIP
+        </button>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text2);margin-top:7px;line-height:1.5;">
+          Extrae el ZIP en <span style="color:var(--text)">OneDrive\OneNote Cargas\Imágenes\</span><br>
+          Se crea la carpeta con el nombre del sitio y las fotos ya renombradas.
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title" style="color:var(--accent2)">
+        Fotos de campo
+        <span class="bdg f">JPG</span>
+      </div>
+        <p style="font-size:11px;color:var(--text2);font-family:var(--mono);margin-bottom:12px;line-height:1.6;">
+          Toca cada cuadro → elige cámara o galería → la foto queda en memoria.<br>
+          Cuando termines presiona <b style="color:var(--accent)">DESCARGAR ZIP</b> arriba.
+        </p>
+      </div>
+      <div class="sec"><div class="sec-title">Fachada / Exterior</div>
+        <div class="foto-grid">
+<div class="foto-slot" id="slot_fachada" onclick="selectFoto('fachada','fachada.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_fachada"><div class="foto-name">fachada.jpg</div></div>
+<div class="foto-slot" id="slot_fachada1" onclick="selectFoto('fachada1','fachada1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_fachada1"><div class="foto-name">fachada1.jpg</div></div>
+<div class="foto-slot" id="slot_bardas" onclick="selectFoto('bardas','bardas.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_bardas"><div class="foto-name">bardas.jpg</div></div>
+<div class="foto-slot" id="slot_plano" onclick="selectFoto('plano','plano.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_plano"><div class="foto-name">plano.jpg</div></div>
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title">Interior</div>
+        <div class="foto-grid">
+<div class="foto-slot" id="slot_inmueble1" onclick="selectFoto('inmueble1','inmueble (1).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_inmueble1"><div class="foto-name">inmueble (1).jpg</div></div>
+<div class="foto-slot" id="slot_inmueble2" onclick="selectFoto('inmueble2','inmueble (2).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_inmueble2"><div class="foto-name">inmueble (2).jpg</div></div>
+<div class="foto-slot" id="slot_inmueble3" onclick="selectFoto('inmueble3','inmueble (3).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_inmueble3"><div class="foto-name">inmueble (3).jpg</div></div>
+<div class="foto-slot" id="slot_inmueble4" onclick="selectFoto('inmueble4','inmueble (4).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_inmueble4"><div class="foto-name">inmueble (4).jpg</div></div>
+<div class="foto-slot" id="slot_mueble1" onclick="selectFoto('mueble1','mueble (1).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_mueble1"><div class="foto-name">mueble (1).jpg</div></div>
+<div class="foto-slot" id="slot_mueble2" onclick="selectFoto('mueble2','mueble (2).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_mueble2"><div class="foto-name">mueble (2).jpg</div></div>
+<div class="foto-slot" id="slot_mueble3" onclick="selectFoto('mueble3','mueble (3).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_mueble3"><div class="foto-name">mueble (3).jpg</div></div>
+<div class="foto-slot" id="slot_mueble4" onclick="selectFoto('mueble4','mueble (4).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_mueble4"><div class="foto-name">mueble (4).jpg</div></div>
+<div class="foto-slot" id="slot_techo" onclick="selectFoto('techo','techo.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_techo"><div class="foto-name">techo.jpg</div></div>
+<div class="foto-slot" id="slot_techo1" onclick="selectFoto('techo1','techo1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_techo1"><div class="foto-name">techo1.jpg</div></div>
+<div class="foto-slot" id="slot_pisos" onclick="selectFoto('pisos','pisos.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_pisos"><div class="foto-name">pisos.jpg</div></div>
+<div class="foto-slot" id="slot_pisos1" onclick="selectFoto('pisos1','pisos1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_pisos1"><div class="foto-name">pisos1.jpg</div></div>
+<div class="foto-slot" id="slot_puerta" onclick="selectFoto('puerta','puerta.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_puerta"><div class="foto-name">puerta.jpg</div></div>
+<div class="foto-slot" id="slot_ventanas" onclick="selectFoto('ventanas','ventanas.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ventanas"><div class="foto-name">ventanas.jpg</div></div>
+<div class="foto-slot" id="slot_estantes" onclick="selectFoto('estantes','estantes.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_estantes"><div class="foto-name">estantes.jpg</div></div>
+<div class="foto-slot" id="slot_banio" onclick="selectFoto('banio','banio.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_banio"><div class="foto-name">banio.jpg</div></div>
+<div class="foto-slot" id="slot_banio1" onclick="selectFoto('banio1','banio1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_banio1"><div class="foto-name">banio1.jpg</div></div>
+<div class="foto-slot" id="slot_site" onclick="selectFoto('site','site.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_site"><div class="foto-name">site.jpg</div></div>
+<div class="foto-slot" id="slot_atencion_clientes" onclick="selectFoto('atencion_clientes','atencion_clientes.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_atencion_clientes"><div class="foto-name">atencion_clientes.jpg</div></div>
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title">Contra Incendio</div>
+        <div class="foto-grid">
+<div class="foto-slot" id="slot_ext1" onclick="selectFoto('ext1','ext (1).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ext1"><div class="foto-name">ext (1).jpg</div></div>
+<div class="foto-slot" id="slot_ext2" onclick="selectFoto('ext2','ext (2).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ext2"><div class="foto-name">ext (2).jpg</div></div>
+<div class="foto-slot" id="slot_ext3" onclick="selectFoto('ext3','ext (3).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ext3"><div class="foto-name">ext (3).jpg</div></div>
+<div class="foto-slot" id="slot_ext4" onclick="selectFoto('ext4','ext (4).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ext4"><div class="foto-name">ext (4).jpg</div></div>
+<div class="foto-slot" id="slot_ext5" onclick="selectFoto('ext5','ext (5).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ext5"><div class="foto-name">ext (5).jpg</div></div>
+<div class="foto-slot" id="slot_ext6" onclick="selectFoto('ext6','ext (6).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ext6"><div class="foto-name">ext (6).jpg</div></div>
+<div class="foto-slot" id="slot_alarma" onclick="selectFoto('alarma','alarma.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_alarma"><div class="foto-name">alarma.jpg</div></div>
+<div class="foto-slot" id="slot_alarma1" onclick="selectFoto('alarma1','alarma1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_alarma1"><div class="foto-name">alarma1.jpg</div></div>
+<div class="foto-slot" id="slot_dh" onclick="selectFoto('dh','dh.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_dh"><div class="foto-name">dh.jpg</div></div>
+<div class="foto-slot" id="slot_dh1" onclick="selectFoto('dh1','dh1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_dh1"><div class="foto-name">dh1.jpg</div></div>
+<div class="foto-slot" id="slot_esc_emer" onclick="selectFoto('esc_emer','esc_emer.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_esc_emer"><div class="foto-name">esc_emer.jpg</div></div>
+<div class="foto-slot" id="slot_salida" onclick="selectFoto('salida','salida.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_salida"><div class="foto-name">salida.jpg</div></div>
+<div class="foto-slot" id="slot_lampara" onclick="selectFoto('lampara','lampara.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_lampara"><div class="foto-name">lampara.jpg</div></div>
+<div class="foto-slot" id="slot_lampara1" onclick="selectFoto('lampara1','lampara1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_lampara1"><div class="foto-name">lampara1.jpg</div></div>
+<div class="foto-slot" id="slot_botiquin" onclick="selectFoto('botiquin','botiquin.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_botiquin"><div class="foto-name">botiquin.jpg</div></div>
+<div class="foto-slot" id="slot_botiquin1" onclick="selectFoto('botiquin1','botiquin1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_botiquin1"><div class="foto-name">botiquin1.jpg</div></div>
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title">Señalamientos</div>
+        <div class="foto-grid">
+<div class="foto-slot" id="slot_ruta1" onclick="selectFoto('ruta1','ruta (1).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ruta1"><div class="foto-name">ruta (1).jpg</div></div>
+<div class="foto-slot" id="slot_ruta2" onclick="selectFoto('ruta2','ruta (2).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ruta2"><div class="foto-name">ruta (2).jpg</div></div>
+<div class="foto-slot" id="slot_ruta3" onclick="selectFoto('ruta3','ruta (3).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ruta3"><div class="foto-name">ruta (3).jpg</div></div>
+<div class="foto-slot" id="slot_ruta4" onclick="selectFoto('ruta4','ruta (4).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_ruta4"><div class="foto-name">ruta (4).jpg</div></div>
+<div class="foto-slot" id="slot_prohib1" onclick="selectFoto('prohib1','prohib (1).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_prohib1"><div class="foto-name">prohib (1).jpg</div></div>
+<div class="foto-slot" id="slot_prohib2" onclick="selectFoto('prohib2','prohib (2).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_prohib2"><div class="foto-name">prohib (2).jpg</div></div>
+<div class="foto-slot" id="slot_prohib3" onclick="selectFoto('prohib3','prohib (3).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_prohib3"><div class="foto-name">prohib (3).jpg</div></div>
+<div class="foto-slot" id="slot_prohib4" onclick="selectFoto('prohib4','prohib (4).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_prohib4"><div class="foto-name">prohib (4).jpg</div></div>
+<div class="foto-slot" id="slot_punto_reun" onclick="selectFoto('punto_reun','punto_reun.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_punto_reun"><div class="foto-name">punto_reun.jpg</div></div>
+<div class="foto-slot" id="slot_zona_sec" onclick="selectFoto('zona_sec','zona_sec.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_zona_sec"><div class="foto-name">zona_sec.jpg</div></div>
+<div class="foto-slot" id="slot_zona_sec1" onclick="selectFoto('zona_sec1','zona_sec1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_zona_sec1"><div class="foto-name">zona_sec1.jpg</div></div>
+<div class="foto-slot" id="slot_sis_inc" onclick="selectFoto('sis_inc','sis_inc.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_sis_inc"><div class="foto-name">sis_inc.jpg</div></div>
+<div class="foto-slot" id="slot_sis_inc1" onclick="selectFoto('sis_inc1','sis_inc1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_sis_inc1"><div class="foto-name">sis_inc1.jpg</div></div>
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title">Eléctrico / Gas / Instalaciones</div>
+        <div class="foto-grid">
+<div class="foto-slot" id="slot_electrico" onclick="selectFoto('electrico','electrico.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_electrico"><div class="foto-name">electrico.jpg</div></div>
+<div class="foto-slot" id="slot_electrico1" onclick="selectFoto('electrico1','electrico1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_electrico1"><div class="foto-name">electrico1.jpg</div></div>
+<div class="foto-slot" id="slot_bateria" onclick="selectFoto('bateria','bateria.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_bateria"><div class="foto-name">bateria.jpg</div></div>
+<div class="foto-slot" id="slot_cisterna" onclick="selectFoto('cisterna','cisterna.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_cisterna"><div class="foto-name">cisterna.jpg</div></div>
+<div class="foto-slot" id="slot_venteo" onclick="selectFoto('venteo','venteo.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_venteo"><div class="foto-name">venteo.jpg</div></div>
+<div class="foto-slot" id="slot_manguera" onclick="selectFoto('manguera','manguera.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_manguera"><div class="foto-name">manguera.jpg</div></div>
+<div class="foto-slot" id="slot_valvulas" onclick="selectFoto('valvulas','valvulas.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_valvulas"><div class="foto-name">valvulas.jpg</div></div>
+<div class="foto-slot" id="slot_paro" onclick="selectFoto('paro','paro.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_paro"><div class="foto-name">paro.jpg</div></div>
+<div class="foto-slot" id="slot_planta" onclick="selectFoto('planta','planta.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_planta"><div class="foto-name">planta.jpg</div></div>
+<div class="foto-slot" id="slot_deposito" onclick="selectFoto('deposito','deposito.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_deposito"><div class="foto-name">deposito.jpg</div></div>
+<div class="foto-slot" id="slot_trampa_grasa" onclick="selectFoto('trampa_grasa','trampa_grasa.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_trampa_grasa"><div class="foto-name">trampa_grasa.jpg</div></div>
+<div class="foto-slot" id="slot_compresor" onclick="selectFoto('compresor','compresor.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_compresor"><div class="foto-name">compresor.jpg</div></div>
+<div class="foto-slot" id="slot_quimicos" onclick="selectFoto('quimicos','quimicos.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_quimicos"><div class="foto-name">quimicos.jpg</div></div>
+<div class="foto-slot" id="slot_tanques_gaso" onclick="selectFoto('tanques_gaso','tanques_gaso.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_tanques_gaso"><div class="foto-name">tanques_gaso.jpg</div></div>
+<div class="foto-slot" id="slot_tanques_gaso1" onclick="selectFoto('tanques_gaso1','tanques_gaso1.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_tanques_gaso1"><div class="foto-name">tanques_gaso1.jpg</div></div>
+<div class="foto-slot" id="slot_caldera" onclick="selectFoto('caldera','caldera.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_caldera"><div class="foto-name">caldera.jpg</div></div>
+<div class="foto-slot" id="slot_bombas" onclick="selectFoto('bombas','bombas.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_bombas"><div class="foto-name">bombas.jpg</div></div>
+<div class="foto-slot" id="slot_hidrante" onclick="selectFoto('hidrante','hidrante.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_hidrante"><div class="foto-name">hidrante.jpg</div></div>
+<div class="foto-slot" id="slot_bomberos" onclick="selectFoto('bomberos','bomberos.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_bomberos"><div class="foto-name">bomberos.jpg</div></div>
+<div class="foto-slot" id="slot_brigadas" onclick="selectFoto('brigadas','brigadas.jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_brigadas"><div class="foto-name">brigadas.jpg</div></div>
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title">Planes</div>
+        <div class="foto-grid">
+<div class="foto-slot" id="slot_plan1" onclick="selectFoto('plan1','plan (1).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_plan1"><div class="foto-name">plan (1).jpg</div></div>
+<div class="foto-slot" id="slot_plan2" onclick="selectFoto('plan2','plan (2).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_plan2"><div class="foto-name">plan (2).jpg</div></div>
+<div class="foto-slot" id="slot_plan3" onclick="selectFoto('plan3','plan (3).jpg')"><div class="foto-icon">📷</div><img class="foto-thumb" id="thumb_plan3"><div class="foto-name">plan (3).jpg</div></div>
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title">Fotos en lote</div>
+        <p style="font-size:11px;color:var(--text2);font-family:var(--mono);margin-bottom:12px;line-height:1.6;">
+          Selecciona varias fotos a la vez. Se descargan numeradas automáticamente.
+        </p>
+      <div class="sec"><div class="sec-title">Capacitaciones <span class="bdg f">LOTE</span></div>
+        <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">cap (1) — cap (24)</span>
+            <span class="bulk-count" id="cnt_cap">0 seleccionadas</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulk('cap','cap',24)">📂 Seleccionar fotos (capacitaciones)</button>
+          <div class="bulk-thumbs" id="thumbs_cap"></div>
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title">Simulacros <span class="bdg f">LOTE</span></div>
+        <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">sim (1) — sim (12)</span>
+            <span class="bulk-count" id="cnt_sim">0 seleccionadas</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulk('sim','sim',12)">📂 Seleccionar fotos (simulacros)</button>
+          <div class="bulk-thumbs" id="thumbs_sim"></div>
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title">Estructuras <span class="bdg f">LOTE</span></div>
+        <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">est (1) — est (18)</span>
+            <span class="bulk-count" id="cnt_est">0 seleccionadas</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulk('est','est',18)">📂 Seleccionar fotos (estructuras)</button>
+          <div class="bulk-thumbs" id="thumbs_est"></div>
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title">Elementos <span class="bdg f">LOTE</span></div>
+        <div class="bulk-box">
+          <div class="bulk-header">
+            <span class="bulk-label">ele (1) — ele (12)</span>
+            <span class="bulk-count" id="cnt_ele">0 seleccionadas</span>
+          </div>
+          <button class="btn-bulk" onclick="selectBulk('ele','ele',12)">📂 Seleccionar fotos (elementos)</button>
+          <div class="bulk-thumbs" id="thumbs_ele"></div>
+        </div>
+      </div>
+      </div>
+    </div>
+
   </div>
   <div class="bot-bar">
     <button class="btn-back" onclick="volver()">← Volver</button>
@@ -627,6 +839,7 @@ function limpiar() {
     else if (CERO.has(f)) el.value = '0';
     else el.value = '';
   });
+  limpiarFotos();
 }
 
 function tab(id, btn) {
@@ -701,62 +914,152 @@ function buildPob() {
   return fields;
 }
 
+// ===== OFFLINE QUEUE =====
+var QUEUE_KEY = 'pipc_queue';
+
+function queueGet() {
+  try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch(e) { return []; }
+}
+function queueSave(q) {
+  localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+}
+function queueAdd(item) {
+  var q = queueGet();
+  item.qid = Date.now() + '_' + Math.random().toString(36).slice(2,7);
+  item.savedAt = new Date().toLocaleString('es-MX');
+  item.error = null;
+  q.push(item);
+  queueSave(q);
+  actualizarBadge();
+}
+function queueRemove(qid) {
+  var q = queueGet().filter(function(i) { return i.qid !== qid; });
+  queueSave(q);
+  actualizarBadge();
+}
+
+function actualizarBadge() {
+  var q = queueGet();
+  var badge = document.getElementById('pendBadge');
+  var syncBar = document.getElementById('syncBar');
+  var syncMsg = document.getElementById('syncMsg');
+  if (q.length > 0) {
+    badge.textContent = q.length + ' pendiente' + (q.length > 1 ? 's' : '');
+    badge.style.display = 'inline-block';
+    syncBar.classList.add('show');
+    syncMsg.textContent = q.length + ' registro' + (q.length > 1 ? 's' : '') + ' sin sincronizar';
+  } else {
+    badge.style.display = 'none';
+    syncBar.classList.remove('show');
+  }
+}
+
+function hayInternet() {
+  return navigator.onLine;
+}
+
+function actualizarOfflineBar() {
+  var bar = document.getElementById('offlineBar');
+  if (!hayInternet()) bar.classList.add('show');
+  else bar.classList.remove('show');
+}
+
+window.addEventListener('online',  function() { actualizarOfflineBar(); actualizarBadge(); });
+window.addEventListener('offline', function() { actualizarOfflineBar(); });
+
+async function enviarAirtable(item) {
+  var inmId;
+  if (item.recId) {
+    await PATCH(TBL_INM, item.recId, item.inm);
+    inmId = item.recId;
+  } else {
+    var ri = await POST(TBL_INM, item.inm);
+    inmId = ri.id;
+  }
+
+  var fPob = Object.assign({}, item.pob);
+  fPob['Inmueble'] = [inmId];
+
+  if (item.pobId) {
+    await PATCH(TBL_POB, item.pobId, fPob);
+  } else {
+    var allPob2 = []; var off2 = null;
+    do {
+      var pg2 = await GET(TBL_POB, 'pageSize=100' + (off2 ? '&offset=' + off2 : ''));
+      allPob2 = allPob2.concat(pg2.records || []);
+      off2 = pg2.offset || null;
+    } while (off2);
+    var match2 = null;
+    allPob2.forEach(function(r) {
+      Object.keys(r.fields).forEach(function(k) {
+        if (Array.isArray(r.fields[k]) && r.fields[k].indexOf(inmId) !== -1) match2 = r;
+      });
+    });
+    if (match2) await PATCH(TBL_POB, match2.id, fPob);
+    else await POST(TBL_POB, fPob);
+  }
+}
+
+async function sincronizar() {
+  var q = queueGet();
+  if (q.length === 0) { toast('No hay registros pendientes', ''); return; }
+  if (!hayInternet()) { toast('Sin conexión a internet', 'err'); return; }
+
+  var btn = document.querySelector('.btn-sync');
+  btn.disabled = true; btn.textContent = 'Sincronizando...';
+
+  var ok = 0; var fail = 0;
+  for (var i = 0; i < q.length; i++) {
+    try {
+      await enviarAirtable(q[i]);
+      queueRemove(q[i].qid);
+      ok++;
+    } catch(e) {
+      q[i].error = e.message;
+      fail++;
+    }
+  }
+  if (fail > 0) queueSave(queueGet()); // guardar errores actualizados
+
+  btn.disabled = false; btn.textContent = '↑ SINCRONIZAR';
+  actualizarBadge();
+
+  if (fail === 0) toast('✓ ' + ok + ' registro' + (ok>1?'s':'') + ' sincronizado' + (ok>1?'s':''), 'ok');
+  else toast(ok + ' OK, ' + fail + ' con error', 'err');
+}
+
+// ===== GUARDAR (con soporte offline) =====
 async function guardar() {
   var bs = document.getElementById('btnSave');
   var bh = document.getElementById('btnHdr');
   bs.disabled = true; bs.textContent = 'Guardando...';
   bh.disabled = true;
 
+  var fInm = buildInm();
+  var fPob = buildPob();
+
+  if (!hayInternet()) {
+    // Guardar en cola local
+    queueAdd({ recId: recId, pobId: pobId, inm: fInm, pob: fPob,
+               nombre: fInm.nombre_comercial || 'Sin nombre' });
+    toast('📥 Guardado sin conexión — pendiente de sync', '');
+    bs.disabled = false; bs.textContent = '💾 GUARDAR EN AIRTABLE';
+    bh.disabled = false;
+    return;
+  }
+
   try {
-    // 1. Inmueble
-    var fInm = buildInm();
-    var inmId;
-    if (recId) {
-      await PATCH(TBL_INM, recId, fInm);
-      inmId = recId;
-    } else {
-      var ri = await POST(TBL_INM, fInm);
-      inmId = ri.id;
-      recId = inmId;
-    }
-
-    // 2. Población
-    var fPob = buildPob();
-    fPob['Inmueble'] = [inmId];
-
-    if (pobId) {
-      await PATCH(TBL_POB, pobId, fPob);
-    } else {
-      // Verificar si ya existe un registro vinculado
-      var allPob2 = [];
-      var off2 = null;
-      do {
-        var qs2 = 'pageSize=100' + (off2 ? '&offset=' + off2 : '');
-        var pg2 = await GET(TBL_POB, qs2);
-        allPob2 = allPob2.concat(pg2.records || []);
-        off2 = pg2.offset || null;
-      } while (off2);
-
-      var match2 = null;
-      allPob2.forEach(function(r) {
-        Object.keys(r.fields).forEach(function(k) {
-          var v = r.fields[k];
-          if (Array.isArray(v) && v.indexOf(inmId) !== -1) match2 = r;
-        });
-      });
-
-      if (match2) {
-        pobId = match2.id;
-        await PATCH(TBL_POB, pobId, fPob);
-      } else {
-        var rp = await POST(TBL_POB, fPob);
-        pobId = rp.id;
-      }
-    }
-
+    await enviarAirtable({ recId: recId, pobId: pobId, inm: fInm, pob: fPob });
     toast('✓ Guardado correctamente', 'ok');
   } catch(e) {
-    toast('Error: ' + e.message, 'err');
+    // Si falla por red, guardar en cola
+    if (!hayInternet() || e.message.includes('fetch') || e.message.includes('network') || e.message.includes('Failed')) {
+      queueAdd({ recId: recId, pobId: pobId, inm: fInm, pob: fPob,
+                 nombre: fInm.nombre_comercial || 'Sin nombre' });
+      toast('📥 Sin conexión — guardado localmente', '');
+    } else {
+      toast('Error: ' + e.message, 'err');
+    }
   } finally {
     bs.disabled = false; bs.textContent = '💾 GUARDAR EN AIRTABLE';
     bh.disabled = false;
@@ -778,8 +1081,132 @@ function toast(msg, type) {
   toastTmr = setTimeout(function() { t.classList.remove('show'); }, 3500);
 }
 
+// ===== FOTOS =====
+// Almacén en memoria: { filename → File }
+var fotosEnMemoria = {};
+
+function selectFoto(slotId, filename) {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = function() {
+    if (!input.files[0]) return;
+    var file = input.files[0];
+    // Guardar en memoria con el nombre correcto
+    fotosEnMemoria[filename] = file;
+    // Mostrar thumbnail
+    var slot  = document.getElementById('slot_' + slotId);
+    var thumb = document.getElementById('thumb_' + slotId);
+    thumb.src = URL.createObjectURL(file);
+    slot.classList.add('done');
+    actualizarContadorFotos();
+  };
+  input.click();
+}
+
+function selectBulk(bid, base, maxn) {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.multiple = true;
+  input.onchange = function() {
+    var files = Array.from(input.files);
+    if (!files.length) return;
+    var container = document.getElementById('thumbs_' + bid);
+    var counter   = document.getElementById('cnt_' + bid);
+    container.innerHTML = '';
+    // Limpiar entradas anteriores de este lote
+    Object.keys(fotosEnMemoria).forEach(function(k) {
+      if (k.startsWith(base + ' (') || k.startsWith(base + '(')) delete fotosEnMemoria[k];
+    });
+    files.forEach(function(file, i) {
+      var fname = base + ' (' + (i + 1) + ').jpg';
+      fotosEnMemoria[fname] = file;
+      var img = document.createElement('img');
+      img.className = 'bulk-thumb';
+      img.title = fname;
+      img.src = URL.createObjectURL(file);
+      container.appendChild(img);
+    });
+    counter.textContent = files.length + ' seleccionada' + (files.length > 1 ? 's' : '');
+    actualizarContadorFotos();
+  };
+  input.click();
+}
+
+function actualizarContadorFotos() {
+  var n = Object.keys(fotosEnMemoria).length;
+  var btn = document.getElementById('btnDescargaZip');
+  var lbl = document.getElementById('lblFotosZip');
+  if (!btn) return;
+  if (n === 0) {
+    btn.disabled = true;
+    lbl.textContent = 'Selecciona fotos para generar el ZIP';
+  } else {
+    btn.disabled = false;
+    lbl.textContent = n + ' foto' + (n > 1 ? 's' : '') + ' lista' + (n > 1 ? 's' : '') + ' para descargar';
+  }
+}
+
+async function descargarZip() {
+  var nombre = document.getElementById('nombre_comercial').value.trim() || 'SITIO';
+  var n = Object.keys(fotosEnMemoria).length;
+  if (n === 0) { toast('No hay fotos seleccionadas', 'err'); return; }
+
+  var btn = document.getElementById('btnDescargaZip');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generando ZIP...';
+
+  try {
+    var zip = new JSZip();
+    var carpeta = zip.folder(nombre);
+    // Leer cada archivo y agregarlo al ZIP
+    var promesas = Object.keys(fotosEnMemoria).map(function(fname) {
+      return new Promise(function(resolve) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          carpeta.file(fname, e.target.result.split(',')[1], {base64: true});
+          resolve();
+        };
+        reader.readAsDataURL(fotosEnMemoria[fname]);
+      });
+    });
+    await Promise.all(promesas);
+
+    var blob = await zip.generateAsync({type: 'blob', compression: 'DEFLATE', compressionOptions: {level: 3}});
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href = url;
+    a.download = nombre + '.zip';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
+    toast('✓ ZIP descargado: ' + nombre + '.zip', 'ok');
+  } catch(e) {
+    toast('Error al generar ZIP: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📦 DESCARGAR ZIP';
+  }
+}
+
+// Limpiar fotos al crear nuevo registro o abrir uno existente
+function limpiarFotos() {
+  fotosEnMemoria = {};
+  document.querySelectorAll('.foto-slot').forEach(function(s) {
+    s.classList.remove('done');
+  });
+  document.querySelectorAll('.foto-thumb').forEach(function(i) { i.src = ''; });
+  document.querySelectorAll('.bulk-thumbs').forEach(function(c) { c.innerHTML = ''; });
+  document.querySelectorAll('[id^="cnt_"]').forEach(function(el) { el.textContent = '0 seleccionadas'; });
+  actualizarContadorFotos();
+}
+
 // ===== INIT =====
 checkKey();
+actualizarOfflineBar();
+actualizarBadge();
 </script>
 </body>
 </html>
