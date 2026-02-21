@@ -27,8 +27,7 @@ PERITO_TABLE = 'Perito'
 
 # Valores específicos para buscar en Airtable
 CATEGORIA_BUSCAR = 'GENERAL'
-NOMBRE_COMERCIAL_BUSCAR = 'COMEX TEPETITLA'
-
+NOMBRE_COMERCIAL_BUSCAR = 'ELEPHANT HOME'
 # Ruta base absoluta
 BASE_DIR = "C:/Users/luis6/OneDrive/Documentos/GitHub/PIPC"
 
@@ -77,6 +76,7 @@ AXA_MF_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/MF Axa.docx"
 AXA_GRI_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/GRI Axa.docx"
 CONTINGENCIA_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Contingencia.docx"
 ALL_LEVANTAMIENTO_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Levantamiento.docx"
+ALL_DICTAMENES_PTLL_PATH = f"{BASE_DIR}/Inputs/Templates/Dictamenes.docx"
 
 # Ruta imágenes
 IMAGES_PATH = f"{BASE_DIR}/Inputs/Images"
@@ -221,43 +221,43 @@ def crear_word(datos_airtable):
 
     if categoria == 'GASOLINERA':
         plantillas = [GASOLINERA_WORD_PTLL_PATH,
-                      GASOLINERA_MF_WORD_PTLL_PATH, GASOLINERA_GRI_WORD_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      GASOLINERA_MF_WORD_PTLL_PATH, GASOLINERA_GRI_WORD_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     elif categoria == 'BANORTE':
         plantillas = [CIDUR_PTLL_PATH, CIDUR_MF_PTLL_PATH,
-                      CIDUR_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      CIDUR_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     elif categoria == 'GDL':
         plantillas = [GDL_PTLL_PATH, GDL_MF_PTLL_PATH,
-                      GDL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      GDL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     elif categoria == 'GENERAL':
         plantillas = [GENERAL_PTLL_PATH, GENERAL_MF_PTLL_PATH,
-                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     elif categoria == 'BBVA':
         plantillas = [BBVA_PTLL_PATH, BBVA_MF_PTLL_PATH,
-                      BBVA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      BBVA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     elif categoria == 'UVP':
         plantillas = [UVP_PTLL_PATH, UVP_MF_PTLL_PATH,
-                      UVP_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      UVP_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     elif categoria == 'DHL':
         plantillas = [DHL_PTLL_PATH, DHL_MF_PTLL_PATH, DHL_GRI_PTLL_PATH,
-                      ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     elif categoria == 'GASERA':
         plantillas = [GASERA_WORD_PTLL_PATH, GASERA_MF_WORD_PTLL_PATH,
-                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     elif categoria == 'ESTAFETA':
         plantillas = [ESTAFETA_PTLL_PATH, ESTAFETA_MF_PTLL_PATH,
-                      ESTAFETA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      ESTAFETA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     elif categoria == 'FEDEX':
         plantillas = [FEDEX_PTLL_PATH, FEDEX_MF_PTLL_PATH,
-                      FEDEX_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      FEDEX_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     elif categoria == 'SMARTFIT':
         plantillas = [SMARTFIT_PTLL_PATH, SMARTFIT_MF_PTLL_PATH,
-                      SMARTFIT_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      SMARTFIT_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     elif categoria == 'AXA':
         plantillas = [AXA_PTLL_PATH, AXA_MF_PTLL_PATH,
-                      AXA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      AXA_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     elif categoria == 'CONTINGENCIA':
         plantillas = [CONTINGENCIA_PTLL_PATH, GENERAL_MF_PTLL_PATH,
-                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH]
+                      GENERAL_GRI_PTLL_PATH, ALL_NOE_PTLL_PATH, ALL_LEVANTAMIENTO_PTLL_PATH, ALL_DICTAMENES_PTLL_PATH]
     else:
         print(f"No se encontraron plantillas para la categoría: {categoria}")
         return
@@ -542,7 +542,7 @@ def crear_word(datos_airtable):
         zona_evac = cargar_imagen(
             docx_tpl, 'zona_evac', 'zona_evac.png', 155, 'width', datos_airtable)
         firma = cargar_imagen(docx_tpl, 'firma', 'firma.png',
-                              14, 'height', datos_airtable)
+                              20, 'height', datos_airtable)
         layout1 = cargar_imagen(docx_tpl, 'layout1',
                                 'layout (1).png', 160, 'width', datos_airtable)
         layout2 = cargar_imagen(docx_tpl, 'layout2',
@@ -621,188 +621,278 @@ def crear_word(datos_airtable):
                                  'brigadas.jpg', 50, 'heigth', datos_airtable)
         hidrante = cargar_imagen(docx_tpl, 'hidrante',
                                  'hidrante.jpg', 50, 'heigth', datos_airtable)
+        est1 = cargar_imagen(docx_tpl, 'est1', 'est (1).jpg',
+                             60, 'height', datos_airtable)
+        est2 = cargar_imagen(docx_tpl, 'est2', 'est (2).jpg',
+                             60, 'height', datos_airtable)
+        est3 = cargar_imagen(docx_tpl, 'est3', 'est (3).jpg',
+                             60, 'height', datos_airtable)
+        est4 = cargar_imagen(docx_tpl, 'est4', 'est (4).jpg',
+                             60, 'height', datos_airtable)
+        est5 = cargar_imagen(docx_tpl, 'est5', 'est (5).jpg',
+                             60, 'height', datos_airtable)
+        est6 = cargar_imagen(docx_tpl, 'est6', 'est (6).jpg',
+                             60, 'height', datos_airtable)
+        est7 = cargar_imagen(docx_tpl, 'est7', 'est (7).jpg',
+                             60, 'height', datos_airtable)
+        est8 = cargar_imagen(docx_tpl, 'est8', 'est (8).jpg',
+                             60, 'height', datos_airtable)
+        est9 = cargar_imagen(docx_tpl, 'est9', 'est (9).jpg',
+                             60, 'height', datos_airtable)
+        est10 = cargar_imagen(
+            docx_tpl, 'est10', 'est (10).jpg', 60, 'height', datos_airtable)
+        est11 = cargar_imagen(
+            docx_tpl, 'est11', 'est (11).jpg', 60, 'height', datos_airtable)
+        est12 = cargar_imagen(             
+            docx_tpl, 'est12', 'est (12).jpg', 60, 'height', datos_airtable)
+        est13 = cargar_imagen(             
+            docx_tpl, 'est13', 'est (13).jpg', 60, 'height', datos_airtable)
+        est14 = cargar_imagen(
+            docx_tpl, 'est14', 'est (14).jpg', 60, 'height', datos_airtable)
+        est15 = cargar_imagen(
+            docx_tpl, 'est15', 'est (15).jpg', 60, 'height', datos_airtable)
+        est16 = cargar_imagen(
+            docx_tpl, 'est16', 'est (16).jpg', 60, 'height', datos_airtable)
+        est17 = cargar_imagen(
+            docx_tpl, 'est17', 'est (17).jpg', 60, 'height', datos_airtable)
+        est18 = cargar_imagen(
+            docx_tpl, 'est18', 'est (18).jpg', 60, 'height', datos_airtable)
+        ele1 = cargar_imagen(docx_tpl, 'ele1', 'ele (1).jpg',
+                             60, 'height', datos_airtable)
+        ele2 = cargar_imagen(docx_tpl, 'ele2', 'ele (2).jpg',
+                             60, 'height', datos_airtable)
+        ele3 = cargar_imagen(docx_tpl, 'ele3', 'ele (3).jpg',
+                             60, 'height', datos_airtable)
+        ele4 = cargar_imagen(docx_tpl, 'ele4', 'ele (4).jpg',
+                             60, 'height', datos_airtable)
+        ele5 = cargar_imagen(docx_tpl, 'ele5', 'ele (5).jpg',
+                             60, 'height', datos_airtable)
+        ele6 = cargar_imagen(docx_tpl, 'ele6', 'ele (6).jpg',
+                             60, 'height', datos_airtable)
+        ele7 = cargar_imagen(docx_tpl, 'ele7', 'ele (7).jpg',
+                             60, 'height', datos_airtable)
+        ele8 = cargar_imagen(docx_tpl, 'ele8', 'ele (8).jpg',
+                             60, 'height', datos_airtable)
+        ele9 = cargar_imagen(docx_tpl, 'ele9', 'ele (9).jpg',
+                             60, 'height', datos_airtable)
+        ele10 = cargar_imagen(
+            docx_tpl, 'ele10', 'ele (10).jpg', 60, 'height', datos_airtable)
+        ele11 = cargar_imagen(
+            docx_tpl, 'ele11', 'ele (11).jpg', 60, 'height', datos_airtable)
+        ele12 = cargar_imagen(
+            docx_tpl, 'ele12', 'ele (12).jpg', 60, 'height', datos_airtable)
 
         try:
             # Renderizar documento - pasamos todos los datos directamente
             docx_tpl.render({**datos_airtable,
                             'logo1': logo1,
-                             'logo2': logo2,
-                             'fachada': fachada,
-                             'mapa': mapa,
-                             'esc_emer': esc_emer,
-                             'mueble1': mueble1,
-                             'mueble2': mueble2,
-                             'venteo': venteo,
-                             'manguera': manguera,
-                             'electrico': electrico,
-                             'banio': banio,
-                             'cisterna': cisterna,
-                             'sismo': sismo,
-                             'inundacion': inundacion,
-                             'torm_elect': torm_elect,
-                             'incendio': incendio,
-                             'influenza': influenza,
-                             'radiacion': radiacion,
-                             'ext1': ext1,
-                             'ext2': ext2,
-                             'ext3': ext3,
-                             'ext4': ext4,
-                             'ext5': ext5,
-                             'ext6': ext6,
-                             'botiquin': botiquin,
-                             'ruta1': ruta1,
-                             'ruta2': ruta2,
-                             'ruta3': ruta3,
-                             'salida': salida,
-                             'alarma': alarma,
-                             'alarma1': alarma1,
-                             'prohib1': prohib1,
-                             'prohib2': prohib2,
-                             'prohib3': prohib3,
-                             'prohib4': prohib4,
-                             'layout': layout,
-                             'cap1': cap1,
-                             'cap2': cap2,
-                             'cap3': cap3,
-                             'cap4': cap4,
-                             'cap5': cap5,
-                             'cap6': cap6,
-                             'cap7': cap7,
-                             'cap8': cap8,
-                             'cap9': cap9,
-                             'cap10': cap10,
-                             'cap11': cap11,
-                             'cap12': cap12,
-                             'sim1': sim1,
-                             'sim2': sim2,
-                             'sim3': sim3,
-                             'sim4': sim4,
-                             'sim5': sim5,
-                             'sim6': sim6,
-                             'techo': techo,
-                             'pisos': pisos,
-                             'puerta': puerta,
-                             'estantes': estantes,
-                             'site': site,
-                             'dh': dh,
-                             'ventanas': ventanas,
-                             'compresor': compresor,
-                             'quimicos': quimicos,
-                             'tanques_gaso': tanques_gaso,
-                             'tanques_gaso1': tanques_gaso1,
-                             'paro': paro,
-                             'trampa_grasa': trampa_grasa,
-                             'planta': planta,
-                             'deposito': deposito,
-                             'mapa_satel': mapa_satel,
-                             'plano': plano,
-                             'inmueble1': inmueble1,
-                             'inmueble2': inmueble2,
-                             'banio1': banio1,
-                             'electrico1': electrico1,
-                             'fachada1': fachada1,
-                             'bateria': bateria,
-                             'acta1': acta1,
-                             'acta2': acta2,
-                             'acta': acta,
-                             'crono_anual': crono_anual,
-                             'mantto1': mantto1,
-                             'mantto2': mantto2,
-                             'simulacro': simulacro,
-                             'capacitacion': capacitacion,
-                             'inv_quim': inv_quim,
-                             'inv_emer': inv_emer,
-                             'bit_emer': bit_emer,
-                             'insp_bot': insp_bot,
-                             'insp_ext': insp_ext,
-                             'insp_ext1': insp_ext1,
-                             'insp_dh': insp_dh,
-                             'insp_lamp': insp_lamp,
-                             'insp_alarm': insp_alarm,
-                             'ev_sim1': ev_sim1,
-                             'ev_sim2': ev_sim2,
-                             'visitas': visitas,
-                             'dir_emer': dir_emer,
-                             'corresp1': corresp1,
-                             'corresp2': corresp2,
-                             'corresp3': corresp3,
-                             'carta_respon': carta_respon,
-                             'registro1': registro1,
-                             'registro2': registro2,
-                             'ries_circ': ries_circ,
-                             'mapa_ext': mapa_ext,
-                             'rec_ext': rec_ext,
-                             'mayor_ries': mayor_ries,
-                             'menor_ries': menor_ries,
-                             'zona_evac': zona_evac,
-                             'firma': firma,
-                             'layout1': layout1,
-                             'layout2': layout2,
-                             'layout3': layout3,
-                             'layout4': layout4,
-                             'layout5': layout5,
-                             'layout6': layout6,
-                             'layout7': layout7,
-                             'layout8': layout8,
-                             'layout9': layout9,
-                             'layout10': layout10,
-                             'layout11': layout11,
-                             'layout12': layout12,
-                             'ev_sim3': ev_sim3,
-                             'ev_sim4': ev_sim4,
-                             'ev_sim5': ev_sim5,
-                             'ev_sim6': ev_sim6,
-                             'ev_sim7': ev_sim7,
-                             'ev_sim8': ev_sim8,
-                             'acta3': acta3,
-                             'acta4': acta4,
-                             'acta5': acta5,
-                             'plan1': plan1,
-                             'plan2': plan2,
-                             'plan3': plan3,
-                             'lampara': lampara,
-                             'bombas': bombas,
-                             'atencion_clientes': atencion_clientes,
-                             'bardas': bardas,
-                             'sis_inc': sis_inc,
-                             'zona_sec': zona_sec,
-                             'punto_reun': punto_reun,
-                             'valvulas': valvulas,
-                             'lampara1': lampara1,
-                             'dh1': dh1,
-                             'sis_inc1': sis_inc1,
-                             'zona_sec1': zona_sec1,
-                             'mueble3': mueble3,
-                             'mueble4': mueble4,
-                             'inmueble3': inmueble3,
-                             'inmueble4': inmueble4,
-                             'botiquin1': botiquin1,
-                             'ruta4': ruta4,
-                             'cap13': cap13,
-                             'cap14': cap14,
-                             'cap15': cap15,
-                             'cap16': cap16,
-                             'cap17': cap17,
-                             'cap18': cap18,
-                             'cap19': cap19,
-                             'cap20': cap20,
-                             'cap21': cap21,
-                             'cap22': cap22,
-                             'cap23': cap23,
-                             'cap24': cap24,
-                             'sim7': sim7,
-                             'sim8': sim8,
-                             'sim9': sim9,
-                             'sim10': sim10,
-                             'sim11': sim11,
-                             'sim12': sim12,
-                             'techo1': techo1,
-                             'pisos1': pisos1,
-                             'bomberos': bomberos,
-                             'caldera': caldera,
-                             'brigadas': brigadas,
-                             'hidrante': hidrante
-                             })
+                            'logo2': logo2,
+                            'fachada': fachada,
+                            'mapa': mapa,
+                            'esc_emer': esc_emer,
+                            'mueble1': mueble1,
+                            'mueble2': mueble2,
+                            'venteo': venteo,
+                            'manguera': manguera,
+                            'electrico': electrico,
+                            'banio': banio,
+                            'cisterna': cisterna,
+                            'sismo': sismo,
+                            'inundacion': inundacion,
+                            'torm_elect': torm_elect,
+                            'incendio': incendio,
+                            'influenza': influenza,
+                            'radiacion': radiacion,
+                            'ext1': ext1,
+                            'ext2': ext2,
+                            'ext3': ext3,
+                            'ext4': ext4,
+                            'ext5': ext5,
+                            'ext6': ext6,
+                            'botiquin': botiquin,
+                            'ruta1': ruta1,
+                            'ruta2': ruta2,
+                            'ruta3': ruta3,
+                            'salida': salida,
+                            'alarma': alarma,
+                            'alarma1': alarma1,
+                            'prohib1': prohib1,
+                            'prohib2': prohib2,
+                            'prohib3': prohib3,
+                            'prohib4': prohib4,
+                            'layout': layout,
+                            'cap1': cap1,
+                            'cap2': cap2,
+                            'cap3': cap3,
+                            'cap4': cap4,
+                            'cap5': cap5,
+                            'cap6': cap6,
+                            'cap7': cap7,
+                            'cap8': cap8,
+                            'cap9': cap9,
+                            'cap10': cap10,
+                            'cap11': cap11,
+                            'cap12': cap12,
+                            'sim1': sim1,
+                            'sim2': sim2,
+                            'sim3': sim3,
+                            'sim4': sim4,
+                            'sim5': sim5,
+                            'sim6': sim6,
+                            'techo': techo,
+                            'pisos': pisos,
+                            'puerta': puerta,
+                            'estantes': estantes,
+                            'site': site,
+                            'dh': dh,
+                            'ventanas': ventanas,
+                            'compresor': compresor,
+                            'quimicos': quimicos,
+                            'tanques_gaso': tanques_gaso,
+                            'tanques_gaso1': tanques_gaso1,
+                            'paro': paro,
+                            'trampa_grasa': trampa_grasa,
+                            'planta': planta,
+                            'deposito': deposito,
+                            'mapa_satel': mapa_satel,
+                            'plano': plano,
+                            'inmueble1': inmueble1,
+                            'inmueble2': inmueble2,
+                            'banio1': banio1,
+                            'electrico1': electrico1,
+                            'fachada1': fachada1,
+                            'bateria': bateria,
+                            'acta1': acta1,
+                            'acta2': acta2,
+                            'acta': acta,
+                            'crono_anual': crono_anual,
+                            'mantto1': mantto1,
+                            'mantto2': mantto2,
+                            'simulacro': simulacro,
+                            'capacitacion': capacitacion,
+                            'inv_quim': inv_quim,
+                            'inv_emer': inv_emer,
+                            'bit_emer': bit_emer,
+                            'insp_bot': insp_bot,
+                            'insp_ext': insp_ext,
+                            'insp_ext1': insp_ext1,
+                            'insp_dh': insp_dh,
+                            'insp_lamp': insp_lamp,
+                            'insp_alarm': insp_alarm,
+                            'ev_sim1': ev_sim1,
+                            'ev_sim2': ev_sim2,
+                            'visitas': visitas,
+                            'dir_emer': dir_emer,
+                            'corresp1': corresp1,
+                            'corresp2': corresp2,
+                            'corresp3': corresp3,
+                            'carta_respon': carta_respon,
+                            'registro1': registro1,
+                            'registro2': registro2,
+                            'ries_circ': ries_circ,
+                            'mapa_ext': mapa_ext,
+                            'rec_ext': rec_ext,
+                            'mayor_ries': mayor_ries,
+                            'menor_ries': menor_ries,
+                            'zona_evac': zona_evac,
+                            'firma': firma,
+                            'layout1': layout1,
+                            'layout2': layout2,
+                            'layout3': layout3,
+                            'layout4': layout4,
+                            'layout5': layout5,
+                            'layout6': layout6,
+                            'layout7': layout7,
+                            'layout8': layout8,
+                            'layout9': layout9,
+                            'layout10': layout10,
+                            'layout11': layout11,
+                            'layout12': layout12,
+                            'ev_sim3': ev_sim3,
+                            'ev_sim4': ev_sim4,
+                            'ev_sim5': ev_sim5,
+                            'ev_sim6': ev_sim6,
+                            'ev_sim7': ev_sim7,
+                            'ev_sim8': ev_sim8,
+                            'acta3': acta3,
+                            'acta4': acta4,
+                            'acta5': acta5,
+                            'plan1': plan1,
+                            'plan2': plan2,
+                            'plan3': plan3,
+                            'lampara': lampara,
+                            'bombas': bombas,
+                            'atencion_clientes': atencion_clientes,
+                            'bardas': bardas,
+                            'sis_inc': sis_inc,
+                            'zona_sec': zona_sec,
+                            'punto_reun': punto_reun,
+                            'valvulas': valvulas,
+                            'lampara1': lampara1,
+                            'dh1': dh1,
+                            'sis_inc1': sis_inc1,
+                            'zona_sec1': zona_sec1,
+                            'mueble3': mueble3,
+                            'mueble4': mueble4,
+                            'inmueble3': inmueble3,
+                            'inmueble4': inmueble4,
+                            'botiquin1': botiquin1,
+                            'ruta4': ruta4,
+                            'cap13': cap13,
+                            'cap14': cap14,
+                            'cap15': cap15,
+                            'cap16': cap16,
+                            'cap17': cap17,
+                            'cap18': cap18,
+                            'cap19': cap19,
+                            'cap20': cap20,
+                            'cap21': cap21,
+                            'cap22': cap22,
+                            'cap23': cap23,
+                            'cap24': cap24,
+                            'sim7': sim7,
+                            'sim8': sim8,
+                            'sim9': sim9,
+                            'sim10': sim10,
+                            'sim11': sim11,
+                            'sim12': sim12,
+                            'techo1': techo1,
+                            'pisos1': pisos1,
+                            'bomberos': bomberos,
+                            'caldera': caldera,
+                            'brigadas': brigadas,
+                            'hidrante': hidrante,
+                            'est1': est1,
+                            'est2': est2,
+                            'est3': est3,
+                            'est4': est4,
+                            'est5': est5,
+                            'est6': est6,
+                            'est7': est7,
+                            'est8': est8,
+                            'est9': est9,
+                            'est10': est10,
+                            'est11': est11,
+                            'est12': est12,
+                            'est13': est13,
+                            'est14': est14,
+                            'est15': est15,
+                            'est16': est16,
+                            'est17': est17,
+                            'est18': est18,
+                            'ele1': ele1,
+                            'ele2': ele2,
+                            'ele3': ele3,
+                            'ele4': ele4,
+                            'ele5': ele5,
+                            'ele6': ele6,
+                            'ele7': ele7,
+                            'ele8': ele8,
+                            'ele9': ele9,
+                            'ele10': ele10,
+                            'ele11': ele11,
+                            'ele12': ele12,
+                            })
 
             # Determinar nombre del archivo de salida
             nombre_comercial = datos_airtable.get(
@@ -817,6 +907,8 @@ def crear_word(datos_airtable):
                 nombre_pipc = f'4. CARTA NOE {nombre_comercial}.docx'
             elif idx == 5:
                 nombre_pipc = f'5. LEVANTAMIENTO {nombre_comercial}.docx'
+            elif idx == 6:
+                nombre_pipc = f'6. DICTAMENES {nombre_comercial}.docx'
             else:
                 nombre_pipc = f'{idx}. DOCUMENTO {nombre_comercial}.docx'
 
