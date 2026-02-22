@@ -87,6 +87,18 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .brig{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px;}
 .brig-t{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
 small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;display:block;}
+.firma-wrap{background:#ffffff;border:2px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;touch-action:none;cursor:crosshair;display:block;width:100%;}
+.firma-wrap.activo{border-color:var(--accent2);}
+#firmaCanvas{display:block;width:100%;height:220px;}
+.firma-btns{display:flex;gap:10px;margin-top:12px;}
+.btn-firma-clear{flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text2);
+  padding:11px;border-radius:var(--radius);font-family:var(--mono);font-size:12px;cursor:pointer;}
+.btn-firma-save{flex:2;background:var(--accent2);border:none;color:#000;
+  padding:11px;border-radius:var(--radius);font-family:var(--mono);font-size:12px;font-weight:600;cursor:pointer;}
+.firma-preview{margin-top:14px;display:none;}
+.firma-preview img{width:100%;border:1px solid var(--accent2);border-radius:6px;}
+.firma-ok{font-family:var(--mono);font-size:11px;color:var(--accent2);margin-top:6px;text-align:center;}
 .foto-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;display:none;align-items:flex-end;}
 .foto-menu-overlay.show{display:flex;}
 .foto-menu{background:var(--surface);border-radius:16px 16px 0 0;padding:20px 16px 32px;width:100%;}
@@ -178,6 +190,7 @@ small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;d
       <button class="tab"        onclick="tab('tPob',this)">Población</button>
       <button class="tab"        onclick="tab('tBri',this)">Brigadas</button>
       <button class="tab"        onclick="tab('tFotos',this)">📷 Fotos</button>
+      <button class="tab"        onclick="tab('tFirma',this)">✍️ Firma</button>
     </div>
 
     <!-- GENERAL -->
@@ -443,10 +456,7 @@ small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;d
                  font-family:var(--mono);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;">
           📦 DESCARGAR ZIP
         </button>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text2);margin-top:7px;line-height:1.5;">
-          Extrae el ZIP en <span style="color:var(--text)">OneDrive\OneNote Cargas\Imágenes\</span><br>
-          Se crea la carpeta con el nombre del sitio y las fotos ya renombradas.
-        </div>
+
       </div>
 
       <!-- INDIVIDUALES -->
@@ -527,42 +537,42 @@ small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;d
         </div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Alarmas</span>
+            <span class="bulk-label">Alarmas (1–2)</span>
             <span class="bulk-count" id="cnt_alarma">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulkSufijo('alarma','alarma',2)">📂 Alarmas</button>
+          <button class="btn-bulk" onclick="selectBulkSufijo('alarma','alarma',2)">📂 Alarmas (1–2)</button>
           <div class="bulk-thumbs" id="thumbs_alarma"></div>
         </div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Det. Humo</span>
+            <span class="bulk-label">Det. Humo (1–2)</span>
             <span class="bulk-count" id="cnt_dh">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulkSufijo('dh','dh',2)">📂 Det. Humo</button>
+          <button class="btn-bulk" onclick="selectBulkSufijo('dh','dh',2)">📂 Det. Humo (1–2)</button>
           <div class="bulk-thumbs" id="thumbs_dh"></div>
         </div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Lámparas</span>
+            <span class="bulk-label">Lámparas (1–2)</span>
             <span class="bulk-count" id="cnt_lampara">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulkSufijo('lampara','lampara',2)">📂 Lámparas</button>
+          <button class="btn-bulk" onclick="selectBulkSufijo('lampara','lampara',2)">📂 Lámparas (1–2)</button>
           <div class="bulk-thumbs" id="thumbs_lampara"></div>
         </div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Botiquín</span>
+            <span class="bulk-label">Botiquín (1–2)</span>
             <span class="bulk-count" id="cnt_botiquin">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulkSufijo('botiquin','botiquin',2)">📂 Botiquín</button>
+          <button class="btn-bulk" onclick="selectBulkSufijo('botiquin','botiquin',2)">📂 Botiquín (1–2)</button>
           <div class="bulk-thumbs" id="thumbs_botiquin"></div>
         </div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Esc. Emergencia</span>
+            <span class="bulk-label">Esc. Emergencia (1–2)</span>
             <span class="bulk-count" id="cnt_esc_emer">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulkSufijo('esc_emer','esc_emer',2)">📂 Esc. Emergencia</button>
+          <button class="btn-bulk" onclick="selectBulkSufijo('esc_emer','esc_emer',2)">📂 Esc. Emergencia (1–2)</button>
           <div class="bulk-thumbs" id="thumbs_esc_emer"></div>
         </div>
       <div class="bulk-box">
@@ -583,60 +593,60 @@ small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;d
         </div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Zona Segura</span>
+            <span class="bulk-label">Zona Segura (1–2)</span>
             <span class="bulk-count" id="cnt_zona_sec">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulkSufijo('zona_sec','zona_sec',2)">📂 Zona Segura</button>
+          <button class="btn-bulk" onclick="selectBulkSufijo('zona_sec','zona_sec',2)">📂 Zona Segura (1–2)</button>
           <div class="bulk-thumbs" id="thumbs_zona_sec"></div>
         </div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Sis. Incendio</span>
+            <span class="bulk-label">Sis. Incendio (1–2)</span>
             <span class="bulk-count" id="cnt_sis_inc">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulkSufijo('sis_inc','sis_inc',2)">📂 Sis. Incendio</button>
+          <button class="btn-bulk" onclick="selectBulkSufijo('sis_inc','sis_inc',2)">📂 Sis. Incendio (1–2)</button>
           <div class="bulk-thumbs" id="thumbs_sis_inc"></div>
         </div>
       </div>
       <div class="sec"><div class="sec-title">Estructura e Instalaciones</div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Techo</span>
+            <span class="bulk-label">Techo (1–2)</span>
             <span class="bulk-count" id="cnt_techo">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulkSufijo('techo','techo',2)">📂 Techo</button>
+          <button class="btn-bulk" onclick="selectBulkSufijo('techo','techo',2)">📂 Techo (1–2)</button>
           <div class="bulk-thumbs" id="thumbs_techo"></div>
         </div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Pisos</span>
+            <span class="bulk-label">Pisos (1–2)</span>
             <span class="bulk-count" id="cnt_pisos">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulkSufijo('pisos','pisos',2)">📂 Pisos</button>
+          <button class="btn-bulk" onclick="selectBulkSufijo('pisos','pisos',2)">📂 Pisos (1–2)</button>
           <div class="bulk-thumbs" id="thumbs_pisos"></div>
         </div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Baño</span>
+            <span class="bulk-label">Baño (1–2)</span>
             <span class="bulk-count" id="cnt_banio">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulkSufijo('banio','banio',2)">📂 Baño</button>
+          <button class="btn-bulk" onclick="selectBulkSufijo('banio','banio',2)">📂 Baño (1–2)</button>
           <div class="bulk-thumbs" id="thumbs_banio"></div>
         </div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Eléctrico</span>
+            <span class="bulk-label">Eléctrico (1–2)</span>
             <span class="bulk-count" id="cnt_electrico">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulkSufijo('electrico','electrico',2)">📂 Eléctrico</button>
+          <button class="btn-bulk" onclick="selectBulkSufijo('electrico','electrico',2)">📂 Eléctrico (1–2)</button>
           <div class="bulk-thumbs" id="thumbs_electrico"></div>
         </div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Tanques Gas</span>
+            <span class="bulk-label">Tanques Gas (1–2)</span>
             <span class="bulk-count" id="cnt_tanques_gaso">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulkSufijo('tanques_gaso','tanques_gaso',2)">📂 Tanques Gas</button>
+          <button class="btn-bulk" onclick="selectBulkSufijo('tanques_gaso','tanques_gaso',2)">📂 Tanques Gas (1–2)</button>
           <div class="bulk-thumbs" id="thumbs_tanques_gaso"></div>
         </div>
       <div class="bulk-box">
@@ -675,11 +685,31 @@ small{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:3px;d
         </div>
       <div class="bulk-box">
           <div class="bulk-header">
-            <span class="bulk-label">Elementos (1–12)</span>
+            <span class="bulk-label">Electricidad (1–12)</span>
             <span class="bulk-count" id="cnt_ele">0 sel.</span>
           </div>
-          <button class="btn-bulk" onclick="selectBulk('ele','ele',12)">📂 Elementos (1–12)</button>
+          <button class="btn-bulk" onclick="selectBulk('ele','ele',12)">📂 Electricidad (1–12)</button>
           <div class="bulk-thumbs" id="thumbs_ele"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIRMA -->
+    <div class="tc" id="tFirma">
+      <div class="sec"><div class="sec-title" style="color:var(--accent2)">Firma digital ✍️</div>
+        <p style="font-size:11px;color:var(--text2);font-family:var(--mono);margin-bottom:14px;line-height:1.6;">
+          Firma con el dedo o el lápiz. Se guardará como <b style="color:var(--text)">firma.png</b> y se incluirá en el ZIP del sitio.
+        </p>
+        <div class="firma-wrap" id="firmaWrap">
+          <canvas id="firmaCanvas"></canvas>
+        </div>
+        <div class="firma-btns">
+          <button class="btn-firma-clear" onclick="firmaClear()">🗑 Borrar</button>
+          <button class="btn-firma-save" onclick="firmaGuardar()">✓ Agregar al ZIP</button>
+        </div>
+        <div class="firma-preview" id="firmaPreview">
+          <img id="firmaPreviewImg">
+          <div class="firma-ok">✓ firma.png lista — se incluirá en el ZIP</div>
         </div>
       </div>
     </div>
@@ -939,6 +969,7 @@ function tab(id, btn) {
   document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
   if (btn) btn.classList.add('active');
+  if (id === 'tFirma') setTimeout(firmaInit, 50);
 }
 
 function cnt(fid, d) {
@@ -1300,6 +1331,17 @@ function actualizarContadorFotos() {
   }
 }
 
+function _descargarDirecto(blob, nombre) {
+  var url = URL.createObjectURL(blob);
+  var a   = document.createElement('a');
+  a.href = url;
+  a.download = nombre + '.zip';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
+}
+
 async function descargarZip() {
   var nombre = document.getElementById('nombre_comercial').value.trim() || 'SITIO';
   var n = Object.keys(fotosEnMemoria).length;
@@ -1326,15 +1368,25 @@ async function descargarZip() {
     await Promise.all(promesas);
 
     var blob = await zip.generateAsync({type: 'blob', compression: 'DEFLATE', compressionOptions: {level: 3}});
-    var url  = URL.createObjectURL(blob);
-    var a    = document.createElement('a');
-    a.href = url;
-    a.download = nombre + '.zip';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
-    toast('✓ ZIP descargado: ' + nombre + '.zip', 'ok');
+    var zipFile = new File([blob], nombre + '.zip', {type: 'application/zip'});
+
+    // Web Share API: muestra menu nativo con OneDrive, Drive, etc.
+    if (navigator.canShare && navigator.canShare({files: [zipFile]})) {
+      try {
+        await navigator.share({ files: [zipFile], title: nombre + '.zip' });
+        toast('✓ ZIP compartido: ' + nombre + '.zip', 'ok');
+      } catch(shareErr) {
+        // Usuario cancelo el menu: no es error
+        if (shareErr.name !== 'AbortError') {
+          _descargarDirecto(blob, nombre);
+          toast('✓ ZIP descargado: ' + nombre + '.zip', 'ok');
+        }
+      }
+    } else {
+      // Fallback: descarga directa (escritorio o navegador sin soporte)
+      _descargarDirecto(blob, nombre);
+      toast('✓ ZIP descargado: ' + nombre + '.zip', 'ok');
+    }
   } catch(e) {
     toast('Error al generar ZIP: ' + e.message, 'err');
   } finally {
@@ -1354,6 +1406,111 @@ function limpiarFotos() {
   document.querySelectorAll('[id^="cnt_"]').forEach(function(el) { el.textContent = '0 seleccionadas'; });
   actualizarContadorFotos();
 }
+
+// ===== FIRMA =====
+var firmaCtx, firmaDrawing = false, firmaVacia = true;
+
+function firmaInit() {
+  var canvas = document.getElementById('firmaCanvas');
+  var wrap   = document.getElementById('firmaWrap');
+  // Ajustar resolución al tamaño real
+  canvas.width  = canvas.offsetWidth  * window.devicePixelRatio;
+  canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+  firmaCtx = canvas.getContext('2d');
+  firmaCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  firmaCtx.strokeStyle = '#1a3db5';
+  firmaCtx.lineWidth   = 3.5;
+  firmaCtx.lineCap     = 'round';
+  firmaCtx.lineJoin    = 'round';
+  firmaCtx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+
+  function pos(e) {
+    var r = canvas.getBoundingClientRect();
+    var src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - r.left, y: src.clientY - r.top };
+  }
+  function start(e) {
+    e.preventDefault();
+    firmaDrawing = true; firmaVacia = false;
+    wrap.classList.add('activo');
+    var p = pos(e);
+    firmaCtx.beginPath();
+    firmaCtx.moveTo(p.x, p.y);
+  }
+  function move(e) {
+    e.preventDefault();
+    if (!firmaDrawing) return;
+    var p = pos(e);
+    firmaCtx.lineTo(p.x, p.y);
+    firmaCtx.stroke();
+  }
+  function end(e) { e.preventDefault(); firmaDrawing = false; }
+
+  canvas.addEventListener('mousedown',  start, {passive:false});
+  canvas.addEventListener('mousemove',  move,  {passive:false});
+  canvas.addEventListener('mouseup',    end,   {passive:false});
+  canvas.addEventListener('touchstart', start, {passive:false});
+  canvas.addEventListener('touchmove',  move,  {passive:false});
+  canvas.addEventListener('touchend',   end,   {passive:false});
+}
+
+function firmaClear() {
+  var canvas = document.getElementById('firmaCanvas');
+  firmaCtx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+  firmaVacia = true;
+  document.getElementById('firmaWrap').classList.remove('activo');
+  document.getElementById('firmaPreview').style.display = 'none';
+  // Quitar del ZIP
+  delete fotosEnMemoria['firma.png'];
+  actualizarContadorFotos();
+}
+
+function firmaGuardar() {
+  if (firmaVacia) { toast('Primero firma en el recuadro', 'err'); return; }
+  var canvas = document.getElementById('firmaCanvas');
+  var ctx    = firmaCtx;
+  var w = canvas.width, h = canvas.height;
+  var data   = ctx.getImageData(0, 0, w, h).data;
+
+  // Encontrar bounding box de los píxeles con alpha > 0
+  var minX = w, minY = h, maxX = 0, maxY = 0;
+  for (var y = 0; y < h; y++) {
+    for (var x = 0; x < w; x++) {
+      var a = data[(y * w + x) * 4 + 3];
+      if (a > 0) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  // Margen de 10px alrededor de la firma
+  var pad = 10;
+  minX = Math.max(0, minX - pad);
+  minY = Math.max(0, minY - pad);
+  maxX = Math.min(w, maxX + pad);
+  maxY = Math.min(h, maxY + pad);
+  var fw = maxX - minX, fh = maxY - minY;
+
+  // Copiar solo esa región a un canvas temporal
+  var tmp = document.createElement('canvas');
+  tmp.width  = fw;
+  tmp.height = fh;
+  var tctx = tmp.getContext('2d');
+  tctx.drawImage(canvas, minX, minY, fw, fh, 0, 0, fw, fh);
+
+  tmp.toBlob(function(blob) {
+    fotosEnMemoria['firma.png'] = new File([blob], 'firma.png', {type:'image/png'});
+    actualizarContadorFotos();
+    var url = URL.createObjectURL(blob);
+    document.getElementById('firmaPreviewImg').src = url;
+    document.getElementById('firmaPreview').style.display = 'block';
+    toast('✓ firma.png agregada al ZIP', 'ok');
+  }, 'image/png');
+}
+
+
 
 // ===== INIT =====
 checkKey();
